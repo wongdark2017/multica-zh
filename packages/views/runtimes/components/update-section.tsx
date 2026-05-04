@@ -191,7 +191,7 @@ export function UpdateSection({
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 flex-wrap">
-        <span className="text-xs text-muted-foreground">CLI Version:</span>
+        <span className="text-xs text-muted-foreground">CLI 版本：</span>
         <span className="text-xs font-mono">
           {currentVersion ?? "unknown"}
         </span>
@@ -199,16 +199,16 @@ export function UpdateSection({
         {isManaged ? (
           <span
             className="inline-flex items-center gap-1 text-xs text-muted-foreground"
-            title="The CLI binary is managed by Multica Desktop — update Desktop to upgrade the CLI."
+            title="CLI binary 由 Multica Desktop 管理，请更新 Desktop 来升级 CLI。"
           >
-            Managed by Desktop
+            由 Desktop 管理
           </span>
         ) : (
           <>
             {!hasUpdate && currentVersion && latestVersion && !status && (
               <span className="inline-flex items-center gap-1 text-xs text-success">
                 <Check className="h-3 w-3" />
-                Latest
+                最新
               </span>
             )}
 
@@ -218,7 +218,7 @@ export function UpdateSection({
                 <span className="text-xs font-mono text-info">
                   {latestVersion}
                 </span>
-                <span className="text-xs text-muted-foreground">available</span>
+                <span className="text-xs text-muted-foreground">可用</span>
               </>
             )}
 

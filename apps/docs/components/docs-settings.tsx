@@ -75,7 +75,7 @@ export function DocsSettings({ locale }: { locale: string }) {
               variant="ghost"
               size="sm"
               className="font-normal text-muted-foreground"
-              aria-label="Switch language"
+              aria-label="切换语言"
             >
               {localeLabels[locale as keyof typeof localeLabels] ?? locale}
             </Button>
@@ -104,7 +104,7 @@ export function DocsSettings({ locale }: { locale: string }) {
               variant="ghost"
               size="icon-sm"
               className="shrink-0 text-muted-foreground"
-              aria-label="Switch theme"
+              aria-label="切换主题"
             >
               {activeThemeOption.icon}
             </Button>

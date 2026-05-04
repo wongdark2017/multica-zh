@@ -140,7 +140,7 @@ function LoginPageContent() {
         <div className="flex min-h-screen items-center justify-center">
           <Card className="w-full max-w-sm">
             <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Sign-in Failed</CardTitle>
+              <CardTitle className="text-2xl">登录失败</CardTitle>
               <CardDescription>{desktopError}</CardDescription>
             </CardHeader>
           </Card>
@@ -151,11 +151,11 @@ function LoginPageContent() {
       <div className="flex min-h-screen items-center justify-center">
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Opening Multica</CardTitle>
+            <CardTitle className="text-2xl">正在打开 Multica</CardTitle>
             <CardDescription>
               {desktopToken
-                ? "You should see a prompt to open the Multica desktop app. If nothing happens, click the button below."
-                : "Preparing Desktop sign-in..."}
+                ? "你应该会看到打开 Multica 桌面应用的提示。如果没有反应，请点击下面的按钮。"
+                : "正在准备桌面端登录..."}
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
@@ -166,7 +166,7 @@ function LoginPageContent() {
                   window.location.href = `multica://auth/callback?token=${encodeURIComponent(desktopToken)}`;
                 }}
               >
-                Open Multica Desktop
+                打开 Multica Desktop
               </Button>
             ) : (
               <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />

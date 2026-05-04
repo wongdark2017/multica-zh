@@ -174,19 +174,18 @@ export function AgentOverviewPane({
         >
           <AlertDialogContent>
             <AlertDialogHeader>
-              <AlertDialogTitle>Discard unsaved changes?</AlertDialogTitle>
+              <AlertDialogTitle>放弃未保存的更改？</AlertDialogTitle>
               <AlertDialogDescription>
-                You have unsaved changes in this tab. Leaving now will discard
-                them.
+                该标签页中有未保存的更改。现在离开会丢弃它们。
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel>Keep editing</AlertDialogCancel>
+              <AlertDialogCancel>继续编辑</AlertDialogCancel>
               <AlertDialogAction
                 variant="destructive"
                 onClick={commitTabChange}
               >
-                Discard changes
+                放弃更改
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>

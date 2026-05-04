@@ -20,8 +20,8 @@ export const uiTranslations: Partial<Record<Lang, Partial<Translations>>> = {
 
 // Display name shown in the LanguageToggle dropdown.
 export const localeLabels: Record<Lang, string> = {
-  en: "English",
   zh: "简体中文",
+  en: "English",
 };
 
 // Copy for the welcome page (Hero + Byline). Pages are translated as MDX;

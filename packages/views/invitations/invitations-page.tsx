@@ -157,12 +157,12 @@ export function InvitationsPage() {
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
               <Mail className="h-6 w-6 text-muted-foreground" />
             </div>
-            <h2 className="text-lg font-semibold">No pending invitations</h2>
+            <h2 className="text-lg font-semibold">没有待处理邀请</h2>
             <p className="text-sm text-muted-foreground text-center">
-              Continue to set up your own workspace.
+              继续设置你自己的工作区。
             </p>
             <Button onClick={() => push(paths.onboarding())}>
-              Continue to setup
+              继续设置
             </Button>
           </CardContent>
         </Card>

@@ -58,7 +58,7 @@ export function ProjectPicker({
           </DropdownMenuItem>
         )}
         {projects.length === 0 && (
-          <div className="px-2 py-1.5 text-xs text-muted-foreground">No projects yet</div>
+          <div className="px-2 py-1.5 text-xs text-muted-foreground">暂无项目</div>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

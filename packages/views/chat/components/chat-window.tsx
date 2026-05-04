@@ -391,7 +391,7 @@ export function ChatWindow() {
             >
               <Plus />
             </TooltipTrigger>
-            <TooltipContent side="top">New chat</TooltipContent>
+            <TooltipContent side="top">新聊天</TooltipContent>
           </Tooltip>
           <SessionDropdown
             sessions={sessions}
@@ -417,7 +417,7 @@ export function ChatWindow() {
               {isExpanded || isAtMax ? <Minimize2 /> : <Maximize2 />}
             </TooltipTrigger>
             <TooltipContent side="top">
-              {isExpanded || isAtMax ? "Restore" : "Fullscreen"}
+              {isExpanded || isAtMax ? "还原" : "全屏"}
             </TooltipContent>
           </Tooltip>
           <Tooltip>
@@ -433,7 +433,7 @@ export function ChatWindow() {
             >
               <Minus />
             </TooltipTrigger>
-            <TooltipContent side="top">Minimize</TooltipContent>
+            <TooltipContent side="top">最小化</TooltipContent>
           </Tooltip>
         </div>
       </div>
@@ -523,7 +523,7 @@ function AgentDropdown({
   }, [agents, userId]);
 
   if (!activeAgent) {
-    return <span className="text-xs text-muted-foreground">No agents</span>;
+    return <span className="text-xs text-muted-foreground">暂无 agents</span>;
   }
 
   return (
@@ -542,7 +542,7 @@ function AgentDropdown({
       <DropdownMenuContent align="start" side="top" className="max-h-80 w-auto max-w-64">
         {mine.length > 0 && (
           <DropdownMenuGroup>
-            <DropdownMenuLabel>My agents</DropdownMenuLabel>
+            <DropdownMenuLabel>我的 agents</DropdownMenuLabel>
             {mine.map((agent) => (
               <AgentMenuItem
                 key={agent.id}
@@ -556,7 +556,7 @@ function AgentDropdown({
         {mine.length > 0 && others.length > 0 && <DropdownMenuSeparator />}
         {others.length > 0 && (
           <DropdownMenuGroup>
-            <DropdownMenuLabel>Others</DropdownMenuLabel>
+            <DropdownMenuLabel>其他</DropdownMenuLabel>
             {others.map((agent) => (
               <AgentMenuItem
                 key={agent.id}
@@ -620,7 +620,7 @@ function SessionDropdown({
   const wsId = useWorkspaceId();
   const agentById = useMemo(() => new Map(agents.map((a) => [a.id, a])), [agents]);
   const activeSession = sessions.find((s) => s.id === activeSessionId);
-  const title = activeSession?.title?.trim() || "New chat";
+  const title = activeSession?.title?.trim() || "新聊天";
   const triggerAgent = activeSession ? agentById.get(activeSession.agent_id) ?? null : null;
 
   // Aggregate "which sessions have an in-flight task right now". Reuses
@@ -660,14 +660,14 @@ function SessionDropdown({
         <span className="truncate text-sm font-medium">{title}</span>
         {otherSessionRunning ? (
           <span
-            aria-label="Another chat is running"
-            title="Another chat is running"
+            aria-label="另一个聊天正在运行"
+            title="另一个聊天正在运行"
             className="size-1.5 shrink-0 rounded-full bg-amber-500 animate-pulse"
           />
         ) : otherSessionUnread ? (
           <span
-            aria-label="Another chat has unread replies"
-            title="Another chat has unread replies"
+            aria-label="另一个聊天有未读回复"
+            title="另一个聊天有未读回复"
             className="size-1.5 shrink-0 rounded-full bg-brand"
           />
         ) : null}
@@ -676,7 +676,7 @@ function SessionDropdown({
       <DropdownMenuContent align="start" className="max-h-80 w-auto min-w-56 max-w-80">
         {sessions.length === 0 ? (
           <div className="px-2 py-1.5 text-xs text-muted-foreground">
-            No previous chats
+            暂无历史聊天
           </div>
         ) : (
           sessions.map((session) => {
@@ -701,7 +701,7 @@ function SessionDropdown({
                   <span className="size-6 shrink-0" />
                 )}
                 <span className="truncate flex-1 text-sm">
-                  {session.title?.trim() || "New chat"}
+                  {session.title?.trim() || "新聊天"}
                 </span>
                 {/* Right-edge status pip: in-flight wins over unread because
                  *  "still working" is more actionable than "has reply" — and
@@ -711,14 +711,14 @@ function SessionDropdown({
                  *  amber + pulse to read as activity. */}
                 {isRunning ? (
                   <span
-                    aria-label="Running"
-                    title="Running"
+                    aria-label="运行中"
+                    title="运行中"
                     className="size-1.5 shrink-0 rounded-full bg-amber-500 animate-pulse"
                   />
                 ) : session.has_unread ? (
                   <span
-                    aria-label="Unread"
-                    title="Unread"
+                    aria-label="未读"
+                    title="未读"
                     className="size-1.5 shrink-0 rounded-full bg-brand"
                   />
                 ) : null}
@@ -738,9 +738,9 @@ function SessionDropdown({
  * this chat is for: operating on the workspace, not open-ended Q&A.
  */
 const STARTER_PROMPTS: { icon: string; text: string }[] = [
-  { icon: "📋", text: "List my open tasks by priority" },
-  { icon: "📝", text: "Summarize what I did today" },
-  { icon: "💡", text: "Plan what to work on next" },
+  { icon: "📋", text: "按优先级列出我的未完成任务" },
+  { icon: "📝", text: "总结我今天完成了什么" },
+  { icon: "💡", text: "规划接下来要做什么" },
 ];
 
 function EmptyState({
@@ -763,16 +763,15 @@ function EmptyState({
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-8">
         <div className="text-center space-y-3">
-          <h3 className="text-base font-semibold">Chat with your agents</h3>
+          <h3 className="text-base font-semibold">和你的 agents 聊天</h3>
           <p className="text-sm text-muted-foreground">
-            ✨ They know your workspace —{" "}
+            它们了解你的工作区：
             <span className="font-medium text-foreground">
               issues, projects, skills
             </span>
-            .
           </p>
           <p className="text-sm text-muted-foreground">
-            Ask for a summary, plan your day, or hand off a quick task.
+            可以让它们总结进展、规划一天，或交接一个快速任务。
           </p>
         </div>
       </div>
@@ -784,9 +783,9 @@ function EmptyState({
     <div className="flex flex-1 flex-col items-center justify-center gap-5 px-6 py-8">
       <div className="text-center space-y-1">
         <h3 className="text-base font-semibold">
-          {agentName ? `Hi, I'm ${agentName}` : "Welcome to Multica"}
+          {agentName ? `你好，我是 ${agentName}` : "欢迎使用 Multica"}
         </h3>
-        <p className="text-sm text-muted-foreground">Try asking</p>
+        <p className="text-sm text-muted-foreground">试着这样问</p>
       </div>
       <div className="w-full max-w-xs space-y-2">
         {STARTER_PROMPTS.map((prompt) => (

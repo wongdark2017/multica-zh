@@ -45,7 +45,7 @@ export function AgentProfileCard({ agentId }: AgentProfileCardProps) {
 
   if (!agent) {
     return (
-      <div className="text-xs text-muted-foreground">Agent unavailable</div>
+      <div className="text-xs text-muted-foreground">智能体不可用</div>
     );
   }
 
@@ -171,7 +171,7 @@ function RuntimeRow({
   const label = runtime?.name ?? (isCloud ? "Cloud" : "Unknown runtime");
   return (
     <div className="flex items-center gap-1.5">
-      <span className="w-12 shrink-0 text-muted-foreground">Runtime</span>
+      <span className="w-12 shrink-0 text-muted-foreground">运行时</span>
       <HealthIcon health={health} className="h-3 w-3 shrink-0" />
       <span className="min-w-0 truncate" title={label}>
         {label}
@@ -204,7 +204,7 @@ function SkillsRow({ skills }: { skills: string[] }) {
   const overflow = skills.length - visible.length;
   return (
     <div className="flex items-center gap-1.5">
-      <span className="w-12 shrink-0 text-muted-foreground">Skills</span>
+      <span className="w-12 shrink-0 text-muted-foreground">技能</span>
       <div className="flex min-w-0 flex-wrap gap-1">
         {visible.map((s) => (
           <span

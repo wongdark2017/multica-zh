@@ -26,7 +26,7 @@ export default function NotFound() {
         style={{ color: TERRACOTTA }}
       >
         <span aria-hidden="true" className="inline-block h-px w-10" style={{ background: TERRACOTTA }} />
-        <span>error · not found</span>
+        <span>错误 · 未找到</span>
         <span aria-hidden="true" className="inline-block h-px w-10" style={{ background: TERRACOTTA }} />
       </div>
 

@@ -1,60 +1,60 @@
 ---
-title: Members and roles
-description: What each of the three workspace roles — owner, admin, member — can do, and how to bring people in.
+title: 成员与权限
+description: 工作区的三种角色——owner、admin、member——各能做什么，以及怎么把人加进来。
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-Everyone in a [workspace](/workspaces) has a role, and the role decides what they can do. Multica has three: **owner** (the workspace's owner), **admin**, and **member**. Most day-to-day work — creating [issues](/issues), writing [comments](/comments), using [agents](/agents) — is available to all three roles. **The differences cluster around team management.**
+[工作区](/workspaces) 里的每个人都有一个角色，角色决定这个人能做什么。Multica 提供三种：**owner**（工作区的所有者）、**admin**（管理员）、**member**（普通成员）。大多数日常工作——创建 [issue](/issues)、写 [评论](/comments)、使用 [智能体](/agents)——三种角色都能做，**区别集中在团队管理上**。
 
-## Permissions at a glance
+## 权限概览
 
-The table below lists the most important differences across team-management actions:
+下表列了三种角色在团队管理操作上最关键的差别：
 
-| Action | owner | admin | member |
+| 动作 | owner | admin | member |
 |---|---|---|---|
-| Invite a new admin or member | ✓ | ✓ | ✗ |
-| **Invite a new owner** | ✓ | ✗ | ✗ |
-| Demote / remove an admin or member | ✓ | ✓ | ✗ |
-| **Demote / remove another owner** | ✓ | ✗ | ✗ |
-| Delete the workspace | ✓ | ✗ | ✗ |
+| 邀请新 admin 或 member | ✓ | ✓ | ✗ |
+| **邀请新 owner** | ✓ | ✗ | ✗ |
+| 降级 / 移除 admin 或 member | ✓ | ✓ | ✗ |
+| **降级 / 移除其他 owner** | ✓ | ✗ | ✗ |
+| 删除工作区 | ✓ | ✗ | ✗ |
 
-**Members can't invite anyone** — inviting is an admin-tier permission. **Only owners can promote someone to owner** — admins can promote and demote members or other admins, but they can't create a new owner. Likewise, admins can remove members or other admins but **can't touch existing owners**. The point is to make sure the highest tier can only be granted by someone who already holds it — permissions don't leak upward.
+**member 不能邀请新人**——邀请能力是管理员层的权限。**只有 owner 能把别人提升为 owner**——admin 可以提升和降级 member 或其他 admin，但不能造出新 owner。同样，admin 可以移除 member 或其他 admin，但**不能动现有的 owner**。这是为了让"最高权限"只能由已有最高权限的人授予，避免权限扩散。
 
 <Callout type="info">
-Agent visibility comes in two flavors: "workspace" and "private." Private agents can only be assigned to issues by owners and admins — this protects configurations meant for a specific set of people. See [Agents](/agents).
+智能体的可见性分"workspace"和"private"两种。私有智能体只有 owner 和 admin 能把它分配到 issue 上——这是为了保护只给特定人使用的配置。详见 [智能体](/agents)。
 </Callout>
 
-## Inviting a new member
+## 邀请新成员
 
-Multica invites new members by email:
+Multica 通过邮箱邀请新成员：
 
-1. On the workspace settings page, click **Invite member**, enter the email, and pick a role.
-2. Multica sends an invitation email containing a unique link.
-3. The recipient clicks the link, logs in (or signs up), and **accepts the invitation** to join the workspace.
+1. 在工作区设置页点 **邀请成员**，填对方邮箱并选一个角色。
+2. Multica 发送一封邀请邮件，里面包含一个专属链接。
+3. 对方点击链接，登录（或注册），然后**接受邀请**，正式成为工作区成员。
 
-The invited email **does not need to be registered with Multica in advance** — if no account exists, one is created when the invitation is accepted.
+被邀请的邮箱**不需要提前在 Multica 注册**——如果账号不存在，系统会在对方接受邀请时自动创建。
 
-If the invitation email fails to deliver (wrong address, mail service hiccup), the invitation record is still retained; you can resend the email from workspace settings, or share the invitation link through another channel.
+邀请邮件如果发送失败（比如邮箱地址写错了、或者邮件服务故障），邀请记录仍然保留；你可以在工作区设置页重新发送邀请邮件，或者直接把邀请链接通过其他渠道发给对方。
 
-Invitations are **valid for 7 days**. After that, clicking the link shows an "expired" message, and the inviter needs to send a new one.
+邀请 **7 天内有效**。过期后对方点链接会看到"已失效"提示，需要由邀请人重新发送。
 
-## Always at least one owner
+## 至少保留一名 owner
 
-Every workspace **must have at least one owner at all times**. This constraint automatically blocks two operations:
+每个工作区任何时候都**必须至少保留一名 owner**。这条约束会自动拦住两种操作：
 
-- The last owner can't demote themselves.
-- Other owners or admins can't remove the last owner.
+- 最后一个 owner 不能把自己降级。
+- 其他 owner 或 admin 不能移除最后一个 owner。
 
 <Callout type="warning">
-If you're the last owner and about to leave the team, **transfer the owner role to another member first**, then try to leave or hand off the workspace. Otherwise the operation will be rejected.
+如果你是最后一个 owner 并准备离开团队，**先把 owner 角色转让给另一个成员**，再尝试退出或交出工作区。否则操作会被拒绝。
 </Callout>
 
-## Removing a member
+## 移除成员
 
-Owners and admins can remove other members from a workspace. A removed member loses access immediately; issues, comments, and other content they created are retained in the workspace.
+owner 和 admin 可以从工作区里移除其他成员。被移除的成员立即失去访问权限；TA 之前创建的 issue、评论等内容会保留在工作区里。
 
-## Next
+## 下一步
 
-- [Issues and projects](/issues) — what members work on
-- [Comments and mentions](/comments) — collaborating under an issue
+- [Issue 与 project](/issues) —— 成员的工作对象
+- [评论与提及](/comments) —— 在 issue 下协作沟通

@@ -57,7 +57,7 @@ function CallbackContent() {
           window.location.href = `multica://auth/callback?token=${encodeURIComponent(token)}`;
         })
         .catch((err) => {
-          setError(err instanceof Error ? err.message : "Login failed");
+          setError(err instanceof Error ? err.message : "登录失败");
         });
     } else {
       // Normal web flow
@@ -114,10 +114,9 @@ function CallbackContent() {
       <div className="flex min-h-screen items-center justify-center">
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Opening Multica</CardTitle>
+            <CardTitle className="text-2xl">正在打开 Multica</CardTitle>
             <CardDescription>
-              You should see a prompt to open the Multica desktop app. If
-              nothing happens, click the button below.
+              你应该会看到打开 Multica 桌面应用的提示。如果没有反应，请点击下面的按钮。
             </CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
@@ -127,7 +126,7 @@ function CallbackContent() {
                 window.location.href = `multica://auth/callback?token=${encodeURIComponent(desktopToken)}`;
               }}
             >
-              Open Multica Desktop
+              打开 Multica Desktop
             </Button>
           </CardContent>
         </Card>
@@ -140,12 +139,12 @@ function CallbackContent() {
       <div className="flex min-h-screen items-center justify-center">
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Login Failed</CardTitle>
+            <CardTitle className="text-2xl">登录失败</CardTitle>
             <CardDescription>{error}</CardDescription>
           </CardHeader>
           <CardContent className="flex justify-center">
             <a href={paths.login()} className="text-primary underline-offset-4 hover:underline">
-              Back to login
+              返回登录
             </a>
           </CardContent>
         </Card>
@@ -157,8 +156,8 @@ function CallbackContent() {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Signing in...</CardTitle>
-          <CardDescription>Please wait while we complete your login</CardDescription>
+          <CardTitle className="text-2xl">正在登录...</CardTitle>
+          <CardDescription>请稍候，我们正在完成登录</CardDescription>
         </CardHeader>
         <CardContent className="flex justify-center">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />

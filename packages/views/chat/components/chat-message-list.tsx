@@ -257,7 +257,7 @@ function FailureBubble({
                 ) : (
                   <ChevronRight className="size-3" />
                 )}
-                <span>Show details</span>
+                <span>显示详情</span>
               </CollapsibleTrigger>
               <CollapsibleContent>
                 <pre className="mt-1 max-h-40 overflow-auto rounded bg-muted/40 p-2 text-[11px] text-muted-foreground whitespace-pre-wrap break-all">
@@ -500,4 +500,3 @@ function ErrorRow({ item }: { item: ChatTimelineItem }) {
 }
 
 // ─── Shared ──────────────────────────────────────────────────────────────
-

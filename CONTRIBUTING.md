@@ -1,58 +1,58 @@
-# Contributing Guide
+# 贡献指南
 
-This guide documents the local development workflow for contributors working on the Multica codebase.
+本指南说明 Multica 代码库贡献者的本地开发流程。
 
-It covers:
+内容包括：
 
-- first-time setup
-- day-to-day development in the main checkout
-- isolated worktree development
-- the shared PostgreSQL model
-- testing and verification
-- full-stack isolated testing (backend + frontend + daemon from source)
-- troubleshooting and destructive reset options
+- 首次设置
+- 主 checkout 中的日常开发
+- 隔离的 worktree 开发
+- 共享 PostgreSQL 模型
+- 测试与验证
+- 全栈隔离测试（从源码运行后端、前端和 daemon）
+- 故障排查与破坏性重置选项
 
-## Development Model
+## 开发模型
 
-Local development uses one shared PostgreSQL container and one database per checkout.
+本地开发使用一个共享 PostgreSQL 容器，并为每个 checkout 使用一个独立数据库。
 
-- the main checkout usually uses `.env` and `POSTGRES_DB=multica`
-- each Git worktree uses its own `.env.worktree`
-- every checkout connects to the same PostgreSQL host: `localhost:5432`
-- isolation happens at the database level, not by starting a separate Docker Compose project
-- backend and frontend ports are still unique per worktree
+- 主 checkout 通常使用 `.env` 和 `POSTGRES_DB=multica`
+- 每个 Git worktree 使用自己的 `.env.worktree`
+- 每个 checkout 都连接到同一个 PostgreSQL host：`localhost:5432`
+- 隔离发生在数据库层面，而不是启动单独的 Docker Compose 项目
+- 后端和前端端口仍然按 worktree 保持唯一
 
-This keeps Docker simple while still isolating schema and data.
+这样可以保持 Docker 简单，同时隔离 schema 和数据。
 
-## Prerequisites
+## 前置条件
 
 - Node.js `v20+`
 - `pnpm` `v10.28+`
 - Go `v1.26+`
 - Docker
 
-## Important Rules
+## 重要规则
 
-- The main checkout should use `.env`.
-- A worktree should use `.env.worktree`.
-- Do not copy `.env` into a worktree directory.
+- 主 checkout 应使用 `.env`。
+- worktree 应使用 `.env.worktree`。
+- 不要把 `.env` 复制到 worktree 目录。
 
-Why:
+原因：
 
-- the current command flow prefers `.env` over `.env.worktree`
-- if a worktree contains `.env`, it can accidentally point back to the main database
+- 当前命令流程会优先使用 `.env`，再使用 `.env.worktree`
+- 如果 worktree 中存在 `.env`，它可能会意外指回主数据库
 
-## Environment Files
+## 环境文件
 
-### Main Checkout
+### 主 Checkout
 
-Create `.env` once:
+创建一次 `.env`：
 
 ```bash
 cp .env.example .env
 ```
 
-By default, `.env` points to:
+默认情况下，`.env` 指向：
 
 ```bash
 POSTGRES_DB=multica
@@ -64,13 +64,13 @@ FRONTEND_PORT=3000
 
 ### Worktree
 
-Generate `.env.worktree` from inside the worktree:
+在 worktree 内生成 `.env.worktree`：
 
 ```bash
 make worktree-env
 ```
 
-That generates values like:
+它会生成类似这样的值：
 
 ```bash
 POSTGRES_DB=multica_my_feature_702
@@ -80,45 +80,45 @@ FRONTEND_PORT=13702
 DATABASE_URL=postgres://multica:multica@localhost:5432/multica_my_feature_702?sslmode=disable
 ```
 
-Notes:
+说明：
 
-- `POSTGRES_DB` is unique per worktree
-- `POSTGRES_PORT` stays fixed at `5432`
-- backend and frontend ports are derived from the worktree path hash
-- `make worktree-env` refuses to overwrite an existing `.env.worktree`
+- `POSTGRES_DB` 对每个 worktree 唯一
+- `POSTGRES_PORT` 固定为 `5432`
+- 后端和前端端口从 worktree 路径哈希派生
+- `make worktree-env` 会拒绝覆盖已存在的 `.env.worktree`
 
-To regenerate a worktree env file:
+重新生成 worktree 环境文件：
 
 ```bash
 FORCE=1 make worktree-env
 ```
 
-## First-Time Setup
+## 首次设置
 
-### Quick Start (recommended)
+### 快速开始（推荐）
 
-From any checkout (main or worktree):
+从任意 checkout（主 checkout 或 worktree）运行：
 
 ```bash
 make dev
 ```
 
-This single command:
+这条命令会：
 
-- auto-detects whether you're in a main checkout or a worktree
-- creates the appropriate env file (`.env` or `.env.worktree`) if it doesn't exist
-- checks that prerequisites (Node.js, pnpm, Go, Docker) are installed
-- installs JavaScript dependencies
-- ensures the shared PostgreSQL container is running
-- creates the application database if it does not exist
-- runs all migrations
-- starts both backend and frontend
+- 自动检测当前处于主 checkout 还是 worktree
+- 如果不存在合适的环境文件，则创建 `.env` 或 `.env.worktree`
+- 检查前置条件（Node.js、pnpm、Go、Docker）是否已安装
+- 安装 JavaScript 依赖
+- 确保共享 PostgreSQL 容器正在运行
+- 如果应用数据库不存在，则创建它
+- 运行所有 migrations
+- 启动后端和前端
 
-### Explicit Setup (advanced)
+### 显式设置（高级）
 
-If you prefer separate control over setup and startup:
+如果你希望分别控制设置和启动：
 
-#### Main Checkout
+#### 主 Checkout
 
 ```bash
 cp .env.example .env
@@ -126,7 +126,7 @@ make setup-main
 make start-main
 ```
 
-Stop:
+停止：
 
 ```bash
 make stop-main
@@ -140,17 +140,17 @@ make setup-worktree
 make start-worktree
 ```
 
-Stop:
+停止：
 
 ```bash
 make stop-worktree
 ```
 
-## Recommended Daily Workflow
+## 推荐日常流程
 
-### Main Checkout
+### 主 Checkout
 
-Use the main checkout when you want a stable local environment for `main`.
+当你希望为 `main` 保持一个稳定的本地环境时，使用主 checkout。
 
 ```bash
 make start-main
@@ -160,7 +160,7 @@ make check-main
 
 ### Feature Worktree
 
-Use a worktree when you want isolated data and separate app ports.
+当你希望拥有隔离数据和独立应用端口时，使用 worktree。
 
 ```bash
 git worktree add ../multica-feature -b feat/my-change main
@@ -168,60 +168,60 @@ cd ../multica-feature
 make dev
 ```
 
-After that, day-to-day commands are:
+之后的日常命令为：
 
 ```bash
-make dev              # start (re-runs setup if needed, idempotent)
-make stop-worktree    # stop
-make check-worktree   # verify
+make dev              # 启动（如有需要会重新执行设置，幂等）
+make stop-worktree    # 停止
+make check-worktree   # 验证
 ```
 
-## Running Main and Worktree at the Same Time
+## 同时运行主 checkout 和 worktree
 
-This is a first-class workflow.
+这是被一等支持的流程。
 
-Example:
+示例：
 
-- main checkout
-  - database: `multica`
-  - backend: `8080`
-  - frontend: `3000`
+- 主 checkout
+  - database：`multica`
+  - backend：`8080`
+  - frontend：`3000`
 - worktree checkout
-  - database: `multica_my_feature_702`
-  - backend: generated worktree port such as `18782`
-  - frontend: generated worktree port such as `13702`
+  - database：`multica_my_feature_702`
+  - backend：生成的 worktree 端口，例如 `18782`
+  - frontend：生成的 worktree 端口，例如 `13702`
 
-Both checkouts use:
+两个 checkout 使用：
 
-- the same PostgreSQL container
-- the same PostgreSQL port: `5432`
+- 同一个 PostgreSQL 容器
+- 同一个 PostgreSQL 端口：`5432`
 
-But they do not share application data, because each uses a different database.
+但它们不会共享应用数据，因为各自使用不同数据库。
 
-## Command Reference
+## 命令参考
 
-### Shared Infrastructure
+### 共享基础设施
 
-Start the shared PostgreSQL container:
+启动共享 PostgreSQL 容器：
 
 ```bash
 make db-up
 ```
 
-Stop the shared PostgreSQL container:
+停止共享 PostgreSQL 容器：
 
 ```bash
 make db-down
 ```
 
-Important:
+注意：
 
-- `make db-down` stops the container but keeps the Docker volume
-- your local databases are preserved
+- `make db-down` 会停止容器，但保留 Docker volume
+- 你的本地数据库会被保留
 
-### App Lifecycle
+### 应用生命周期
 
-Main checkout:
+主 checkout：
 
 ```bash
 make setup-main
@@ -230,7 +230,7 @@ make stop-main
 make check-main
 ```
 
-Worktree:
+Worktree：
 
 ```bash
 make worktree-env
@@ -240,7 +240,7 @@ make stop-worktree
 make check-worktree
 ```
 
-Generic targets for the current checkout:
+当前 checkout 的通用 targets：
 
 ```bash
 make setup
@@ -253,13 +253,13 @@ make migrate-up
 make migrate-down
 ```
 
-These generic targets require a valid env file in the current directory.
+这些通用 targets 要求当前目录中存在有效的环境文件。
 
-## How Database Creation Works
+## 数据库创建机制
 
-Database creation is automatic.
+数据库创建是自动完成的。
 
-The following commands all ensure the target database exists before they continue:
+以下命令都会在继续执行前确保目标数据库存在：
 
 - `make setup`
 - `make start`
@@ -269,72 +269,63 @@ The following commands all ensure the target database exists before they continu
 - `make migrate-down`
 - `make check`
 
-That logic lives in `scripts/ensure-postgres.sh`.
+该逻辑位于 `scripts/ensure-postgres.sh`。
 
-## Testing
+## 测试
 
-Run all local checks:
+运行所有本地检查：
 
 ```bash
 make check-main
 ```
 
-Or from a worktree:
+或从 worktree 运行：
 
 ```bash
 make check-worktree
 ```
 
-This runs:
+它会运行：
 
 1. TypeScript typecheck
 2. TypeScript unit tests
 3. Go tests
 4. Playwright E2E tests
 
-Notes:
+说明：
 
-- Go tests create their own fixture data
-- E2E tests create their own workspace and issue fixtures
-- the check flow starts backend/frontend only if they are not already running
+- Go tests 会创建自己的 fixture data
+- E2E tests 会创建自己的 workspace 和 issue fixtures
+- 检查流程只会在后端/前端尚未运行时启动它们
 
-## Local Codex Daemon
+## 本地 Codex Daemon
 
-Run the local daemon:
+运行本地 daemon：
 
 ```bash
 make daemon
 ```
 
-The daemon authenticates using the CLI's stored token (`multica login`).
-It registers runtimes for all watched workspaces from the CLI config.
+daemon 使用 CLI 已保存的令牌认证（`multica login`）。它会为 CLI 配置中所有已监听工作区注册运行时。
 
-## Full-Stack Isolated Testing
+## 全栈隔离测试
 
-This section covers running the complete stack (backend, frontend, daemon) from
-source in a fully isolated environment. Useful for testing end-to-end changes
-that span multiple components, or for automated CI/AI workflows that need zero
-human intervention.
+本节说明如何从源码在完全隔离的环境中运行完整栈（后端、前端、daemon）。这适合测试跨多个组件的端到端变更，或用于需要零人工干预的自动化 CI/AI 工作流。
 
-### Why Not Just `make daemon`?
+### 为什么不只用 `make daemon`？
 
-`make daemon` uses the system-installed CLI's stored token and connects to
-whatever server is configured in `~/.multica/config.json`. That's fine for
-day-to-day development against a shared server, but for fully isolated testing
-you need:
+`make daemon` 使用系统安装版 CLI 中保存的令牌，并连接到 `~/.multica/config.json` 中配置的任意服务器。这适合日常开发连接共享服务器，但完全隔离测试需要：
 
-- a local backend and frontend (from source)
-- a local daemon (from source) with its own profile
-- automated authentication (no browser login)
-- no interference with your production CLI config
+- 本地后端和前端（从源码运行）
+- 带独立 profile 的本地 daemon（从源码运行）
+- 自动认证（无需浏览器登录）
+- 不干扰你的生产 CLI 配置
 
-### Dynamic Profile Naming
+### 动态 Profile 命名
 
-Each worktree must use a unique daemon profile to avoid collisions when
-multiple features run in parallel.
+每个 worktree 必须使用唯一 daemon profile，避免多个功能并行运行时发生冲突。
 
-The profile name is derived from the worktree directory using the same
-slug + hash pattern as `scripts/init-worktree-env.sh`:
+profile 名称从 worktree 目录派生，使用与 `scripts/init-worktree-env.sh` 相同的 slug + hash 模式：
 
 ```bash
 WORKTREE_DIR="$(basename "$PWD")"
@@ -344,21 +335,19 @@ OFFSET=$((HASH % 1000))
 PROFILE="dev-${SLUG}-${OFFSET}"
 ```
 
-Example: worktree at `../multica-feat-auth` produces profile
-`dev-multica_feat_auth-347`, matching that worktree's port and database
-allocation.
+示例：位于 `../multica-feat-auth` 的 worktree 会生成 profile `dev-multica_feat_auth-347`，并与该 worktree 的端口和数据库分配匹配。
 
-### Start the Isolated Environment
+### 启动隔离环境
 
-Run all steps from the worktree root (where the Makefile is).
+所有步骤都从 worktree 根目录（包含 Makefile 的位置）运行。
 
-#### 1. Start backend, frontend, and database
+#### 1. 启动后端、前端和数据库
 
 ```bash
 make dev
 ```
 
-Wait for the backend to be healthy:
+等待后端健康：
 
 ```bash
 PORT=$(grep '^PORT=' .env.worktree 2>/dev/null || grep '^PORT=' .env | head -1 | cut -d= -f2)
@@ -371,10 +360,9 @@ for i in $(seq 1 30); do
 done
 ```
 
-#### 2. Create a test user and token (automated auth)
+#### 2. 创建测试用户和令牌（自动认证）
 
-For deterministic local automation, set `MULTICA_DEV_VERIFICATION_CODE=888888`
-in your env file before starting the backend:
+为了让本地自动化具有确定性，请在启动后端前，在环境文件中设置 `MULTICA_DEV_VERIFICATION_CODE=888888`：
 
 ```bash
 curl -s -X POST "$SERVER/auth/send-code" \
@@ -391,7 +379,7 @@ PAT=$(curl -s -X POST "$SERVER/api/tokens" \
   -d '{"name": "auto-dev", "expires_in_days": 365}' | jq -r '.token')
 ```
 
-#### 3. Create a workspace
+#### 3. 创建工作区
 
 ```bash
 WS=$(curl -s -X POST "$SERVER/api/workspaces" \
@@ -400,10 +388,10 @@ WS=$(curl -s -X POST "$SERVER/api/workspaces" \
   -d '{"name": "Dev", "slug": "dev"}' | jq -r '.id')
 ```
 
-#### 4. Compute profile name and write CLI config
+#### 4. 计算 profile 名称并写入 CLI 配置
 
 ```bash
-# Compute profile (see Dynamic Profile Naming above)
+# 计算 profile（见上文“动态 Profile 命名”）
 WORKTREE_DIR="$(basename "$PWD")"
 SLUG="$(printf '%s' "$WORKTREE_DIR" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/_/g; s/__*/_/g; s/^_//; s/_$//')"
 HASH="$(printf '%s' "$PWD" | cksum | awk '{print $1}')"
@@ -427,143 +415,136 @@ cat > "$CONFIG_DIR/config.json" << EOF
 EOF
 ```
 
-#### 5. Start the daemon from source
+#### 5. 从源码启动 daemon
 
 ```bash
 make cli ARGS="daemon start --profile $PROFILE"
 ```
 
-The daemon runs from the current worktree's Go source, connecting to the
-local backend. Agent-executed `multica` commands automatically use the same
-binary (the daemon prepends its own directory to `PATH`).
+daemon 会从当前 worktree 的 Go 源码运行，并连接到本地后端。Agent 执行的 `multica` 命令会自动使用同一个二进制（daemon 会把自己的目录前置到 `PATH`）。
 
-### Stop the Isolated Environment
+### 停止隔离环境
 
 ```bash
-# Compute profile (same formula)
+# 计算 profile（相同公式）
 PROFILE="dev-$(printf '%s' "$(basename "$PWD")" | tr '[:upper:]' '[:lower:]' | sed 's/[^a-z0-9]/_/g; s/__*/_/g; s/^_//; s/_$//')-$(( $(printf '%s' "$PWD" | cksum | awk '{print $1}') % 1000 ))"
 
-# 1. Stop daemon
+# 1. 停止 daemon
 make cli ARGS="daemon stop --profile $PROFILE"
 
-# 2. Stop backend + frontend
-make stop            # main checkout
+# 2. 停止后端 + 前端
+make stop            # 主 checkout
 make stop-worktree   # worktree checkout
 
-# 3. (Optional) Stop shared PostgreSQL
+# 3.（可选）停止共享 PostgreSQL
 make db-down
 
-# 4. (Optional) Clean build artifacts
+# 4.（可选）清理构建产物
 make clean
 
-# 5. (Optional) Remove profile config
+# 5.（可选）移除 profile 配置
 rm -rf "$HOME/.multica/profiles/$PROFILE"
 ```
 
-### Desktop App Local Testing
+### 桌面应用本地测试
 
-To test the Electron desktop app against a local backend:
+要让 Electron 桌面应用连接本地后端：
 
 ```bash
-# After backend is running (make dev)
+# 后端启动后（make dev）
 pnpm dev:desktop
 ```
 
-This automatically:
+它会自动：
 
-1. Compiles the `multica` CLI from `server/cmd/multica` into
-   `apps/desktop/resources/bin/multica`
-2. Creates an isolated profile named `desktop-localhost-<PORT>`
-3. Starts and manages its own daemon instance
-4. Connects to the local backend
+1. 将 `server/cmd/multica` 中的 `multica` CLI 编译到 `apps/desktop/resources/bin/multica`
+2. 创建一个名为 `desktop-localhost-<PORT>` 的隔离 profile
+3. 启动并管理自己的 daemon 实例
+4. 连接到本地后端
 
-Login in the Desktop UI with `dev@localhost` and the generated code from the
-backend logs. If you set `MULTICA_DEV_VERIFICATION_CODE=888888` before starting
-the backend, you can use `888888` instead.
+在 Desktop UI 中使用 `dev@localhost` 和后端日志中生成的验证码登录。如果你在启动后端前设置了 `MULTICA_DEV_VERIFICATION_CODE=888888`，也可以直接使用 `888888`。
 
-If the backend runs on a non-default port (worktree), create
-`apps/desktop/.env.development.local`:
+如果后端运行在非默认端口（worktree），请创建 `apps/desktop/.env.development.local`：
 
 ```bash
 VITE_API_URL=http://localhost:<backend-port>
 VITE_WS_URL=ws://localhost:<backend-port>/ws
 ```
 
-### Isolation Guarantee
+### 隔离保证
 
-Nothing in this flow touches the system-installed `multica` or the default
-`~/.multica/config.json`:
+此流程不会触碰系统安装的 `multica` 或默认的 `~/.multica/config.json`：
 
-| Resource | System / Production | Local Dev (per-worktree) |
+| 资源 | 系统/生产 | 本地开发（每个 worktree） |
 |---|---|---|
 | Config | `~/.multica/config.json` | `~/.multica/profiles/dev-<slug>-<hash>/config.json` |
 | Daemon PID | `~/.multica/daemon.pid` | `~/.multica/profiles/dev-<slug>-<hash>/daemon.pid` |
 | Health port | `19514` | `19514 + 1 + (name_hash % 1000)` |
 | Workspaces dir | `~/multica_workspaces/` | `~/multica_workspaces_dev-<slug>-<hash>/` |
-| Database | remote / production | local Docker: `multica_<slug>_<hash>` |
+| Database | remote / production | local Docker：`multica_<slug>_<hash>` |
 | Desktop profile | `desktop-api.multica.ai` | `desktop-localhost-<port>` |
 
-Multiple worktrees can run simultaneously without conflict.
+多个 worktree 可以同时运行且互不冲突。
 
-## Troubleshooting
+## 故障排查
 
-### Missing Env File
+### 缺少环境文件
 
-If you see:
+如果看到：
 
 ```text
 Missing env file: .env
 ```
 
-or:
+或：
 
 ```text
 Missing env file: .env.worktree
 ```
 
-then create the expected env file first.
+请先创建预期的环境文件。
 
-Main checkout:
+主 checkout：
 
 ```bash
 cp .env.example .env
 ```
 
-Worktree:
+Worktree：
 
 ```bash
 make worktree-env
 ```
 
-### Check Which Database a Checkout Uses
+### 检查 checkout 使用哪个数据库
 
-Inspect the env file:
+查看环境文件：
 
 ```bash
 cat .env
 cat .env.worktree
 ```
 
-Look for:
+关注：
 
 - `POSTGRES_DB`
 - `DATABASE_URL`
 - `PORT`
 - `FRONTEND_PORT`
 
-### List All Local Databases in Shared PostgreSQL
+### 列出共享 PostgreSQL 中的所有本地数据库
 
 ```bash
 docker compose exec -T postgres psql -U multica -d postgres -At -c "select datname from pg_database order by datname;"
 ```
 
-### Worktree Is Accidentally Using the Main Database
+### Worktree 意外使用主数据库
 
-Check whether the worktree contains `.env`.
+检查 worktree 中是否存在 `.env`。
 
-It should not.
+它不应该存在。
 
-The safe worktree setup is:
+安全的 worktree 设置方式是：
 
 ```bash
 make worktree-env
@@ -571,58 +552,57 @@ make setup-worktree
 make start-worktree
 ```
 
-### App Stops but PostgreSQL Keeps Running
+### 应用停止但 PostgreSQL 仍在运行
 
-That is expected.
+这是预期行为。
 
 - `make stop`
 - `make stop-main`
 - `make stop-worktree`
 
-only stop backend/frontend processes.
+只会停止后端/前端进程。
 
-To stop the shared PostgreSQL container:
-
-```bash
-make db-down
-```
-
-## Destructive Reset
-
-If you want to stop PostgreSQL and keep your local databases:
+要停止共享 PostgreSQL 容器：
 
 ```bash
 make db-down
 ```
 
-If you want a fresh database for the current checkout only (drops the
-database named in `POSTGRES_DB`, recreates it, and runs all migrations):
+## 破坏性重置
+
+如果你想停止 PostgreSQL 并保留本地数据库：
 
 ```bash
-make stop        # stop backend/frontend first
+make db-down
+```
+
+如果你想为当前 checkout 使用全新数据库（删除 `POSTGRES_DB` 中命名的数据库，重新创建并运行所有 migrations）：
+
+```bash
+make stop        # 先停止后端/前端
 make db-reset
 make start
 ```
 
-- only affects the current env's database; other worktree databases are untouched
-- refuses to run if `DATABASE_URL` points at a remote host
-- pass `ENV_FILE=.env.worktree` to target a specific worktree
+- 只影响当前环境的数据库；其他 worktree 数据库不受影响
+- 如果 `DATABASE_URL` 指向远程 host，会拒绝运行
+- 传入 `ENV_FILE=.env.worktree` 可指定某个 worktree
 
-If you want to wipe all local PostgreSQL data for this repo:
+如果你想清空本仓库所有本地 PostgreSQL 数据：
 
 ```bash
 docker compose down -v
 ```
 
-Warning:
+警告：
 
-- this deletes the shared Docker volume
-- this deletes the main database and every worktree database in that volume
-- after that you must run `make setup-main` or `make setup-worktree` again
+- 这会删除共享 Docker volume
+- 这会删除该 volume 中的主数据库和所有 worktree 数据库
+- 之后必须重新运行 `make setup-main` 或 `make setup-worktree`
 
-## Typical Flows
+## 常用流程
 
-### Stable Main Environment
+### 稳定主环境
 
 ```bash
 make dev
@@ -636,22 +616,22 @@ cd ../multica-feature
 make dev
 ```
 
-### Return to a Previously Configured Worktree
+### 回到已配置的 Worktree
 
 ```bash
 cd ../multica-feature
 make start-worktree
 ```
 
-### Validate Before Pushing
+### 推送前验证
 
-Main checkout:
+主 checkout：
 
 ```bash
 make check-main
 ```
 
-Worktree:
+Worktree：
 
 ```bash
 make check-worktree

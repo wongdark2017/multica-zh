@@ -104,16 +104,16 @@ export function EnvTab({
     const keys = envEntries.filter((e) => e.key.trim()).map((e) => e.key.trim());
     const uniqueKeys = new Set(keys);
     if (uniqueKeys.size < keys.length) {
-      toast.error("Duplicate environment variable keys");
+      toast.error("环境变量 key 重复");
       return;
     }
 
     setSaving(true);
     try {
       await onSave({ custom_env: currentEnvMap });
-      toast.success("Environment variables saved");
+      toast.success("环境变量已保存");
     } catch {
-      toast.error("Failed to save environment variables");
+      toast.error("保存环境变量失败");
     } finally {
       setSaving(false);
     }
@@ -123,8 +123,7 @@ export function EnvTab({
     return (
       <div className="space-y-4">
         <p className="text-xs text-muted-foreground">
-          Injected into the agent process at launch. Values are hidden — only
-          the agent owner or workspace admin can view and edit them.
+          启动时注入 agent 进程。值会被隐藏，只有 agent 所有者或工作区管理员可以查看和编辑。
         </p>
         {envEntries.length > 0 ? (
           <div className="space-y-2">
@@ -231,7 +230,7 @@ export function EnvTab({
 
       <div className="flex items-center justify-end gap-3">
         {dirty && (
-          <span className="text-xs text-muted-foreground">Unsaved changes</span>
+          <span className="text-xs text-muted-foreground">未保存的更改</span>
         )}
         <Button onClick={handleSave} disabled={!dirty || saving} size="sm">
           {saving ? (

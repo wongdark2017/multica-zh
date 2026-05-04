@@ -1,67 +1,67 @@
 ---
 title: Skills
-description: Attach "knowledge packs" to an agent — compatible with the Anthropic Agent Skills open standard.
+description: 给智能体挂上"专业知识包"——兼容 Anthropic Agent Skills 开放标准。
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-A Skill is a **knowledge pack** for an [agent](/agents) — a `SKILL.md` plus optional supporting files (scripts, configs, reference templates) that tell the agent "when you hit this kind of task, think and act like this." Multica adopts the [Anthropic Agent Skills](https://agentskills.io) open standard, so any compliant Skill — from Anthropic's official repository, ClawHub, or skills.sh — can be imported directly.
+Skill 是给 [智能体](/agents) 的**专业知识包**——一个 `SKILL.md` 加上可选的支持文件（脚本、配置、参考模板等），告诉智能体"遇到某类任务时该怎么想、怎么做"。Multica 采用 [Anthropic Agent Skills](https://agentskills.io) 开放标准，所有符合规范的 Skill（Anthropic 官方仓库、ClawHub、skills.sh 上的包）都能直接导入。
 
-## Workspace skills vs. local skills
+## 工作区 Skill 和本机 Skill
 
-Multica supports two skill sources:
+Multica 支持两种 Skill 来源：
 
-- **Workspace skill** — stored in Multica's cloud. Once attached to an agent, it's synced down to your daemon at task execution time. This is the **standard way to share skills across a team**.
-- **Local skill** — lives in a directory on your machine (each AI coding tool has a conventional default path, e.g. Claude Code's `~/.claude/skills/`). On your request, the [daemon](/daemon-runtimes) scans your machine, and you manually pick which ones to bring into the workspace.
+- **工作区 Skill（workspace skill）** —— 存在 Multica 云端。挂到智能体后，任务执行时自动同步到你本机的守护进程。这是**团队共享 Skill 的标准方式**。
+- **本机 Skill（local skill）** —— 直接存在你本机的某个目录里（每款 AI 编程工具有约定的默认路径，比如 Claude Code 的 `~/.claude/skills/`）。[守护进程](/daemon-runtimes) 按你的请求扫描本机，发现后由你手动选入工作区。
 
-Most of the time you want **workspace skills**: import once, every teammate's agent can use it. Local skills are a fit when you want to test locally first, or when the content involves sensitive local material.
+大多数情况用**工作区 Skill**：导入一次，团队所有成员的智能体都能用。本机 Skill 适合先在本地测试、或涉及敏感本地内容的场景。
 
-## Importing a skill
+## 导入 Skill
 
-Workspace skills come from four sources:
+工作区 Skill 有四种来源：
 
-- **New** — write the `SKILL.md` and related files directly in the UI
-- **From GitHub** — paste a repo URL (e.g. `https://github.com/owner/repo/tree/main/skills/my-skill`) and Multica pulls the `SKILL.md` and every file in that directory
-- **From ClawHub** — search and import from the [ClawHub](https://clawhub.io) public marketplace, with version selection
-- **From local** — the daemon scans skill directories on your machine, and you pick which to bring into the workspace
+- **新建** —— 在 UI 里直接写 `SKILL.md` 和相关文件
+- **从 GitHub** —— 贴一个仓库 URL（例如 `https://github.com/owner/repo/tree/main/skills/my-skill`），Multica 自动拉取目录下的 `SKILL.md` 和所有文件
+- **从 ClawHub** —— 从 [ClawHub](https://clawhub.io) 公开市场搜索并导入，支持选版本
+- **从本机** —— 守护进程扫描你本机的 skill 目录，你选要用的导入到工作区
 
-Both individual files and whole skill packs have size caps (single-file cap around 1 MB when importing from GitHub). The exact rules appear in the import dialog — exceeding them returns an error.
+单个文件和整个 Skill 包都有容量上限（从 GitHub 导入时单文件上限约 1 MB）。精确规则会在导入界面里提示——超过时会报错。
 
-## Attaching to an agent
+## 挂到智能体
 
-Once imported, a skill has to be **attached to a specific agent** to take effect. One agent can have multiple skills attached, and one skill can be attached to multiple agents.
+Skill 导入后需要**挂载到具体的智能体**才会生效。一个智能体能挂多个 Skill，一个 Skill 也能挂到多个智能体。
 
-After attaching, the agent picks up its skills the next time it starts a task — each AI coding tool has its own skill discovery path (Claude Code uses `.claude/skills/`, Cursor uses `.cursor/skills/`, etc.), and Multica drops files in the right place automatically. **However, three tools (Gemini, Hermes, OpenClaw) currently use the generic fallback path `.agent_context/skills/` — whether these tools actually read skills from that path depends on the tool itself.** Full path mapping and the native-discovery vs. fallback distinction is in [AI coding tools comparison → Where skill files go](/providers#where-skill-files-go).
+挂上之后，智能体下次开工时会自动拿到挂着的 Skill——不同 AI 编程工具有各自的 Skill 发现路径（Claude Code 是 `.claude/skills/`、Cursor 是 `.cursor/skills/` 等），Multica 会自动放到对的位置。**但有 3 款工具（Gemini / Hermes / OpenClaw）当前走的是通用 fallback 路径 `.agent_context/skills/`——这些工具能否真的从这里读到 skill，取决于工具本身是否支持**。完整路径对照和原生发现 vs fallback 的区分见 [AI 编程工具对照 → skill 文件该放哪儿](/providers#skill-文件该放哪儿)。
 
-After you edit a skill's contents, **only newly created tasks pick up the new version** — tasks already running continue with the old skill.
+修改 Skill 的内容后，**只有之后新创建的任务会拿到新版本**——正在跑的任务继续用旧版 Skill。
 
-## Safety of third-party skills
+## 第三方 Skill 的安全
 
-Skills imported from GitHub or ClawHub may include scripts and executable content. Multica itself **does not sign, audit, or sandbox them** — skill contents are handed to the corresponding AI coding tool as-is, and whether the tool treats them as executable is up to the tool.
+从 GitHub 或 ClawHub 导入的 Skill 可能包含脚本和可执行内容。Multica 本身**不做签名验证、不做代码审查、不做沙盒隔离**——Skill 里的内容原封不动交给对应的 AI 编程工具，工具怎么用这些文件（是否当脚本执行）由工具本身决定。
 
 <Callout type="warning">
-**Before importing a third-party skill, review the `SKILL.md` and every file that ships with it.**
+**导入第三方 Skill 前，审查 `SKILL.md` 和它附带的所有文件。**
 
-In February 2026 the "ClawHavoc" incident — malicious instructions planted in a popular skill pack stole API keys from affected users. ClawHub has since added VirusTotal scanning, but **automated scans are not a substitute for your own review**.
+2026 年 2 月发生过 "ClawHavoc" 事件——有人在热门 Skill 包里植入恶意指令，受害用户的 API key 被窃取。ClawHub 之后加了 VirusTotal 扫描，但**自动扫描不能替代你自己的审查**。
 
-**Only import from sources you trust.** For projects involving sensitive data, consider using only local skills you wrote yourself.
+**只从你信任的来源导入**。涉及敏感数据的项目，考虑只用你自己写的本机 Skill。
 </Callout>
 
-## Skills vs. MCP
+## Skill 和 MCP 的区别
 
-Both augment what an agent can do, but in different directions:
+两者都是给智能体"增强能力"的机制，方向不同：
 
-- **Skill** = a structured **knowledge pack** (static content + instructions). The agent reads a skill to learn "when I see problem X, here's how to think and what to do."
-- **MCP** (Model Context Protocol) = a **tool channel**. The agent uses MCP to connect to external services (databases, filesystems, third-party APIs) and **invoke** them.
+- **Skill** = 结构化的**知识包**（静态内容 + 指令）。智能体读 Skill 来学"遇到 X 类问题该怎么想、怎么做"。
+- **MCP**（Model Context Protocol）= **工具通道**。智能体通过 MCP 连外部服务（数据库、文件系统、第三方 API）并**调用**它们。
 
-The two are complementary. In Multica today, MCP support is **only truly consumed by Claude Code** — other tools receive the MCP config but don't actually use it. A dedicated MCP section will come in a later release.
+两者可以同时用。目前 Multica 的 MCP 支持**只有 Claude Code 真正消费**——其他工具会接收到 MCP 配置但不会实际用。MCP 的专题会在后续版本展开。
 
 ---
 
-By now you know what an agent is, how to create one, and how to attach skills. The next question: **where does it actually run, and why does my agent sometimes get stuck?** The next chapter covers the execution architecture — daemons, runtimes, and how tasks work together.
+到这里你已经知道智能体是什么、怎么创建、怎么挂 Skill。下一个问题：**它具体在哪跑？为什么我的智能体有时候会卡住不动？** 下一章讲执行架构——守护进程、运行时、任务怎么协作。
 
-## Next steps
+## 下一步
 
-- [Daemon and runtimes](/daemon-runtimes) — where agents actually run, and how to tell online from offline
-- [Executing tasks](/tasks) — the full lifecycle of one "agent work session"
-- [AI coding tools comparison](/providers) — full comparison of all 11 tools (including each one's skill injection path)
+- [守护进程与运行时](/daemon-runtimes) —— 智能体到底跑在哪、怎么判断在线 / 离线
+- [执行任务](/tasks) —— 一次"智能体工作"的完整生命周期
+- [AI 编程工具对照](/providers) —— 11 款工具的完整对比（含每款的 Skill 注入路径）

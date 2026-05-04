@@ -41,9 +41,9 @@ function YourSide() {
       <div className="flex-1 space-y-5">
         {/* Client surfaces */}
         <div>
-          <SectionLabel>Client</SectionLabel>
+          <SectionLabel>客户端</SectionLabel>
           <div className="flex flex-wrap gap-2">
-            <Pill>Web app</Pill>
+            <Pill>Web 应用</Pill>
             <Pill>CLI</Pill>
           </div>
         </div>
@@ -53,7 +53,7 @@ function YourSide() {
 
         {/* Daemon + local tools */}
         <div>
-          <SectionLabel>Daemon</SectionLabel>
+          <SectionLabel>守护进程</SectionLabel>
           <div className="text-xs text-muted-foreground mb-2.5">
             Polls work from Multica. Invokes local AI coding tools:
           </div>
@@ -69,11 +69,11 @@ function YourSide() {
 
       {/* Tagline */}
       <div className="mt-6 pt-4 border-t border-brand/20 flex items-center justify-center gap-3 text-[13px] font-medium text-brand">
-        <span>Your code.</span>
+        <span>你的代码。</span>
         <span className="text-brand/40">·</span>
-        <span>Your keys.</span>
+        <span>你的密钥。</span>
         <span className="text-brand/40">·</span>
-        <span>Your CPU.</span>
+        <span>你的算力。</span>
       </div>
     </div>
   );
@@ -87,16 +87,16 @@ function MulticaSide() {
       </div>
 
       <div className="flex-1 flex flex-col">
-        <SectionLabel>Server</SectionLabel>
+        <SectionLabel>服务端</SectionLabel>
         <div className="text-xs text-muted-foreground mb-4">
           Cloud or self-hosted
         </div>
 
         <div className="text-xs space-y-1.5 text-foreground/80">
-          <div>Workspaces</div>
-          <div>Issues &amp; tasks</div>
-          <div>Agent definitions</div>
-          <div>Realtime (WebSocket)</div>
+          <div>工作区</div>
+          <div>Issue 与任务</div>
+          <div>智能体定义</div>
+          <div>实时通信（WebSocket）</div>
         </div>
       </div>
 

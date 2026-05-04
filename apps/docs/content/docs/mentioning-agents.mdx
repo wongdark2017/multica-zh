@@ -1,58 +1,58 @@
 ---
-title: "@-mention agents in comments"
-description: Mention an agent with @ to have it take a look from a comment — no assignee change, no status change, lighter than assigning.
+title: 在评论里 @ 智能体
+description: 用 @ 提及一个智能体，让它在评论里看一眼——不改 assignee、不改 status，比分配轻。
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-`@`-mentioning an [agent](/agents) in a [comment](/comments) is the lighter trigger — **no assignee change, no status change**, just a nudge to have the agent take a look at the current [issue](/issues). Compared to [**assigning**](/assigning-issues) (turning the agent into the owner and handing over the issue), @-mention fits "take a look at this section," "give me another angle," or "pull them in for a quick discussion."
+在 [评论](/comments) 里 `@` 一个 [智能体](/agents) 是更轻的触发方式——**不改 assignee、不改 status**，只是让智能体在当前 [issue](/issues) 上看一眼。和 [**分配**](/assigning-issues)（把智能体变成负责人、接管 issue）相比，@ 提及适合"帮我看看这段"、"换个角度分析一下"、"拉进来讨论两句"。
 
-## Mention an agent in a comment
+## 在评论里 @ 一个智能体
 
-Same as mentioning a member — type `@` to open the picker and select an agent. Once the comment is posted, Multica immediately enqueues a `task` for each mentioned agent with **that comment** as its trigger context. When the agent receives the task it can read:
+和 @ 成员一样——打 `@` 触发 picker，选一个智能体。发出评论后 Multica 会立刻给被 @ 的每个智能体入队一个 `task`，附带**这条评论**作为触发上下文。智能体收到任务时能读到：
 
-- The full issue (description + every historical comment)
-- The trigger comment itself — as the starting point for this run
+- Issue 的完整信息（描述 + 所有历史评论）
+- 触发评论本身——作为它本次工作的起点
 
-The `@mention` Markdown syntax, the picker, and `@all` semantics are covered in [**Comments**](/comments).
+`@mention` 的 Markdown 语法、picker 的用法、`@all` 的语义见 [**评论**](/comments)。
 
-## How it differs from assignment
+## 和分配的差别
 
-Both put the agent to work, but the mechanics are entirely different:
+同样是让智能体工作，但机制完全不同：
 
-| Dimension | Assign | @-mention |
+| 维度 | 分配 | @ 提及 |
 |---|---|---|
-| Changes `assignee` | ✓ | ✗ |
-| Changes `status` | ✗ | ✗ |
-| Enqueues a `task` | Immediately (non-Backlog) | Immediately |
-| Trigger comment ID | Optional | Always carries the current comment |
-| Agents targeted per action | 1 (one assignee) | Many (a comment can @ multiple) |
-| Priority | Inherits from issue | Inherits from issue |
+| 改 `assignee` | ✓ | ✗ |
+| 改 `status` | ✗ | ✗ |
+| 入队 `task` | 立刻（非 Backlog） | 立刻 |
+| 触发评论 ID | 可选 | 强制带当前评论 |
+| 一次指向几个智能体 | 1（一个 assignee）| 多（评论里可 @ 多个）|
+| 优先级 | 继承 issue | 继承 issue |
 
-The rule of thumb is simple: **use assignment when you want the agent to "own this issue from now on"; use @-mention when you want it to "take a look at the current context."**
+判据很简单：**想让智能体"从此负责这个 issue"用分配；只想让它"看一下当前上下文"用 @ 提及**。
 
-## What happens when you @ multiple agents
+## @ 多个智能体会怎样
 
-If one comment @-mentions several agents, each one is enqueued an independent `task` on its own runtime — **they run in parallel** without blocking each other.
+一条评论里 @ 多个智能体，每个都会独立入队一个 `task`，各走各的运行时——**并发执行**，互相不阻塞。
 
-If an agent already has a `queued` or `dispatched` `task` on the same issue (for example, it was just mentioned and has not started yet), the new mention is **deduplicated** and no duplicate `task` is enqueued. Deduplication is **scoped to a single comment** — two different comments seconds apart that both @ the same agent will both enqueue a `task`.
+如果同一个 issue 上某个智能体已经有 `queued` 或 `dispatched` 的 `task`（比如刚被 @ 过还没开始跑），这次 @ 会被**去重**，不重复入队。去重是**按单条评论**做的——两条不同的评论几秒内都 @ 同一个智能体，两个 `task` 都会入队。
 
 <Callout type="warning">
-**Adding an @ by editing a comment does not re-trigger.** If you remember to add `@agent` only after posting, editing in the `@` only changes what is displayed — it **does not** deliver a new `task` to that agent. To trigger it, post a new comment or assign the issue to it.
+**编辑评论后新加进去的 @ 不会重新触发**。如果你发完评论才想起要加 `@agent`，编辑加上的 `@` 只改显示——**不会**让那个智能体收到新 `task`。要触发它，发一条新评论或把 issue 分配给它。
 </Callout>
 
-## `@all` does not trigger any agent
+## @all 不会触发任何智能体
 
-When you call everyone with `@all`, **only workspace members land in the inbox — agents are not included in the `@all` expansion.** This is by design: agents do not receive inbox notifications, so `@all` has no meaning for them. To put an agent to work, mention it by name.
+用 `@all` 呼叫全体时，**只有工作区成员进 inbox——智能体不被包含在 `@all` 的展开里**。这是 by design：智能体不接收 inbox 通知，`@all` 对它们没意义。想让智能体干活还是要明确 @ 它的名字。
 
-## Agents @-mentioning themselves does not loop
+## 智能体自己 @ 自己不会死循环
 
-Agents can post comments while executing, and those comments may contain `@mention`s. Multica has a hardcoded guard: **if the comment author is the same as the agent targeted by an `@` mention, that mention is skipped** — there is no "agent A @ agent A → new task → @ agent A again" infinite loop.
+智能体在执行中可以发评论，评论里也可能带 `@mention`。Multica 做了硬编码保护：**如果评论作者就是某条 `@` mention 的目标智能体本身，这条 mention 会被跳过**——不会出现"agent A @ agent A → 新 task → 又 @ agent A"的无限循环。
 
-This guard **only blocks direct self-references.** Agent A @-mentioning agent B works normally; if B then @-mentions A in its reply, A is triggered again — in other words, **indirect recursion is not blocked**. When writing agent instructions, be careful not to let a group of agents @-mention each other in a cycle.
+这条保护**只防直接自引用**。智能体 @ 另一个智能体（A @ B）正常触发；如果 B 在回应里又 @ A，A 会被再次触发——也就是说**间接递归不防**。给智能体写指令时注意不要让几个智能体之间互相 `@` 形成循环。
 
-## Next
+## 下一步
 
-- [**Chat**](/chat) — one-to-one conversation outside any issue
-- [**Autopilots**](/autopilots) — let agents start work automatically on a schedule
-- [**Comments**](/comments) — `@mention` syntax, the picker, and `@all` semantics
+- [**对话**](/chat) —— 脱离 issue 和智能体一对一聊
+- [**Autopilots**](/autopilots) —— 让智能体定时自动开工
+- [**评论**](/comments) —— `@mention` 的语法、picker、`@all` 的语义

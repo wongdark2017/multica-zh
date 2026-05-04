@@ -437,9 +437,9 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
         exact: true,
       });
       qc.invalidateQueries({ queryKey: workspaceKeys.agents(wsId) });
-      toast.success("Skill saved");
+      toast.success("技能已保存");
     } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Failed to save skill");
+      toast.error(err instanceof Error ? err.message : "保存技能失败");
     } finally {
       setSaving(false);
     }
@@ -458,7 +458,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
     try {
       await api.deleteSkill(skill.id);
       // Navigate first so the detail route unmounts BEFORE invalidation
-      // refetches the now-404 row — otherwise users see a "Skill not found"
+      // refetches the now-404 row — otherwise users see a "技能未找到"
       // flash. Deleting also cascade-removes junction rows on the server,
       // so agents cache must refresh too.
       navigation.replace(paths.skills());
@@ -467,10 +467,10 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
       });
       qc.invalidateQueries({ queryKey: workspaceKeys.skills(wsId) });
       qc.invalidateQueries({ queryKey: workspaceKeys.agents(wsId) });
-      toast.success("Skill deleted");
+      toast.success("技能已删除");
     } catch (err) {
       toast.error(
-        err instanceof Error ? err.message : "Failed to delete skill",
+        err instanceof Error ? err.message : "删除技能失败",
       );
       setDeleting(false);
       setConfirmDelete(false);
@@ -537,11 +537,11 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
         </div>
         <div className="flex flex-1 flex-col items-center justify-center gap-2 text-center">
           <AlertCircle className="h-8 w-8 text-muted-foreground/40" />
-          <p className="text-sm font-medium">Skill not found</p>
+          <p className="text-sm font-medium">技能未找到</p>
           <p className="max-w-xs text-xs text-muted-foreground">
             {error instanceof Error
               ? error.message
-              : "This skill may have been deleted or you lost access."}
+              : "此技能可能已被删除，或你已失去访问权限。"}
           </p>
           <AppLink
             href={paths.skills()}
@@ -559,14 +559,14 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
     if (!origin) return null;
     if (origin.type === "runtime_local") {
       return originRuntime
-        ? `Local runtime · ${originRuntime.name}`
+        ? `本地运行时 · ${originRuntime.name}`
         : origin.provider
-          ? `Local runtime · ${origin.provider}`
-          : "Local runtime";
+          ? `本地运行时 · ${origin.provider}`
+          : "本地运行时";
     }
     if (origin.type === "clawhub") return "Imported · ClawHub";
     if (origin.type === "skills_sh") return "Imported · Skills.sh";
-    return "Workspace";
+    return "工作区";
   })();
 
   return (
@@ -601,13 +601,13 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
                     size="icon-sm"
                     onClick={() => setConfirmDelete(true)}
                     className="text-muted-foreground hover:text-destructive"
-                    aria-label="Delete skill"
+                    aria-label="删除技能"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 }
               />
-              <TooltipContent>Delete skill</TooltipContent>
+              <TooltipContent>删除技能</TooltipContent>
             </Tooltip>
           )}
         </div>
@@ -658,13 +658,13 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
                       size="icon-sm"
                       onClick={() => setAddingFile(true)}
                       className="text-muted-foreground"
-                      aria-label="Add file"
+                      aria-label="添加文件"
                     >
                       <Plus className="h-3.5 w-3.5" />
                     </Button>
                   }
                 />
-                <TooltipContent>Add file</TooltipContent>
+                <TooltipContent>添加文件</TooltipContent>
               </Tooltip>
             )}
           </div>
@@ -708,7 +708,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
               onChange={(e) => setName(e.target.value)}
               placeholder="skill-name"
               className="h-9 border-0 bg-transparent px-0 text-lg font-semibold shadow-none focus-visible:ring-0 read-only:cursor-default"
-              aria-label="Skill name"
+              aria-label="技能名称"
             />
             <div className="space-y-1">
               <Label
@@ -723,7 +723,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
                 value={description}
                 readOnly={!canEdit}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="One sentence describing when an agent should use this skill…"
+                placeholder="用一句话描述智能体何时应该使用此技能…"
                 rows={2}
                 className="resize-none text-sm read-only:cursor-default"
               />
@@ -844,25 +844,25 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
             </h3>
             <dl className="space-y-1.5 text-xs">
               <div className="flex gap-2">
-                <dt className="min-w-20 text-muted-foreground">Created</dt>
+                <dt className="min-w-20 text-muted-foreground">创建时间</dt>
                 <dd className="min-w-0 flex-1">
                   {timeAgo(skill.created_at)}
                 </dd>
               </div>
               <div className="flex gap-2">
-                <dt className="min-w-20 text-muted-foreground">Updated</dt>
+                <dt className="min-w-20 text-muted-foreground">更新时间</dt>
                 <dd className="min-w-0 flex-1">
                   {timeAgo(skill.updated_at)}
                 </dd>
               </div>
               {creator && (
                 <div className="flex gap-2">
-                  <dt className="min-w-20 text-muted-foreground">Created by</dt>
+                  <dt className="min-w-20 text-muted-foreground">创建者</dt>
                   <dd className="min-w-0 flex-1">{creator.name}</dd>
                 </div>
               )}
               <div className="flex gap-2">
-                <dt className="min-w-20 text-muted-foreground">Files</dt>
+                <dt className="min-w-20 text-muted-foreground">文件</dt>
                 <dd className="min-w-0 flex-1">{totalFileCount(skill)}</dd>
               </div>
               <div
@@ -916,7 +916,7 @@ export function SkillDetailPage({ skillId }: { skillId: string }) {
       >
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Delete skill?</DialogTitle>
+            <DialogTitle>删除技能?</DialogTitle>
             <DialogDescription>
               This will permanently delete &ldquo;{skill.name}&rdquo; and remove
               it from{" "}

@@ -1,5 +1,5 @@
 {
-  "title": "Documentation",
+  "title": "文档",
   "pages": [
     "index",
     "how-multica-works",
@@ -10,6 +10,7 @@
     "members-roles",
     "issues",
     "comments",
+    "project-resources",
     "---智能体---",
     "agents",
     "agents-create",

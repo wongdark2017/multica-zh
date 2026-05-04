@@ -108,14 +108,14 @@ interface NavPage {
 }
 
 const navPages: NavPage[] = [
-  { key: "inbox", label: "Inbox", icon: Inbox, keywords: ["inbox", "notifications"] },
-  { key: "myIssues", label: "My Issues", icon: CircleUser, keywords: ["my", "issues", "assigned"] },
-  { key: "issues", label: "Issues", icon: ListTodo, keywords: ["issues", "tasks", "bugs"] },
-  { key: "projects", label: "Projects", icon: FolderKanban, keywords: ["projects", "kanban"] },
-  { key: "agents", label: "Agents", icon: Bot, keywords: ["agents", "bots", "ai"] },
-  { key: "runtimes", label: "Runtimes", icon: Monitor, keywords: ["runtimes", "environments"] },
-  { key: "skills", label: "Skills", icon: BookOpenText, keywords: ["skills", "library"] },
-  { key: "settings", label: "Settings", icon: Settings, keywords: ["settings", "config", "preferences"] },
+  { key: "inbox", label: "收件箱", icon: Inbox, keywords: ["inbox", "notifications", "收件箱", "通知"] },
+  { key: "myIssues", label: "我的 Issue", icon: CircleUser, keywords: ["my", "issues", "assigned", "我的", "指派"] },
+  { key: "issues", label: "Issue", icon: ListTodo, keywords: ["issues", "tasks", "bugs", "任务"] },
+  { key: "projects", label: "项目", icon: FolderKanban, keywords: ["projects", "kanban", "项目", "看板"] },
+  { key: "agents", label: "智能体", icon: Bot, keywords: ["agents", "bots", "ai", "智能体"] },
+  { key: "runtimes", label: "运行时", icon: Monitor, keywords: ["runtimes", "environments", "运行时"] },
+  { key: "skills", label: "技能", icon: BookOpenText, keywords: ["skills", "library", "技能"] },
+  { key: "settings", label: "设置", icon: Settings, keywords: ["settings", "config", "preferences", "设置"] },
 ];
 
 type ThemeValue = "light" | "dark" | "system";
@@ -190,7 +190,7 @@ export function SearchCommand() {
     const activeThemeCheck = (value: ThemeValue) =>
       theme === value ? (
         <Check
-          aria-label="Current theme"
+          aria-label="当前主题"
           className="ml-auto size-4 shrink-0 text-muted-foreground"
         />
       ) : undefined;
@@ -198,7 +198,7 @@ export function SearchCommand() {
     const items: CommandItem[] = [
       {
         key: "new-issue",
-        label: "New Issue",
+        label: "新建 Issue",
         icon: Plus,
         keywords: ["new", "issue", "create", "add"],
         onSelect: () => {
@@ -208,7 +208,7 @@ export function SearchCommand() {
       },
       {
         key: "new-project",
-        label: "New Project",
+        label: "新建项目",
         icon: Plus,
         keywords: ["new", "project", "create", "add"],
         onSelect: () => {
@@ -223,13 +223,13 @@ export function SearchCommand() {
       items.push(
         {
           key: "copy-issue-link",
-          label: "Copy Issue Link",
+          label: "复制 Issue 链接",
           icon: Link2,
           keywords: ["copy", "link", "share", "url", identifier.toLowerCase()],
           onSelect: () => {
             const url = getShareableUrl ? getShareableUrl(pathname) : window.location.href;
             void navigator.clipboard.writeText(url);
-            toast.success("Link copied");
+            toast.success("链接已复制");
             setOpen(false);
           },
         },
@@ -240,7 +240,7 @@ export function SearchCommand() {
           keywords: ["copy", "id", "identifier", identifier.toLowerCase()],
           onSelect: () => {
             void navigator.clipboard.writeText(identifier);
-            toast.success(`Copied ${identifier}`);
+            toast.success(`已复制 ${identifier}`);
             setOpen(false);
           },
         },
@@ -250,7 +250,7 @@ export function SearchCommand() {
     items.push(
       {
         key: "theme-light",
-        label: "Switch to Light Theme",
+        label: "切换到浅色主题",
         icon: Sun,
         keywords: ["light", "theme", "appearance", "mode", "bright"],
         trailing: activeThemeCheck("light"),
@@ -261,7 +261,7 @@ export function SearchCommand() {
       },
       {
         key: "theme-dark",
-        label: "Switch to Dark Theme",
+        label: "切换到深色主题",
         icon: Moon,
         keywords: ["dark", "theme", "appearance", "mode", "night"],
         trailing: activeThemeCheck("dark"),
@@ -272,7 +272,7 @@ export function SearchCommand() {
       },
       {
         key: "theme-system",
-        label: "Use System Theme",
+        label: "使用系统主题",
         icon: Monitor,
         keywords: ["system", "theme", "appearance", "mode", "auto"],
         trailing: activeThemeCheck("system"),
@@ -449,7 +449,7 @@ export function SearchCommand() {
         showCloseButton={false}
       >
         <DialogHeader className="sr-only">
-          <DialogTitle>Search</DialogTitle>
+          <DialogTitle>搜索</DialogTitle>
           <DialogDescription>
             Search pages, issues, and projects
           </DialogDescription>
@@ -462,7 +462,7 @@ export function SearchCommand() {
           <div className="flex items-center gap-3 border-b px-4 py-3">
             <SearchIcon className="size-5 shrink-0 text-muted-foreground" />
             <CommandPrimitive.Input
-              placeholder="Type a command or search..."
+              placeholder="输入命令或搜索..."
               value={query}
               onValueChange={handleValueChange}
               className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
@@ -650,7 +650,7 @@ export function SearchCommand() {
               <CommandPrimitive.Group className="p-2">
                 <div className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-muted-foreground">
                   <Clock className="size-3" />
-                  <span>Recent</span>
+                  <span>最近使用</span>
                 </div>
                 {recentIssues.map((item) => (
                   <CommandPrimitive.Item

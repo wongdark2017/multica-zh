@@ -67,11 +67,10 @@ export function BacklogAgentHintContent({
           </div>
           <div className="min-w-0">
             <h2 className="text-base font-semibold">
-              Agent is paused in Backlog
+              Agent 在 Backlog 中会暂停
             </h2>
             <p className="mt-1 text-sm leading-5 text-muted-foreground">
-              This issue is parked, so the assigned agent will wait. Move it to
-              Todo when you want the agent to start.
+              该 issue 已暂存，因此分配的 agent 会等待。想让 agent 开始时，请将它移动到 Todo。
             </p>
           </div>
         </div>
@@ -80,12 +79,12 @@ export function BacklogAgentHintContent({
           <div className="flex items-center gap-2 text-muted-foreground">
             <Archive className="size-4 shrink-0" />
             <span className="font-medium text-foreground">Backlog</span>
-            <span className="text-muted-foreground">keeps the agent paused</span>
+            <span className="text-muted-foreground">会让 agent 暂停</span>
           </div>
           <div className="flex items-center gap-2 text-muted-foreground">
             <ArrowRight className="size-4 shrink-0" />
             <span className="font-medium text-foreground">Todo</span>
-            <span className="text-muted-foreground">starts the agent</span>
+            <span className="text-muted-foreground">会启动 agent</span>
             <CheckCircle2 className="ml-auto size-4 shrink-0 text-primary" />
           </div>
         </div>
@@ -98,7 +97,7 @@ export function BacklogAgentHintContent({
               checked={dontShowAgain}
               onCheckedChange={(next) => setDontShowAgain(next === true)}
             />
-            <span className="truncate">Don&apos;t show this again</span>
+            <span className="truncate">不再显示</span>
           </label>
           <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
             <Button
@@ -107,14 +106,14 @@ export function BacklogAgentHintContent({
               className="w-full sm:w-auto"
               onClick={handleKeepInBacklog}
             >
-              Keep in Backlog
+              保留在 Backlog
             </Button>
             <Button
               type="button"
               className="w-full sm:w-auto"
               onClick={handleMoveToTodo}
             >
-              Move to Todo
+              移动到 Todo
             </Button>
           </div>
         </div>

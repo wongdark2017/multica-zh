@@ -532,17 +532,16 @@ function RowMenu({
       >
         <AlertDialogContent onClick={(e) => e.stopPropagation()}>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Runtime</AlertDialogTitle>
+            <AlertDialogTitle>删除 Runtime</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &ldquo;{runtime.name}&rdquo;?
-              This action cannot be undone.
+              确定要删除 &ldquo;{runtime.name}&rdquo; 吗？此操作无法撤销。
               <span className="mt-2 block text-xs text-muted-foreground/80">
-                Only the runtime owner and workspace admins can delete a runtime.
+                只有 runtime 所有者和工作区管理员可以删除 runtime。
               </span>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               onClick={handleDelete}

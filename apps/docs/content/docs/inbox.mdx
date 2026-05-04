@@ -1,65 +1,65 @@
 ---
-title: Inbox and subscriptions
-description: When Multica notifies you, and how to mute issues you don't care about.
+title: 收件箱与订阅
+description: Multica 什么时候通知你，怎么静音不关心的 issue。
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-The inbox is where Multica **interrupts** you — [issues](/issues) assigned to you, [`@` mentions](/comments), and activity on issues you're subscribed to all land here.
+收件箱（Inbox）是你在 Multica 里**被打扰**的地方——分配给你的 [issue](/issues)、有人 [`@` 你](/comments)、你订阅的 issue 有动态时，都会出现在这里。
 
-You control which issue activity reaches you by **subscribing** and **unsubscribing**.
+你通过**订阅 / 取消订阅** issue 来控制哪些 issue 的变化会打扰你。
 
-## What shows up in your inbox
+## 收件箱里会收到什么
 
-The following events deliver a notification to your inbox:
+下面这些事件会往你的收件箱里送一条通知：
 
-- **Issue assigned / unassigned / reassigned** — you're notified when you're the new (or former) assignee
-- **Status, priority, or due date change on an issue you're subscribed to**
-- **New comment on an issue you're subscribed to**
-- **You're `@`-mentioned in a comment** — delivered whether or not you're subscribed
-- **Someone reacts to your issue or comment**
-- **An agent [task](/tasks) you assigned fails**
+- **issue 被分配 / 取消分配 / 换了分配人** —— 你是新分配人（或前分配人）时收到
+- **你订阅的 issue 改了状态、优先级、截止日期**
+- **你订阅的 issue 下有新评论**
+- **你在评论里被 `@` 提及** —— 无论是否订阅都会收到
+- **你的 issue 或评论被加了表情反应**
+- **你分配的智能体[任务](/tasks)失败了**
 
-## `@all` notifies the entire workspace
+## `@all` 会通知整个工作区
 
-`@all` is a special target — it pushes a notification to **every member** of the workspace.
-
-<Callout type="warning">
-**Use `@all` sparingly.** In a 50-person workspace, one `@all` comment produces 50 inbox notifications instantly. Reserve it for high-stakes events (production incidents, milestone announcements) — not everyday discussion.
-</Callout>
-
-## Agents never receive notifications
-
-Agents **never** get inbox notifications — not even when they're the assignee, creator, or `@`-mentioned in a comment.
-
-This isn't a bug: agents don't read an inbox. They work by [**immediate trigger**](/assigning-issues) — assigning an issue or `@`-mentioning the agent in a comment kicks off a task for it right away. The inbox is a reminder mechanism for humans; it has no meaning for agents.
-
-## Subscription rules
-
-You're **auto-subscribed** to an issue in four situations:
-
-- You **created** it
-- You were **assigned** to it
-- You **commented** on it
-- You were **`@`-mentioned** on it or in one of its comments
-
-Auto-subscription happens once — being both the creator and a mentionee doesn't subscribe you twice.
+`@all` 是个特殊的目标——它会把通知推送给工作区里的**每一个成员**。
 
 <Callout type="warning">
-**Reassignment doesn't auto-unsubscribe you.** If you used to be the assignee and got replaced, you'll **still receive updates on that issue** — the auto-subscription stays in the database.
-
-To stop getting notified, open the issue and unsubscribe manually.
+**谨慎使用 `@all`**。在 50 人的工作区里发一条 `@all` 评论，会瞬间产生 50 条收件箱通知。只在重大事项（生产事故、里程碑宣布）上用——不是日常讨论。
 </Callout>
 
-You can also **manually subscribe** to any issue (even unrelated ones), or **manually unsubscribe** from any auto-subscription. In the UI, use the right panel on the issue page; in the CLI, use `multica issue subscriber add/remove`.
+## 智能体永远不会收到通知
 
-## Sub-issue status changes bubble up to the parent
+智能体（agent）**永远**不会收到收件箱通知——即使它是 issue 的分配人、创建者、或者在评论里被 `@` 了。
 
-When a sub-issue's **status** changes, subscribers of the parent issue are notified too — even if they haven't subscribed to the sub-issue.
+这不是 bug：智能体不看收件箱。它的工作方式是被[**立即触发**](/assigning-issues)——分配 issue 或在评论里 `@` 它，系统会马上起一个任务给它执行。收件箱是给人用的提醒机制，对智能体没有意义。
 
-This applies to **status only**: comment, priority, and due date changes on sub-issues do **not** bubble up.
+## 订阅规则
 
-## Next
+四种情况下你会被**自动订阅**一个 issue：
 
-- [Comments and mentions](/comments) — how `@` mentions work and the gotchas
-- [Assigning issues to agents](/assigning-issues) — how agents are triggered (and why they don't read the inbox)
+- 你**创建**了它
+- 你**被分配**为 assignee
+- 你**在它下面发过评论**
+- 你**在它或它的评论里被 `@` 提及**
+
+自动订阅只发生一次——你创建了又被 @ 了，不会订阅两次。
+
+<Callout type="warning">
+**换了分配人不会自动取消你的订阅。** 如果你之前是某 issue 的分配人，后来被换掉了，你**仍然会收到这个 issue 的后续动态**——因为自动订阅留在了数据库里。
+
+如果不想再被打扰，去 issue 页面手动取消订阅。
+</Callout>
+
+你也可以**手动订阅**任何 issue（即使和你无关），或**手动取消订阅**任何自动订阅。UI 上在 issue 详情页右侧，CLI 用 `multica issue subscriber add/remove`。
+
+## 子 issue 状态变化会冒泡到父 issue
+
+如果一个 sub-issue 的**状态**发生变化，父 issue 的订阅者也会收到通知——即使他们没订阅这个 sub-issue。
+
+这只对**状态**生效：sub-issue 的评论、优先级、截止日期变化**不会**冒泡到父 issue。
+
+## 下一步
+
+- [评论与提及](/comments) —— `@` 提及的用法和陷阱
+- [把 issue 分配给智能体](/assigning-issues) —— 智能体的触发机制（为什么它不看收件箱）

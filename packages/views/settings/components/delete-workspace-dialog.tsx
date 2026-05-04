@@ -62,16 +62,15 @@ export function DeleteWorkspaceDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Delete workspace</DialogTitle>
+          <DialogTitle>删除工作区</DialogTitle>
           <DialogDescription>
-            This cannot be undone. All issues, agents, and data will be
-            permanently removed.
+            此操作无法撤销。所有 issues、agents 和数据都会被永久移除。
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-2">
           <Label htmlFor="delete-workspace-confirm" className="text-xs">
-            To confirm, type{" "}
+            要确认，请在下方输入{" "}
             <code className="rounded bg-muted px-1 py-0.5 font-mono text-xs">
               {workspaceName}
             </code>{" "}

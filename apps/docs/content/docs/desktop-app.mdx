@@ -1,78 +1,78 @@
 ---
-title: Desktop app
-description: What Multica Desktop is, how it differs from the web app, and when it's worth using.
+title: 桌面应用
+description: Multica Desktop 是什么、和 Web 有什么区别、什么时候值得用。
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-Multica Desktop is a native desktop app for macOS, Windows, and Linux. It talks to the same backend as the web app and shows the same data, but it adds a few things the browser can't: **independent tab groups per [workspace](/workspaces)**, **automatic [daemon](/daemon-runtimes) startup**, and **one-click upgrades**.
+Multica Desktop 是原生桌面应用——macOS / Windows / Linux 三个平台。它和 Web 版连同一个后端，看到的数据完全一样，但给了几个 Web 做不到的能力：**[工作区](/workspaces) 独立的多标签页**、**自动启动 [守护进程](/daemon-runtimes)**、**一键升级**。
 
-## Desktop or web — which to pick
+## Desktop 和 Web 该用哪个
 
 | | Web | Desktop |
 |---|---|---|
-| Access | Open a URL in your browser | Install a native app |
-| Multiple tabs | Your browser's own tabs (no workspace separation) | **One independent tab group per workspace** |
-| Daemon | You run `multica daemon start` yourself | **Started automatically** on launch |
-| Upgrades | Refresh to get the latest | App checks in the background and installs on next launch |
-| Signed-in data | Identical | Identical |
+| 访问方式 | 浏览器打开 URL | 装一个本地应用 |
+| 多标签页 | 浏览器自己的标签页（不区分工作区）| **每个工作区一组独立标签页** |
+| 守护进程 | 要你自己跑 `multica daemon start` | 启动时**自动拉起** |
+| 升级 | 刷新页面就是最新 | 应用自动检查 + 下次启动安装 |
+| 登录后的数据 | 完全一样 | 完全一样 |
 
-**Pick web** for one-off use, working on someone else's machine, or when you'd rather not install anything.
-**Pick desktop** for daily use, juggling multiple workspaces, or avoiding manual daemon management.
+**选 Web**：临时用、在别人电脑上、不想装应用的场景。
+**选 Desktop**：每天用 Multica、会同时操作多个工作区、不想自己管守护进程的场景。
 
-## Multiple tabs: what happens when you switch workspaces
+## 多 tab：工作区之间切换怎么表现
 
-Desktop maintains an independent tab group for **every workspace you've joined**. When you switch workspaces, the current workspace's tabs are hidden as a unit and the previous workspace's tabs are restored as you left them — similar to VSCode's multi-workspace behavior or switching workspaces in Slack.
+Desktop 为**每个你加入的工作区**独立维护一组标签页。切换工作区时，当前工作区的标签页会被整体隐藏，上次那个工作区的标签页会原样恢复——像 VSCode 的多 workspace 行为或 Slack 的 workspace 切换。
 
-Example: you open 3 issue tabs in workspace A and switch to workspace B. A's 3 tabs disappear, and B shows whatever you last had open in B. Switch back to A and those 3 tabs come back exactly as they were. **Tabs never leak across workspaces.**
+举例：你在工作区 A 打开了 3 个 issue 标签页，切到工作区 B，A 的那 3 个标签页消失，B 里显示你上次在 B 留下的标签页；切回 A，那 3 个原样回来。**不同工作区的标签页不会互相串到对方**。
 
-Logging out **clears every workspace's tab state**, so you don't leak data when a machine is shared between users.
+登出会**清空所有工作区的标签页状态**，防止多用户共用同一台机器时的数据泄露。
 
-## How Desktop auto-updates
+## Desktop 怎么自动更新
 
-On launch, Desktop checks GitHub Releases for a newer version. If one is found:
+Desktop 启动时会去 GitHub Releases 检查新版本。检查到新版本：
 
-1. It downloads the new version silently in the background.
-2. It tells you "ready — will install on next launch."
-3. When you quit (or next restart), the app installs the update before closing.
-4. The next launch runs the new version.
+1. 在后台静默下载新版本
+2. 提示你「准备就绪，下次启动时安装」
+3. 你点击退出（或下次重启）时，应用关闭前把新版本装好
+4. 再次打开时就是新版本
 
-The whole process **doesn't interrupt what you're working on**.
+整个过程**不中断你正在做的事**。
 
 <Callout type="warning">
-**On Windows, ARM64 and x64 are separate update channels** — install the wrong architecture and updates won't be detected. When you download, pick the `.exe` that matches your machine (the ARM build has an `arm64` suffix).
+**Windows 的 ARM64 和 x64 是独立的更新通道**——装错架构会识别不到更新。安装时下载对应你机器架构的那个 `.exe`（带 `arm64` 后缀的是 ARM 版）。
 </Callout>
 
-The macOS build is signed and notarized, so you won't see an "unidentified developer" warning on first launch. The Linux build is an `.AppImage` — auto-updates rely on electron-updater, which can be flaky on some distros. **If auto-update doesn't work, download the new version manually and replace the old file.**
+macOS 版本已经签名 + 公证，第一次打开不会有"未知开发者"的警告。Linux 版是 `.AppImage`——自动更新机制依赖 electron-updater，在某些发行版可能不稳定，**不工作时手动下载新版本覆盖**。
 
-## Do I still need the standalone CLI and daemon?
+## 还要单独装 CLI 和守护进程吗
 
-**No.** Desktop ships with the same `multica` CLI binary embedded inside it, and it launches its own daemon profile at startup (isolated from any daemon you may be running manually from the terminal).
+**不用**。Desktop 包里**内置了同一个 `multica` CLI 二进制**——Desktop 启动时会自动启动守护进程的独立 profile（和你命令行手动跑的守护进程互不干扰）。
 
-If you've already installed the CLI and run `multica daemon start` by hand, Desktop won't take over your daemon — it starts its own with a separate profile. Both register as **different runtimes**, and you'll see two independent runtimes in the UI.
+如果你已经装过 CLI 并手动跑过 `multica daemon start`，Desktop 不会抢占你那个守护进程——它起自己的，用不同的 profile 隔离。两边注册的是**不同的运行时**，在 UI 里能看到两个独立运行时。
 
-If you want to run CLI commands in your terminal, Desktop doesn't offer a special path — use the CLI you installed separately, or run the bundled copy at `resources/bin/multica` inside the app's resources directory.
+想在终端里跑 CLI 命令，Desktop 不提供特殊方式——照常用系统的 CLI（如果你单独装了），或者用 Desktop 自带的版本（在应用的资源目录里，`resources/bin/multica`）。
 
-## Downloading and installing
+## 怎么下载安装
 
-Grab the installer for your platform from the [Multica downloads page](https://multica.ai/download):
+去 [多卡下载页](https://multica.ai/download) 拿对应平台的安装包：
 
-| Platform | File |
+| 平台 | 文件 |
 |---|---|
-| macOS (Intel or Apple Silicon) | `.dmg` |
-| Windows x64 | `.exe` (standard) |
-| Windows ARM64 | `.exe` (with `arm64` suffix) |
+| macOS（Intel 或 Apple Silicon）| `.dmg` |
+| Windows x64 | `.exe`（常规）|
+| Windows ARM64 | `.exe`（带 `arm64` 后缀）|
 | Linux | `.AppImage` |
 
-On first launch you'll need to sign in — the same email + verification code flow as the web app. Once you're in, Desktop syncs your workspace list automatically.
+安装后第一次打开需要登录——和 Web 版一样的 email + 验证码流程。登录成功后 Desktop 自动把工作区列表同步下来。
 
 <Callout type="warning">
-**Released Desktop builds are pinned to Multica Cloud.** The backend, websocket, and web URLs are baked in at build time (`VITE_API_URL` / `VITE_WS_URL` / `VITE_APP_URL`) — there is no in-app option to point Desktop at a self-hosted instance. To use Desktop against a self-hosted backend you need to build it yourself:
+**发布版的 Desktop 是锁死连 Multica Cloud 的**。后端 / WebSocket / Web 前端 URL（`VITE_API_URL` / `VITE_WS_URL` / `VITE_APP_URL`）在构建时就写死了，应用内**没有切换后端的入口**。要让 Desktop 连自部署后端，需要你自己从源码 build：
 
 ```bash
 git clone https://github.com/multica-ai/multica.git
 cd multica
-# Edit apps/desktop/.env.production:
+# 编辑 apps/desktop/.env.production：
 #   VITE_API_URL=https://api.your-domain
 #   VITE_WS_URL=wss://api.your-domain/ws
 #   VITE_APP_URL=https://your-domain
@@ -80,11 +80,11 @@ pnpm install
 pnpm --filter @multica/desktop package
 ```
 
-If you'd rather not build from source, the supported self-hosted path is **web frontend + CLI** — see [Self-host quickstart](/self-host-quickstart). Runtime backend configuration in Desktop is tracked in [issue #1371](https://github.com/multica-ai/multica/issues/1371).
+不想自己 build 的话，自部署的官方路径是 **Web 前端 + CLI**——见 [自部署快速上手](/self-host-quickstart)。Desktop 运行时切换后端的能力跟踪在 [issue #1371](https://github.com/multica-ai/multica/issues/1371)。
 </Callout>
 
-## Next steps
+## 下一步
 
-- [Cloud Quickstart](/cloud-quickstart) — the Cloud onboarding flow for Desktop
-- [Self-Host Quickstart](/self-host-quickstart) — running your own backend (Desktop against self-host requires a custom build, see the callout above)
-- [Daemon and runtimes](/daemon-runtimes) — how the daemon works (Desktop starts it for you, but the behavior is the same)
+- [Cloud Quickstart](/cloud-quickstart) —— Desktop 版的 Cloud 接入流程
+- [Self-Host Quickstart](/self-host-quickstart) —— 自部署后端（Desktop 连自部署需要自行构建，见上方提示）
+- [守护进程与运行时](/daemon-runtimes) —— 守护进程机制（Desktop 自动起它，但行为一样）

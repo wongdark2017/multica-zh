@@ -179,15 +179,15 @@ function NowSection({
 }) {
   return (
     <Section
-      title="Now"
+      title="当前"
       subtitle={
         tasks.length === 0
-          ? "No active work"
-          : `${tasks.length} active task${tasks.length === 1 ? "" : "s"}`
+          ? "无进行中工作"
+          : `${tasks.length} 个进行中任务`
       }
     >
       {tasks.length === 0 ? (
-        <EmptyText>This agent isn&apos;t running anything right now.</EmptyText>
+        <EmptyText>该 agent 当前没有运行任何任务。</EmptyText>
       ) : (
         <TaskList
           tasks={tasks}
@@ -215,9 +215,9 @@ function Last30dSection({
       : 100;
 
   return (
-    <Section title="Last 30 days" subtitle="Performance">
+    <Section title="最近 30 天" subtitle="表现">
       {totalRuns === 0 ? (
-        <EmptyText>No completions in the last 30 days.</EmptyText>
+        <EmptyText>最近 30 天没有完成记录。</EmptyText>
       ) : (
         // Layout: number is the hero, sparkline is a garnish on the
         // right. Reversed from "chart hero + tiny number" because at
@@ -233,11 +233,11 @@ function Last30dSection({
                 {totalRuns}
               </span>
               <span className="text-sm text-muted-foreground">
-                run{totalRuns === 1 ? "" : "s"}
+                次运行
               </span>
             </div>
             <div className="text-xs text-muted-foreground">
-              {successPct}% success
+              {successPct}% 成功
               {avgDurationMs > 0 && (
                 <>
                   <Sep />
@@ -292,14 +292,14 @@ function RecentWorkSection({
   // "Show more" — not the raw on-the-wire row count.
   const subtitle =
     tasks.length === 0
-      ? "Nothing finished yet"
+      ? "尚无完成记录"
       : totalCount > tasks.length
-        ? `${tasks.length} of ${totalCount}`
-        : `${tasks.length} latest`;
+        ? `${tasks.length} / ${totalCount}`
+        : `最近 ${tasks.length} 个`;
   return (
-    <Section title="Recent work" subtitle={subtitle}>
+    <Section title="最近工作" subtitle={subtitle}>
       {tasks.length === 0 ? (
-        <EmptyText>This agent hasn&apos;t completed anything yet.</EmptyText>
+        <EmptyText>该 agent 还没有完成任何任务。</EmptyText>
       ) : (
         <>
           <TaskList
@@ -541,12 +541,12 @@ function TaskRow({
           <Tooltip>
             <TooltipTrigger
               render={<AppLink href={paths.issueDetail(task.issue_id)} />}
-              aria-label="Open issue"
+              aria-label="打开 issue"
               className="flex items-center justify-center rounded p-1 text-muted-foreground hover:text-foreground hover:bg-accent/50 transition-colors"
             >
               <ArrowUpRight className="h-3.5 w-3.5" />
             </TooltipTrigger>
-            <TooltipContent>Open issue</TooltipContent>
+            <TooltipContent>打开 issue</TooltipContent>
           </Tooltip>
         )}
         {showTranscript && (

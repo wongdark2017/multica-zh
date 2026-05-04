@@ -42,15 +42,15 @@ export function AddChildIssueModal({
       onOpenChange={(v) => {
         if (!v) onClose();
       }}
-      title="Add sub-issue"
-      description="Search for an issue to add as a sub-issue"
+      title="添加子 issue"
+      description="搜索一个 issue，作为子 issue 添加"
       excludeIds={excludeIds}
       onSelect={(selected) => {
         updateIssue.mutate(
           { id: selected.id, parent_issue_id: issueId },
-          { onError: () => toast.error("Failed to add sub-issue") },
+          { onError: () => toast.error("添加子 issue 失败") },
         );
-        toast.success(`Added ${selected.identifier} as sub-issue`);
+        toast.success(`已将 ${selected.identifier} 添加为子 issue`);
       }}
     />
   );

@@ -393,11 +393,11 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
                 <Rocket className="size-3" />
               </span>
               <span className="font-medium text-foreground">
-                {isCreate ? "New autopilot" : "Edit autopilot"}
+                {isCreate ? "新建 autopilot" : "编辑 autopilot"}
               </span>
             </div>
             <span className="text-muted-foreground/60">·</span>
-            <span className="text-muted-foreground">A recurring AI task</span>
+            <span className="text-muted-foreground">周期性 AI 任务</span>
             {workspaceName && (
               <>
                 <ChevronRight className="size-3 text-muted-foreground/40" />
@@ -417,7 +417,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
                   </button>
                 }
               />
-              <TooltipContent side="bottom">{isExpanded ? "Collapse" : "Expand"}</TooltipContent>
+              <TooltipContent side="bottom">{isExpanded ? "收起" : "展开"}</TooltipContent>
             </Tooltip>
             <Tooltip>
               <TooltipTrigger
@@ -430,7 +430,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
                   </button>
                 }
               />
-              <TooltipContent side="bottom">Close</TooltipContent>
+              <TooltipContent side="bottom">关闭</TooltipContent>
             </Tooltip>
           </div>
         </div>
@@ -446,7 +446,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
               <TitleEditor
                 autoFocus={isCreate}
                 defaultValue={initial.title ?? ""}
-                placeholder="Autopilot name"
+                placeholder="Autopilot 名称"
                 className="text-2xl font-semibold tracking-tight"
                 onChange={setTitle}
                 onSubmit={handleSubmit}
@@ -458,7 +458,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
                 Runbook
               </span>
               <span className="text-xs text-muted-foreground/80">
-                Read by the agent on every run
+                agent 每次运行都会读取
               </span>
             </div>
 
@@ -466,7 +466,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
               <div className="h-full overflow-y-auto rounded-lg border border-border bg-background transition-colors focus-within:border-input px-4 py-3">
                 <ContentEditor
                   defaultValue={initial.description ?? ""}
-                  placeholder={`# Goal\nWhat should the agent accomplish?\n\n# Context\nWho is this for? Any constraints?\n\n# Steps\n1. …\n2. …`}
+                  placeholder={`# 目标\nagent 应该完成什么？\n\n# 上下文\n这是为谁准备的？有什么约束？\n\n# 步骤\n1. …\n2. …`}
                   onUpdate={setDescription}
                   debounceMs={300}
                   showBubbleMenu={false}
@@ -492,7 +492,7 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
               disabled={schedulePillDisabled}
               disabledReason={
                 schedulePillDisabled
-                  ? "This autopilot has multiple schedules — edit them in the detail page."
+                  ? "该 autopilot 有多个计划，请在详情页中编辑。"
                   : undefined
               }
             />
@@ -504,21 +504,21 @@ export function AutopilotDialog(props: AutopilotDialogProps) {
           <div className="flex items-center gap-1.5 text-xs text-muted-foreground min-w-0">
             <Zap className="size-3.5 text-amber-500 shrink-0" />
             <span className="truncate">
-              Once saved, runs automatically until paused.
+              保存后会自动运行，直到被暂停。
             </span>
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <Button size="sm" variant="outline" onClick={() => onOpenChange(false)}>
-              Cancel
+              取消
             </Button>
             <Button size="sm" onClick={handleSubmit} disabled={!canSubmit}>
               {submitting
                 ? isCreate
-                  ? "Creating..."
-                  : "Saving..."
+                  ? "创建中..."
+                  : "保存中..."
                 : isCreate
-                ? "Create autopilot"
-                : "Save"}
+                ? "创建 autopilot"
+                : "保存"}
             </Button>
           </div>
         </div>
@@ -579,7 +579,7 @@ function AgentSection({
             )}
             <span className="flex-1 min-w-0">
               <span className="block text-sm font-medium truncate">
-                {selectedName ?? "Select agent"}
+                {selectedName ?? "选择 agent"}
               </span>
               {selectedDescription && (
                 <span className="block text-xs text-muted-foreground truncate">
@@ -604,7 +604,7 @@ function OutputModeSection({
 }) {
   return (
     <div>
-      <SectionLabel>Output mode</SectionLabel>
+      <SectionLabel>输出模式</SectionLabel>
       <div className="space-y-1.5">
         {OUTPUT_MODES.map((o) => {
           const selected = o.value === mode;
@@ -667,7 +667,7 @@ function ScheduleSection({
 
   return (
     <div>
-      <SectionLabel>Schedule</SectionLabel>
+      <SectionLabel>计划</SectionLabel>
       <div
         className={cn(
           "space-y-2",

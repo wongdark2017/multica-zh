@@ -158,7 +158,7 @@ export function RuntimeDetail({ runtime }: { runtime: AgentRuntime }) {
           {!canDelete && (
             <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
               <Lock className="h-3 w-3" />
-              Read-only
+              只读
             </span>
           )}
           {canDelete && (
@@ -170,13 +170,13 @@ export function RuntimeDetail({ runtime }: { runtime: AgentRuntime }) {
                     size="icon-sm"
                     onClick={() => setDeleteOpen(true)}
                     className="text-muted-foreground hover:text-destructive"
-                    aria-label="Delete runtime"
+                    aria-label="删除 runtime"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
                   </Button>
                 }
               />
-              <TooltipContent>Delete runtime</TooltipContent>
+              <TooltipContent>删除 runtime</TooltipContent>
             </Tooltip>
           )}
         </div>
@@ -223,19 +223,19 @@ export function RuntimeDetail({ runtime }: { runtime: AgentRuntime }) {
       <AlertDialog open={deleteOpen} onOpenChange={(v) => { if (!v) setDeleteOpen(false); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Runtime</AlertDialogTitle>
+            <AlertDialogTitle>删除 Runtime</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete &ldquo;{runtime.name}&rdquo;? This action cannot be undone.
+              确定要删除 &ldquo;{runtime.name}&rdquo; 吗？此操作无法撤销。
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>取消</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               onClick={handleDelete}
               disabled={deleteMutation.isPending}
             >
-              {deleteMutation.isPending ? "Deleting..." : "Delete"}
+              {deleteMutation.isPending ? "删除中..." : "删除"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -411,16 +411,16 @@ function ServingAgentsCard({
   return (
     <div className="rounded-lg border">
       <div className="flex items-center justify-between border-b px-4 py-2.5">
-        <span className="text-xs font-semibold">Serving</span>
+        <span className="text-xs font-semibold">服务中</span>
         <span className="text-xs text-muted-foreground">
-          {agents.length} agent{agents.length === 1 ? "" : "s"}
+          {agents.length} 个 agent
         </span>
       </div>
       {agents.length === 0 ? (
         <div className="flex flex-col items-center px-4 py-6 text-center">
           <Cpu className="h-5 w-5 text-muted-foreground/40" />
           <p className="mt-2 text-xs text-muted-foreground">
-            No agents are bound to this runtime yet.
+            还没有 agents 绑定到该 runtime。
           </p>
         </div>
       ) : (
@@ -457,10 +457,10 @@ function ServingAgentsCard({
                         />
                         {wl.label}
                         {running > 0 && (
-                          <span className="text-muted-foreground">· {running} running</span>
+                          <span className="text-muted-foreground">· {running} 运行中</span>
                         )}
                         {queued > 0 && (
-                          <span className="text-muted-foreground">· {queued} queued</span>
+                          <span className="text-muted-foreground">· {queued} 排队中</span>
                         )}
                       </span>
                     )}
@@ -493,7 +493,7 @@ function DiagnosticsCard({
   return (
     <div className="rounded-lg border">
       <div className="border-b px-4 py-2.5">
-        <span className="text-xs font-semibold">Diagnostics</span>
+        <span className="text-xs font-semibold">诊断</span>
       </div>
       <div className="space-y-3 p-4">
         {isLocal && (

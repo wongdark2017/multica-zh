@@ -64,21 +64,21 @@ export function InboxDetailLabel({ item }: { item: InboxItem }) {
     }
     case "issue_assigned": {
       if (details.new_assignee_id) {
-        return <span>Assigned to {getActorName(details.new_assignee_type ?? "member", details.new_assignee_id)}</span>;
+        return <span>已分配给 {getActorName(details.new_assignee_type ?? "member", details.new_assignee_id)}</span>;
       }
       return <span>{typeLabels[item.type]}</span>;
     }
     case "unassigned":
-      return <span>Removed assignee</span>;
+      return <span>已移除负责人</span>;
     case "assignee_changed": {
       if (details.new_assignee_id) {
-        return <span>Assigned to {getActorName(details.new_assignee_type ?? "member", details.new_assignee_id)}</span>;
+        return <span>已分配给 {getActorName(details.new_assignee_type ?? "member", details.new_assignee_id)}</span>;
       }
       return <span>{typeLabels[item.type]}</span>;
     }
     case "due_date_changed": {
-      if (details.to) return <span>Set due date to {shortDate(details.to)}</span>;
-      return <span>Removed due date</span>;
+      if (details.to) return <span>将截止日期设为 {shortDate(details.to)}</span>;
+      return <span>已移除截止日期</span>;
     }
     case "new_comment": {
       if (item.body) return <span>{item.body}</span>;
@@ -86,17 +86,17 @@ export function InboxDetailLabel({ item }: { item: InboxItem }) {
     }
     case "reaction_added": {
       const emoji = details.emoji;
-      if (emoji) return <span>Reacted {emoji} to your comment</span>;
+      if (emoji) return <span>用 {emoji} 回应了你的评论</span>;
       return <span>{typeLabels[item.type]}</span>;
     }
     case "quick_create_done": {
       const identifier = details.identifier;
-      if (identifier) return <span>Created with agent: {identifier}</span>;
+      if (identifier) return <span>由智能体创建： {identifier}</span>;
       return <span>{typeLabels[item.type]}</span>;
     }
     case "quick_create_failed": {
       const detail = getQuickCreateFailureDetail(item);
-      if (detail) return <span>Failed: {detail}</span>;
+      if (detail) return <span>失败： {detail}</span>;
       return <span>{typeLabels[item.type]}</span>;
     }
     default:
