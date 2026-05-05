@@ -114,7 +114,7 @@ function SkillItem({
             <Textarea
               value={description}
               onChange={(e) => onDescriptionChange(e.target.value)}
-              placeholder="Optional — describe when an agent should use this skill."
+              placeholder="可选 - 描述智能体何时应该使用此技能。"
               rows={2}
               className="resize-none text-sm"
             />
@@ -226,11 +226,11 @@ export function RuntimeLocalSkillImportPanel({
         qc.invalidateQueries({ queryKey: workspaceKeys.skills(wsId) }),
         qc.invalidateQueries({ queryKey: workspaceKeys.agents(wsId) }),
       ]);
-      toast.success("Skill imported");
+      toast.success("技能已导入");
       onImported?.(result.skill);
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to import skill",
+        error instanceof Error ? error.message : "导入技能失败",
       );
     } finally {
       setImporting(false);
@@ -312,7 +312,7 @@ export function RuntimeLocalSkillImportPanel({
     if (runtimeSkills.length === 0) {
       return (
         <div className="rounded-lg border border-dashed px-4 py-10 text-center">
-          <p className="text-sm text-muted-foreground">No local skills found</p>
+          <p className="text-sm text-muted-foreground">未找到本地技能</p>
           <p className="mt-1 text-xs text-muted-foreground">
             This runtime does not have any discoverable local skills yet.
           </p>
@@ -349,13 +349,13 @@ export function RuntimeLocalSkillImportPanel({
         }`}
       >
         <div className="space-y-1.5">
-          <Label className="text-xs text-muted-foreground">Runtime</Label>
+          <Label className="text-xs text-muted-foreground">运行时</Label>
           <Select
             value={selectedRuntimeId}
             onValueChange={(v) => v && setSelectedRuntimeId(v)}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Select a local runtime">
+              <SelectValue placeholder="选择本地运行时">
                 {selectedRuntime ? runtimeLabel(selectedRuntime) : null}
               </SelectValue>
             </SelectTrigger>
@@ -414,7 +414,7 @@ export function RuntimeLocalSkillImportPanel({
               into this workspace.
             </>
           ) : (
-            "Select a skill to continue."
+            "请选择一个技能后继续。"
           )}
         </div>
         <Button

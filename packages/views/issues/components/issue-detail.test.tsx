@@ -424,13 +424,13 @@ describe("IssueDetail (shared)", () => {
     renderIssueDetail();
 
     await waitFor(() => {
-      expect(screen.getByText("Properties")).toBeInTheDocument();
+      expect(screen.getByText("属性")).toBeInTheDocument();
     });
 
-    expect(screen.getByText("Status")).toBeInTheDocument();
-    expect(screen.getByText("Priority")).toBeInTheDocument();
-    expect(screen.getByText("Assignee")).toBeInTheDocument();
-    expect(screen.getByText("Due date")).toBeInTheDocument();
+    expect(screen.getByText("状态")).toBeInTheDocument();
+    expect(screen.getByText("优先级")).toBeInTheDocument();
+    expect(screen.getByText("负责人")).toBeInTheDocument();
+    expect(screen.getByText("截止日期")).toBeInTheDocument();
   });
 
   it("uses a non-resizable layout with the sidebar sheet closed by default on mobile", async () => {
@@ -443,19 +443,19 @@ describe("IssueDetail (shared)", () => {
     });
 
     expect(screen.queryByTestId("panel-group")).not.toBeInTheDocument();
-    expect(screen.queryByText("Properties")).not.toBeInTheDocument();
+    expect(screen.queryByText("属性")).not.toBeInTheDocument();
   });
 
   it("renders Details section with Created by and dates", async () => {
     renderIssueDetail();
 
     await waitFor(() => {
-      expect(screen.getByText("Details")).toBeInTheDocument();
+      expect(screen.getByText("详情")).toBeInTheDocument();
     });
 
-    expect(screen.getByText("Created by")).toBeInTheDocument();
-    expect(screen.getByText("Created")).toBeInTheDocument();
-    expect(screen.getByText("Updated")).toBeInTheDocument();
+    expect(screen.getByText("创建者")).toBeInTheDocument();
+    expect(screen.getByText("创建时间")).toBeInTheDocument();
+    expect(screen.getByText("更新时间")).toBeInTheDocument();
   });
 
   it("shows 'not found' message when issue does not exist", async () => {
@@ -465,7 +465,7 @@ describe("IssueDetail (shared)", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText("This issue does not exist or has been deleted in this workspace."),
+        screen.getByText("该 issue 不存在，或已在此工作区中被删除。"),
       ).toBeInTheDocument();
     });
   });
@@ -476,7 +476,7 @@ describe("IssueDetail (shared)", () => {
     renderIssueDetail("nonexistent-id");
 
     await waitFor(() => {
-      expect(screen.getByText("Back to Issues")).toBeInTheDocument();
+      expect(screen.getByText("返回 Issues")).toBeInTheDocument();
     });
   });
 
@@ -484,7 +484,7 @@ describe("IssueDetail (shared)", () => {
     renderIssueDetail();
 
     await waitFor(() => {
-      expect(screen.getAllByText("Activity").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("动态").length).toBeGreaterThanOrEqual(1);
     });
   });
 

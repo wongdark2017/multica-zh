@@ -68,9 +68,9 @@ export function CustomArgsTab({
     setSaving(true);
     try {
       await onSave({ custom_args: currentArgs });
-      toast.success("Custom arguments saved");
+      toast.success("自定义参数已保存");
     } catch {
-      toast.error("Failed to save custom arguments");
+      toast.error("保存自定义参数失败");
     } finally {
       setSaving(false);
     }
@@ -134,7 +134,7 @@ export function CustomArgsTab({
 
       <div className="flex items-center justify-end gap-3">
         {dirty && (
-          <span className="text-xs text-muted-foreground">Unsaved changes</span>
+          <span className="text-xs text-muted-foreground">未保存的更改</span>
         )}
         <Button onClick={handleSave} disabled={!dirty || saving} size="sm">
           {saving ? (

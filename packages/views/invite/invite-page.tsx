@@ -127,7 +127,7 @@ export function InvitePage({ invitationId, onBack }: InvitePageProps) {
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
               <X className="h-6 w-6 text-muted-foreground" />
             </div>
-            <h2 className="text-lg font-semibold">Invitation not found</h2>
+            <h2 className="text-lg font-semibold">邀请未找到</h2>
             <p className="text-sm text-muted-foreground text-center">
               This invitation may have expired, been revoked, or doesn&apos;t belong to your account.
             </p>
@@ -149,7 +149,7 @@ export function InvitePage({ invitationId, onBack }: InvitePageProps) {
               <Check className="h-6 w-6 text-primary" />
             </div>
             <h2 className="text-lg font-semibold">You joined {invitation.workspace_name}!</h2>
-            <p className="text-sm text-muted-foreground">Redirecting to workspace...</p>
+            <p className="text-sm text-muted-foreground">正在跳转到工作区...</p>
           </CardContent>
         </Card>
       </InviteShell>
@@ -161,8 +161,8 @@ export function InvitePage({ invitationId, onBack }: InvitePageProps) {
       <InviteShell onBack={onBack}>
         <Card className="w-full max-w-md">
           <CardContent className="flex flex-col items-center gap-4 py-12">
-            <h2 className="text-lg font-semibold">Invitation declined</h2>
-            <p className="text-sm text-muted-foreground">You won&apos;t be added to this workspace.</p>
+            <h2 className="text-lg font-semibold">邀请已拒绝</h2>
+            <p className="text-sm text-muted-foreground">你不会被加入此工作区。</p>
             <Button variant="outline" onClick={() => push(fallbackDest)}>
               Go to dashboard
             </Button>

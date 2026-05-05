@@ -83,10 +83,10 @@ export function ModelDropdown({
   const triggerLabel =
     value ||
     (disabled
-      ? "Select a runtime first"
+      ? "请先选择 runtime"
       : runtimeOnline
-        ? "Default (provider)"
-        : "Runtime offline — enter manually");
+        ? "默认（provider）"
+        : "Runtime 离线，请手动输入");
 
   if (!supported && !modelsQuery.isLoading) {
     // Provider doesn't honour per-agent model selection — show a
@@ -94,14 +94,13 @@ export function ModelDropdown({
     // inert. (Hermes reads its model from ~/.hermes/.env.)
     return (
       <div className="min-w-0">
-        <Label className="text-xs text-muted-foreground">Model</Label>
+        <Label className="text-xs text-muted-foreground">模型</Label>
         <div className="mt-1.5 flex items-start gap-2 rounded-lg border border-dashed border-border bg-muted/30 px-3 py-2.5 text-sm text-muted-foreground">
           <Info className="mt-0.5 h-4 w-4 shrink-0" />
           <div className="min-w-0">
-            <div>Model selection is managed by this runtime.</div>
+            <div>模型选择由该 runtime 管理。</div>
             <div className="mt-0.5 text-xs">
-              Configure the model on the runtime host (e.g. Hermes reads it
-              from its own config file).
+              请在 runtime host 上配置模型（例如 Hermes 会从自己的配置文件读取）。
             </div>
           </div>
         </div>
@@ -112,9 +111,9 @@ export function ModelDropdown({
   return (
     <div className="min-w-0">
       <div className="flex items-center justify-between">
-        <Label className="text-xs text-muted-foreground">Model</Label>
+        <Label className="text-xs text-muted-foreground">模型</Label>
         {modelsQuery.isError && (
-          <span className="text-xs text-muted-foreground">discovery failed</span>
+          <span className="text-xs text-muted-foreground">发现失败</span>
         )}
       </div>
       <Popover open={open} onOpenChange={setOpen}>
@@ -144,7 +143,7 @@ export function ModelDropdown({
           <div className="border-b border-border p-2">
             <Input
               autoFocus
-              placeholder="Search or type a model ID"
+              placeholder="搜索或输入 model ID"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="h-8"

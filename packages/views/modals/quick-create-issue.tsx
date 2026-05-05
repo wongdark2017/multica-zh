@@ -171,7 +171,7 @@ export function AgentCreatePanel({
       setLastAgentId(agentId);
       clearPrompt();
       setLastMode("agent");
-      toast.success("Sent to agent — you'll get an inbox notification when it's done", {
+      toast.success("已发送给 agent，完成后你会收到 inbox 通知", {
         duration: 4000,
       });
       if (keepOpen) {
@@ -199,7 +199,7 @@ export function AgentCreatePanel({
           min_version?: string;
         };
         if (body.code === "agent_unavailable") {
-          setError(body.reason || "Agent is unavailable. Pick another agent.");
+          setError(body.reason || "Agent 不可用。请选择另一个 agent。");
           setSubmitting(false);
           return;
         }
@@ -210,13 +210,13 @@ export function AgentCreatePanel({
           // consistency.
           const cur = body.current_version || "unknown";
           setError(
-            `This agent's daemon CLI (${cur}) is below the required ${body.min_version || MIN_QUICK_CREATE_CLI_VERSION}. Upgrade the daemon to use Create with agent.`,
+            `该 agent 的 daemon CLI (${cur}) 低于要求的 ${body.min_version || MIN_QUICK_CREATE_CLI_VERSION}。请升级 daemon 后再使用“用 agent 创建”。`,
           );
           setSubmitting(false);
           return;
         }
       }
-      setError("Failed to submit. Try again.");
+      setError("提交失败，请重试。");
     } finally {
       setSubmitting(false);
     }
@@ -242,14 +242,14 @@ export function AgentCreatePanel({
 
   return (
     <>
-        <DialogTitle className="sr-only">Quick create issue</DialogTitle>
+        <DialogTitle className="sr-only">快速创建 issue</DialogTitle>
 
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-3 pb-2 shrink-0">
           <div className="flex items-center gap-1.5 text-xs">
             <span className="text-muted-foreground">{workspaceName}</span>
             <ChevronRight className="size-3 text-muted-foreground/50" />
-            <span className="font-medium">Create with agent</span>
+            <span className="font-medium">用 agent 创建</span>
           </div>
           {/* Native `title` instead of Base UI Tooltip — Tooltip opens on
               keyboard focus, and the dialog's focus trap briefly lands focus
@@ -258,8 +258,8 @@ export function AgentCreatePanel({
           <button
             type="button"
             onClick={onClose}
-            title="Close"
-            aria-label="Close"
+            title="关闭"
+            aria-label="关闭"
             className="rounded-sm p-1.5 opacity-70 hover:opacity-100 hover:bg-accent/60 transition-all cursor-pointer"
           >
             <XIcon className="size-4" />
@@ -273,10 +273,10 @@ export function AgentCreatePanel({
               render={
                 <button
                   type="button"
-                  aria-label="Select agent"
+                  aria-label="选择 agent"
                   className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors cursor-pointer rounded-sm px-1.5 py-1 -ml-1.5 hover:bg-accent/60"
                 >
-                  <span>Created by</span>
+                  <span>创建者</span>
                   {selectedAgent ? (
                     <span className="flex items-center gap-1.5 text-foreground">
                       <ActorAvatar
@@ -287,7 +287,7 @@ export function AgentCreatePanel({
                       {selectedAgent.name}
                     </span>
                   ) : (
-                    <span>Pick an agent…</span>
+                    <span>选择 agent…</span>
                   )}
                 </button>
               }
@@ -295,7 +295,7 @@ export function AgentCreatePanel({
             <DropdownMenuContent align="start" className="w-64 max-h-72 overflow-y-auto">
               {visibleAgents.length === 0 ? (
                 <div className="px-2 py-1.5 text-xs text-muted-foreground">
-                  No agents available.
+                  暂无可用 agents。
                 </div>
               ) : (
                 visibleAgents.map((a: Agent) => (
@@ -326,8 +326,8 @@ export function AgentCreatePanel({
         {selectedAgent && versionBlocked && (
           <div className="mx-5 mb-2 shrink-0 rounded-md border border-amber-500/30 bg-amber-500/5 px-3 py-2 text-xs text-amber-700 dark:text-amber-300">
             {versionCheck.state === "missing"
-              ? `This agent's daemon doesn't report a CLI version. Create with agent needs multica CLI ≥ ${versionCheck.min}. Upgrade the daemon and reconnect, or switch to manual create.`
-              : `This agent's daemon CLI is ${versionCheck.current} — Create with agent needs ≥ ${versionCheck.min}. Upgrade the daemon, or switch to manual create.`}
+              ? `该 agent 的 daemon 未上报 CLI 版本。用 agent 创建需要 multica CLI ≥ ${versionCheck.min}。请升级 daemon 并重新连接，或切换到手动创建。`
+              : `该 agent 的 daemon CLI 是 ${versionCheck.current}，用 agent 创建需要 ≥ ${versionCheck.min}。请升级 daemon，或切换到手动创建。`}
           </div>
         )}
 
@@ -345,7 +345,7 @@ export function AgentCreatePanel({
           <ContentEditor
             ref={editorRef}
             defaultValue={initialPrompt}
-            placeholder='Tell the agent what to do, e.g. "let Bohan fix the inbox loading slowness in the Web project"'
+            placeholder='告诉 agent 要做什么，例如“让 Bohan 修复 Web 项目中 inbox 加载慢的问题”'
             onUpdate={(md) => {
               setHasContent(md.trim().length > 0);
               setPrompt(md);
@@ -371,7 +371,7 @@ export function AgentCreatePanel({
             />
             {keepOpen && sentCount > 0 && (
               <span className="text-xs text-emerald-600 dark:text-emerald-400">
-                {sentCount} sent
+                已发送 {sentCount} 条
               </span>
             )}
           </div>
@@ -379,11 +379,11 @@ export function AgentCreatePanel({
             <button
               type="button"
               onClick={switchToManual}
-              title="Switch to manual create — fill the fields yourself"
+              title="切换到手动创建：自己填写字段"
               className="flex shrink-0 items-center gap-1.5 text-xs px-2 py-1 rounded-sm text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors cursor-pointer"
             >
               <ArrowLeftRight className="size-3.5" />
-              Switch to Manual
+              切换到手动
             </button>
             <label className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
               <Switch
@@ -391,7 +391,7 @@ export function AgentCreatePanel({
                 checked={keepOpen}
                 onCheckedChange={setKeepOpen}
               />
-              Create another
+              继续创建
             </label>
             <Button
               size="sm"
@@ -399,14 +399,14 @@ export function AgentCreatePanel({
               disabled={!hasContent || !agentId || submitting || versionBlocked || uploading}
               title={
                 versionBlocked
-                  ? `Daemon CLI must be ≥ ${versionCheck.min}`
+                  ? `Daemon CLI 必须 ≥ ${versionCheck.min}`
                   : undefined
               }
               className={justSent ? "min-w-28 !bg-emerald-600 !text-white" : "min-w-28"}
             >
-              {submitting ? "Sending…" : uploading ? "Uploading…" : justSent ? (
-                <span className="flex items-center gap-1"><Check className="size-3.5" />Sent</span>
-              ) : "Create (⌘↵)"}
+              {submitting ? "发送中…" : uploading ? "上传中…" : justSent ? (
+                <span className="flex items-center gap-1"><Check className="size-3.5" />已发送</span>
+              ) : "创建 (⌘↵)"}
             </Button>
           </div>
         </div>

@@ -87,9 +87,9 @@ describe("LoginPage", () => {
   it("renders login form with email input and continue button", () => {
     render(<LoginPage />, { wrapper: createWrapper() });
 
-    expect(screen.getByText("Sign in to Multica")).toBeInTheDocument();
-    expect(screen.getByText("Enter your email to get a login code")).toBeInTheDocument();
-    expect(screen.getByLabelText("Email")).toBeInTheDocument();
+    expect(screen.getByText("登录 Multica")).toBeInTheDocument();
+    expect(screen.getByText("输入邮箱以获取登录验证码")).toBeInTheDocument();
+    expect(screen.getByLabelText("邮箱")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: "Continue" })
     ).toBeInTheDocument();
@@ -108,7 +108,7 @@ describe("LoginPage", () => {
     const user = userEvent.setup();
     render(<LoginPage />, { wrapper: createWrapper() });
 
-    await user.type(screen.getByLabelText("Email"), "test@multica.ai");
+    await user.type(screen.getByLabelText("邮箱"), "test@multica.ai");
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     await waitFor(() => {
@@ -121,11 +121,11 @@ describe("LoginPage", () => {
     const user = userEvent.setup();
     render(<LoginPage />, { wrapper: createWrapper() });
 
-    await user.type(screen.getByLabelText("Email"), "test@multica.ai");
+    await user.type(screen.getByLabelText("邮箱"), "test@multica.ai");
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Sending code...")).toBeInTheDocument();
+      expect(screen.getByText("正在发送验证码...")).toBeInTheDocument();
     });
   });
 
@@ -134,11 +134,11 @@ describe("LoginPage", () => {
     const user = userEvent.setup();
     render(<LoginPage />, { wrapper: createWrapper() });
 
-    await user.type(screen.getByLabelText("Email"), "test@multica.ai");
+    await user.type(screen.getByLabelText("邮箱"), "test@multica.ai");
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Check your email")).toBeInTheDocument();
+      expect(screen.getByText("检查你的邮箱")).toBeInTheDocument();
     });
   });
 
@@ -147,7 +147,7 @@ describe("LoginPage", () => {
     const user = userEvent.setup();
     render(<LoginPage />, { wrapper: createWrapper() });
 
-    await user.type(screen.getByLabelText("Email"), "test@multica.ai");
+    await user.type(screen.getByLabelText("邮箱"), "test@multica.ai");
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     await waitFor(() => {
@@ -185,7 +185,7 @@ describe("LoginPage", () => {
         );
       });
       expect(
-        await screen.findByRole("button", { name: "Open Multica Desktop" }),
+        await screen.findByRole("button", { name: "打开 Multica Desktop" }),
       ).toBeInTheDocument();
     } finally {
       Object.defineProperty(window, "location", {

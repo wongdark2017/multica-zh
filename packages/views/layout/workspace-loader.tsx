@@ -26,7 +26,7 @@ export function WorkspaceLoader({ name }: { name?: string | null }) {
             Loading <span className="font-medium text-foreground">{name}</span>…
           </p>
         ) : (
-          <p className="text-sm text-muted-foreground">Loading workspace…</p>
+          <p className="text-sm text-muted-foreground">正在加载工作区…</p>
         )}
       </div>
     </div>

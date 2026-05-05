@@ -129,7 +129,7 @@ export function InboxPage() {
   useEffect(() => {
     if (!selectedId || selectedRead) return;
     markReadMutate(selectedId, {
-      onError: () => toast.error("Failed to mark as read"),
+      onError: () => toast.error("标记为已读失败"),
     });
   }, [selectedId, selectedRead, markReadMutate]);
 
@@ -141,21 +141,21 @@ export function InboxPage() {
     const archived = items.find((i) => i.id === id);
     if (archived && (archived.issue_id ?? archived.id) === selectedKey) setSelectedKey("");
     archiveMutation.mutate(id, {
-      onError: () => toast.error("Failed to archive"),
+      onError: () => toast.error("归档失败"),
     });
   };
 
   // Batch operations
   const handleMarkAllRead = () => {
     markAllReadMutation.mutate(undefined, {
-      onError: () => toast.error("Failed to mark all as read"),
+      onError: () => toast.error("全部标记为已读失败"),
     });
   };
 
   const handleArchiveAll = () => {
     setSelectedKey("");
     archiveAllMutation.mutate(undefined, {
-      onError: () => toast.error("Failed to archive all"),
+      onError: () => toast.error("全部归档失败"),
     });
   };
 
@@ -163,14 +163,14 @@ export function InboxPage() {
     const readKeys = items.filter((i) => i.read).map((i) => i.issue_id ?? i.id);
     if (readKeys.includes(selectedKey)) setSelectedKey("");
     archiveAllReadMutation.mutate(undefined, {
-      onError: () => toast.error("Failed to archive read items"),
+      onError: () => toast.error("归档已读通知失败"),
     });
   };
 
   const handleArchiveCompleted = () => {
     setSelectedKey("");
     archiveCompletedMutation.mutate(undefined, {
-      onError: () => toast.error("Failed to archive completed"),
+      onError: () => toast.error("归档已完成通知失败"),
     });
   };
 
@@ -179,7 +179,7 @@ export function InboxPage() {
   const listHeader = (
     <PageHeader className="justify-between">
       <div className="flex items-center gap-2">
-        <h1 className="text-sm font-semibold">Inbox</h1>
+        <h1 className="text-sm font-semibold">收件箱</h1>
         {unreadCount > 0 && (
           <span className="text-xs text-muted-foreground">
             {unreadCount}
@@ -201,20 +201,20 @@ export function InboxPage() {
         <DropdownMenuContent align="end" className="w-auto">
           <DropdownMenuItem onClick={handleMarkAllRead}>
             <CheckCheck className="h-4 w-4" />
-            Mark all as read
+            全部标记为已读
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleArchiveAll}>
             <Archive className="h-4 w-4" />
-            Archive all
+            全部归档
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleArchiveAllRead}>
             <BookCheck className="h-4 w-4" />
-            Archive all read
+            归档已读
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleArchiveCompleted}>
             <ListChecks className="h-4 w-4" />
-            Archive completed
+            归档已完成
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -224,7 +224,7 @@ export function InboxPage() {
   const listBody = items.length === 0 ? (
     <div className="flex flex-col items-center justify-center py-16 text-muted-foreground">
       <Inbox className="mb-3 h-8 w-8 text-muted-foreground/50" />
-      <p className="text-sm">No notifications</p>
+      <p className="text-sm">暂无通知</p>
     </div>
   ) : (
     <div>
@@ -261,7 +261,7 @@ export function InboxPage() {
       onDone={() => {
         setSelectedKey("");
         archiveMutation.mutate(selected.id, {
-          onError: () => toast.error("Failed to archive"),
+          onError: () => toast.error("归档失败"),
         });
       }}
     />
@@ -278,7 +278,7 @@ export function InboxPage() {
       )}
       {selected.type === "quick_create_failed" && selected.details?.original_prompt && (
         <div className="mt-4 rounded-md border bg-muted/40 p-3">
-          <p className="text-xs font-medium text-muted-foreground">Original input</p>
+          <p className="text-xs font-medium text-muted-foreground">原始输入</p>
           <p className="mt-1 whitespace-pre-wrap text-sm">{selected.details.original_prompt}</p>
         </div>
       )}

@@ -82,17 +82,17 @@ function DeleteCommentDialog({
     <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete comment</AlertDialogTitle>
+          <AlertDialogTitle>删除评论</AlertDialogTitle>
           <AlertDialogDescription>
             {hasReplies
-              ? "This comment and all its replies will be permanently deleted. This cannot be undone."
-              : "This comment will be permanently deleted. This cannot be undone."}
+              ? "该评论及其所有回复将被永久删除。此操作无法撤销。"
+              : "该评论将被永久删除。此操作无法撤销。"}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>取消</AlertDialogCancel>
           <AlertDialogAction variant="destructive" onClick={onConfirm}>
-            Delete
+            删除
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -303,7 +303,7 @@ function CommentRow({
             <ContentEditor
               ref={editEditorRef}
               defaultValue={entry.content ?? ""}
-              placeholder="Edit comment..."
+              placeholder="编辑评论..."
               onSubmit={saveEdit}
               onUploadFile={(file) => uploadWithToast(file, { issueId })}
               debounceMs={100}
@@ -316,8 +316,8 @@ function CommentRow({
               onSelect={(file) => editEditorRef.current?.uploadFile(file)}
             />
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="ghost" onClick={cancelEdit}>Cancel</Button>
-              <Button size="sm" variant="outline" onClick={saveEdit}>Save</Button>
+              <Button size="sm" variant="ghost" onClick={cancelEdit}>取消</Button>
+              <Button size="sm" variant="outline" onClick={saveEdit}>保存</Button>
             </div>
           </div>
           {isDragOver && <FileDropOverlay />}
@@ -535,7 +535,7 @@ function CommentCardImpl({
                   <ContentEditor
                     ref={editEditorRef}
                     defaultValue={entry.content ?? ""}
-                    placeholder="Edit comment..."
+                    placeholder="编辑评论..."
                     onSubmit={saveEdit}
                     onUploadFile={(file) => uploadWithToast(file, { issueId })}
                     debounceMs={100}
@@ -548,8 +548,8 @@ function CommentCardImpl({
                     onSelect={(file) => editEditorRef.current?.uploadFile(file)}
                   />
                   <div className="flex items-center gap-2">
-                    <Button size="sm" variant="ghost" onClick={cancelEdit}>Cancel</Button>
-                    <Button size="sm" variant="outline" onClick={saveEdit}>Save</Button>
+                    <Button size="sm" variant="ghost" onClick={cancelEdit}>取消</Button>
+                    <Button size="sm" variant="outline" onClick={saveEdit}>保存</Button>
                   </div>
                 </div>
                 {parentDragOver && <FileDropOverlay />}
@@ -593,7 +593,7 @@ function CommentCardImpl({
           <div className="border-t border-border/50 px-4 py-2.5">
             <ReplyInput
               issueId={issueId}
-              placeholder="Leave a reply..."
+              placeholder="留下回复..."
               size="sm"
               avatarType="member"
               avatarId={currentUserId ?? ""}

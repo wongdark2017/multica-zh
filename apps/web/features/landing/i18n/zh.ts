@@ -233,7 +233,7 @@ export function createZhDict(allowSignup: boolean): LandingDict {
       resources: {
         label: "\u8d44\u6e90",
         links: [
-          { label: "\u6587\u6863", href: "/docs/zh" },
+          { label: "\u6587\u6863", href: "/docs" },
           { label: "API", href: githubUrl },
           { label: "X (Twitter)", href: "https://x.com/MulticaAI" },
         ],

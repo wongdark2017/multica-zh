@@ -64,10 +64,10 @@ type AvailabilityFilter = "all" | AgentAvailability;
 type SortKey = "recent" | "name" | "runs" | "created";
 const SORT_KEYS: SortKey[] = ["recent", "name", "runs", "created"];
 const SORT_LABEL: Record<SortKey, string> = {
-  recent: "Recent activity",
-  name: "Name",
-  runs: "Most runs",
-  created: "Recently created",
+  recent: "最近活动",
+  name: "名称",
+  runs: "运行次数最多",
+  created: "最近创建",
 };
 
 export function AgentsPage() {
@@ -238,7 +238,7 @@ export function AgentsPage() {
         break;
       case "recent":
       default:
-        // "Recent activity" prioritises 7d total completions (the same
+        // "最近活动" prioritises 7d total completions (the same
         // window the row's sparkline shows), then 30d run count, then
         // created_at. We don't have a precise last-touched timestamp on
         // Agent today; this approximates it closely without a new column.
@@ -400,11 +400,11 @@ export function AgentsPage() {
         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-16 text-center">
           <AlertCircle className="h-8 w-8 text-destructive" />
           <div>
-            <p className="text-sm font-medium">Couldn&rsquo;t load agents</p>
+            <p className="text-sm font-medium">无法加载 agents</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {listError instanceof Error
                 ? listError.message
-                : "Something went wrong fetching the agent list."}
+                : "获取 agent 列表时出错。"}
             </p>
           </div>
           <Button
@@ -413,7 +413,7 @@ export function AgentsPage() {
             size="sm"
             onClick={() => refetchList()}
           >
-            Try again
+            重试
           </Button>
         </div>
       </div>
@@ -514,7 +514,7 @@ function PageHeaderBar({
     <PageHeader className="justify-between px-5">
       <div className="flex items-center gap-2">
         <Bot className="h-4 w-4 text-muted-foreground" />
-        <h1 className="text-sm font-medium">Agents</h1>
+        <h1 className="text-sm font-medium">智能体</h1>
         {totalCount > 0 && (
           <span className="font-mono text-xs tabular-nums text-muted-foreground/70">
             {totalCount}
@@ -526,20 +526,20 @@ function PageHeaderBar({
             the state-legend job, so the tagline only needs to anchor what
             an agent IS, not what each colour means. */}
         <p className="ml-2 hidden text-xs text-muted-foreground md:block">
-          AI teammates that pick up issues, comment, and update status.{" "}
+          能接手 issues、评论并更新状态的 AI 队友。{" "}
           <a
             href="https://multica.ai/docs/agents"
             target="_blank"
             rel="noopener noreferrer"
             className="underline decoration-muted-foreground/30 underline-offset-4 transition-colors hover:text-foreground"
           >
-            Learn more →
+            了解更多 →
           </a>
         </p>
       </div>
       <Button type="button" size="sm" onClick={onCreate}>
         <Plus className="h-3 w-3" />
-        New agent
+        新建 agent
       </Button>
     </PageHeader>
   );
@@ -586,7 +586,7 @@ function ActiveToolbarRow({
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search agents…"
+          placeholder="搜索 agents…"
           className="h-8 w-64 pl-8 text-sm"
         />
       </div>
@@ -598,11 +598,11 @@ function ActiveToolbarRow({
             onClick={onShowArchived}
             className="text-xs text-muted-foreground transition-colors hover:text-foreground"
           >
-            Show archived ({archivedCount}) →
+            显示已归档（{archivedCount}）→
           </button>
         )}
         <span className="font-mono text-xs tabular-nums text-muted-foreground/70">
-          {visibleCount} of {totalCount}
+          {visibleCount} / {totalCount}
         </span>
         <SortDropdown sort={sort} setSort={setSort} />
       </div>
@@ -625,13 +625,13 @@ function ScopeSegment({
     <div className="flex items-center gap-0.5 rounded-md bg-muted p-0.5">
       <ScopeButton
         active={scope === "mine"}
-        label="Mine"
+        label="我的"
         count={counts.mine}
         onClick={() => setScope("mine")}
       />
       <ScopeButton
         active={scope === "all"}
-        label="All"
+        label="全部"
         count={counts.all}
         onClick={() => setScope("all")}
       />
@@ -729,7 +729,7 @@ function AvailabilityFilterRow({
       <AvailabilityChip
         active={value === "all"}
         onClick={() => onChange("all")}
-        label="All"
+        label="全部"
         count={totalCount}
       />
       {availabilityOrder.map((a) => {
@@ -806,10 +806,10 @@ function ArchivedToolbarRow({
         className="inline-flex items-center gap-1 text-xs text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="h-3 w-3" />
-        Active agents
+        活跃 agents
       </button>
       <span className="text-muted-foreground/40">/</span>
-      <span className="text-xs font-medium">Archived agents</span>
+      <span className="text-xs font-medium">已归档 agents</span>
       <span className="font-mono text-xs tabular-nums text-muted-foreground/70">
         {archivedCount}
       </span>
@@ -830,14 +830,13 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
         <Bot className="h-6 w-6 text-muted-foreground" />
       </div>
-      <h2 className="mt-4 text-base font-semibold">No agents yet</h2>
+      <h2 className="mt-4 text-base font-semibold">还没有 agents</h2>
       <p className="mt-1 max-w-md text-sm text-muted-foreground">
-        Create an agent and assign it issues, like any teammate. Local agents
-        run on your machine; cloud agents run on Multica&rsquo;s runtime.
+        创建 agent，并像分配队友一样分配 issues。本地 agents 在你的机器上运行；云端 agents 在 Multica runtime 上运行。
       </p>
       <Button type="button" onClick={onCreate} size="sm" className="mt-5">
         <Plus className="h-3 w-3" />
-        New agent
+        新建 agent
       </Button>
     </div>
   );
@@ -861,18 +860,18 @@ function NoMatches({
   let body: string;
   if (view === "archived") {
     body = hasSearch
-      ? `No archived agents match "${search}".`
-      : "No archived agents yet.";
+      ? `没有已归档 agents 匹配“${search}”。`
+      : "还没有已归档 agents。";
   } else if (hasSearch) {
-    body = `No agents match "${search}"${hasFilter ? " in this filter" : ""}.`;
+    body = `没有 agents 匹配“${search}”${hasFilter ? "（当前筛选）" : ""}。`;
   } else {
-    body = "No agents match this filter.";
+    body = "没有 agents 匹配当前筛选。";
   }
 
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-2 px-4 py-16 text-center text-muted-foreground">
       <Search className="h-8 w-8 text-muted-foreground/40" />
-      <p className="text-sm">No matches</p>
+      <p className="text-sm">无匹配结果</p>
       <p className="max-w-xs text-xs">{body}</p>
     </div>
   );

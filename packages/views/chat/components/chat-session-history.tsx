@@ -56,9 +56,9 @@ export function ChatSessionHistory() {
           >
             <ArrowLeft />
           </TooltipTrigger>
-          <TooltipContent side="bottom">Back</TooltipContent>
+          <TooltipContent side="bottom">返回</TooltipContent>
         </Tooltip>
-        <span className="text-sm font-medium">Chat History</span>
+        <span className="text-sm font-medium">聊天历史</span>
       </div>
 
       {/* Session list */}
@@ -66,7 +66,7 @@ export function ChatSessionHistory() {
         {sessions.length === 0 ? (
           <div className="flex flex-col items-center justify-center gap-2 py-12 text-muted-foreground">
             <MessageSquare className="size-6" />
-            <span className="text-sm">No chat sessions yet</span>
+            <span className="text-sm">还没有聊天会话</span>
           </div>
         ) : (
           <div>

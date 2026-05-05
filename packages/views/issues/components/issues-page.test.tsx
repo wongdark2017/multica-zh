@@ -404,7 +404,7 @@ describe("IssuesPage (shared)", () => {
 
     renderWithQuery(<IssuesPage />);
 
-    await screen.findByText("Issues");
+    await screen.findByText("Issue");
     expect(screen.getByText("Test WS")).toBeInTheDocument();
   });
 
@@ -413,8 +413,8 @@ describe("IssuesPage (shared)", () => {
 
     renderWithQuery(<IssuesPage />);
 
-    await screen.findByText("No issues yet");
-    expect(screen.getByText("Create an issue to get started.")).toBeInTheDocument();
+    await screen.findByText("暂无 issue");
+    expect(screen.getByText("创建一个 issue 开始使用。")).toBeInTheDocument();
   });
 
   it("shows scope tab buttons", async () => {

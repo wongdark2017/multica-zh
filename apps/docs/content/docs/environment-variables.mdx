@@ -1,152 +1,152 @@
 ---
-title: Environment variables
-description: The full list of environment variables for running a self-hosted Multica server.
+title: 环境变量
+description: self-host Multica 服务器需要配置的环境变量清单。
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-A self-hosted Multica [server](/self-host-quickstart) reads its configuration from environment variables at startup — database, sign-in, email, storage, signup allowlists all live here. This page groups every variable by purpose: each section spells out **what happens if you leave it unset** and **which ones you must set in production**. For how to actually configure the auth-related ones, see [Sign-in and signup configuration](/auth-setup).
+Multica 的 [自部署](/self-host-quickstart) 服务器启动时从环境变量读取配置——数据库、登录、邮件、存储、注册白名单都在这里配。这一页按用途分组给完整清单：每组说清楚**不设会怎样**、**生产必须设哪几个**。Auth 相关那几个怎么真正配见 [登录与注册配置](/auth-setup)。
 
-## Core server variables
+## 核心 server 环境变量
 
-These are the core variables you must think about before deploying — some have defaults that let the server start, but in production you should set the required ones explicitly.
+这些是你部署前必须考虑的核心变量——有些有默认值能让 server 启动，但生产环境里你应该显式配置必填项。
 
-| Variable | Default | Required in production? |
+| 环境变量 | 默认值 | 生产必须设？ |
 |---|---|---|
-| `DATABASE_URL` | `postgres://multica:multica@localhost:5432/multica?sslmode=disable` | **Yes** |
-| `PORT` | `8080` | No (unless you change the port) |
-| `JWT_SECRET` | `multica-dev-secret-change-in-production` | **Yes** (the default is unsafe) |
-| `APP_ENV` | empty | **Yes** (must be `production`) |
-| `FRONTEND_ORIGIN` | empty | **Yes** (self-host must set its own domain) |
-| `MULTICA_DEV_VERIFICATION_CODE` | empty | No (must stay empty in production) |
+| `DATABASE_URL` | `postgres://multica:multica@localhost:5432/multica?sslmode=disable` | **是** |
+| `PORT` | `8080` | 否（除非换端口）|
+| `JWT_SECRET` | `multica-dev-secret-change-in-production` | **是**（默认值不安全）|
+| `APP_ENV` | 空 | **是**（必须 `production`）|
+| `FRONTEND_ORIGIN` | 空 | **是**（self-host 要填你自己的域名）|
+| `MULTICA_DEV_VERIFICATION_CODE` | 空 | 否（生产必须保持为空）|
 
 <Callout type="warning">
-**Keep `MULTICA_DEV_VERIFICATION_CODE` empty in production.** A fixed local test code is disabled by default, but if you opt in with `MULTICA_DEV_VERIFICATION_CODE=888888`, anyone who can request a code can sign in with that fixed value while `APP_ENV` is non-production. The shortcut is ignored when `APP_ENV=production`.
+**生产环境保持 `MULTICA_DEV_VERIFICATION_CODE` 为空。** 固定本地测试验证码默认关闭；如果你设置 `MULTICA_DEV_VERIFICATION_CODE=888888`，在 `APP_ENV` 非 production 时，任何能请求验证码的人都能用这个固定值登录。`APP_ENV=production` 时该快捷码会被忽略。
 </Callout>
 
-### Database connection pool
+### 数据库连接池
 
-| Variable | Default | Description |
+| 环境变量 | 默认值 | 说明 |
 |---|---|---|
-| `DATABASE_MAX_CONNS` | `25` | pgxpool max connections. The daemon polls frequently (every 3s) and uses connections; larger deployments may need a higher value |
-| `DATABASE_MIN_CONNS` | `5` | Minimum idle connections |
+| `DATABASE_MAX_CONNS` | `25` | pgxpool 最大连接数。守护进程高频轮询（每 3 秒）会占用连接；大规模部署可能需要调高 |
+| `DATABASE_MIN_CONNS` | `5` | 最小常驻连接 |
 
-**When unset**, the values above are used — **not** pgx's built-in 4/NumCPU defaults, which previously caused pool exhaustion in production.
+**不设时**使用上表默认值，**不是** pgx 内置的 4/NumCPU——后者在生产曾引发连接池耗尽。
 
-## Email configuration
+## 怎么配邮件
 
-Multica uses [Resend](https://resend.com/) to send verification codes and invite emails.
+Multica 用 [Resend](https://resend.com/) 发验证码和邀请邮件。
 
-| Variable | Default | Description |
+| 环境变量 | 默认值 | 说明 |
 |---|---|---|
-| `RESEND_API_KEY` | empty | Resend API key |
-| `RESEND_FROM_EMAIL` | `noreply@multica.ai` | Sender address (must be a domain verified in your Resend account) |
+| `RESEND_API_KEY` | 空 | Resend API key |
+| `RESEND_FROM_EMAIL` | `noreply@multica.ai` | 发件地址（必须是 Resend 账号已验证的域名）|
 
-**Behavior when `RESEND_API_KEY` is unset**: the server does not error, but every email that should have been sent (verification codes, invite links) **is written to the server's stdout only**. Convenient for local development — copy the code out of the server logs; **in production, forgetting to set this creates a silent black hole**, with users never receiving email and no error surfaced.
+**不设 `RESEND_API_KEY` 时的行为**：server 不会报错，但所有本该发出去的邮件（验证码、邀请链接）**只打到 server 的 stdout**。本地开发时方便——你从 server 日志里抄验证码；**生产环境忘记设就是黑洞**，用户收不到邮件也没任何错误提示。
 
-## Google OAuth configuration
+## 怎么配 Google OAuth
 
-Optional. Leave unset for email + verification code only; configure it to add "Sign in with Google" on the sign-in page.
+可选。不设则只有邮箱 + 验证码登录；设了就在登录页出现「用 Google 登录」。
 
-| Variable | Default | Description |
+| 环境变量 | 默认值 | 说明 |
 |---|---|---|
-| `GOOGLE_CLIENT_ID` | empty | Google Cloud OAuth client ID |
-| `GOOGLE_CLIENT_SECRET` | empty | Google Cloud OAuth secret |
-| `GOOGLE_REDIRECT_URI` | `http://localhost:3000/auth/callback` | OAuth callback URL (self-host: replace with your frontend domain) |
+| `GOOGLE_CLIENT_ID` | 空 | Google Cloud OAuth client ID |
+| `GOOGLE_CLIENT_SECRET` | 空 | Google Cloud OAuth secret |
+| `GOOGLE_REDIRECT_URI` | `http://localhost:3000/auth/callback` | OAuth 回调地址（self-host 换成你的前端域名）|
 
-**Takes effect at runtime**: the frontend reads these settings via `/api/config` at runtime, so **changing them requires no frontend rebuild or redeploy** — restart the server and they apply.
+**热生效**：前端在运行时通过 `/api/config` 拿这些配置，**改了不用重启前端也不用重建镜像**——改完重启 server 即可。
 
-Full setup (including Google Cloud Console steps) is in [Sign-in and signup configuration](/auth-setup#google-oauth-configuration).
+完整配置步骤（含 Google Cloud Console 操作）详见 [登录与注册配置](/auth-setup#怎么配-google-oauth)。
 
-## File storage configuration
+## 怎么配文件存储
 
-Multica stores user-uploaded attachments (images and files in comments). **S3 is preferred**; if S3 is not configured, it falls back to local disk.
+Multica 存储用户上传的附件（评论里的图片、文件等）。**优先走 S3**；不配 S3 就回落本地磁盘。
 
-### S3 / S3-compatible storage
+### S3 / S3 兼容存储
 
-| Variable | Default | Description |
+| 环境变量 | 默认值 | 说明 |
 |---|---|---|
-| `S3_BUCKET` | empty | Setting this enables S3 storage |
-| `S3_REGION` | `us-west-2` | AWS region |
-| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | empty | Static credentials. When both are unset, the AWS SDK default credential chain is used (IAM role / environment credentials) |
-| `AWS_ENDPOINT_URL` | empty | Custom S3-compatible endpoint (for example [MinIO](https://min.io/)). Setting this switches to path-style URLs |
+| `S3_BUCKET` | 空 | 设了就启用 S3 存储 |
+| `S3_REGION` | `us-west-2` | AWS 区域 |
+| `AWS_ACCESS_KEY_ID` / `AWS_SECRET_ACCESS_KEY` | 空 | 静态凭证。全未设时用 AWS SDK 默认凭证链（IAM role / 环境凭证）|
+| `AWS_ENDPOINT_URL` | 空 | 自定义 S3 兼容端点（例如 [MinIO](https://min.io/)）。设了会切到 path-style URL |
 
-**When `S3_BUCKET` is unset**: the server logs `"S3_BUCKET not set, cloud upload disabled"` at startup, and all uploads fall back to local disk.
+**`S3_BUCKET` 未设时**：server 启动时打 info 日志 `"S3_BUCKET not set, cloud upload disabled"`，所有上传回落到本地磁盘。
 
-### Local disk (when S3 is not configured)
+### 本地磁盘（S3 未配时）
 
-| Variable | Default | Description |
+| 环境变量 | 默认值 | 说明 |
 |---|---|---|
-| `LOCAL_UPLOAD_DIR` | `./data/uploads` | Local storage directory |
-| `LOCAL_UPLOAD_BASE_URL` | empty (returns relative paths) | Public base URL — leave unset and the frontend can't resolve a full URL for attachments |
+| `LOCAL_UPLOAD_DIR` | `./data/uploads` | 本地存储目录 |
+| `LOCAL_UPLOAD_BASE_URL` | 空（返回相对路径）| 公开访问的 base URL——不设前端就拿不到附件的完整 URL |
 
-### CloudFront (optional)
+### CloudFront（可选）
 
-If you front S3 with CloudFront, three variables apply: `CLOUDFRONT_DOMAIN`, `CLOUDFRONT_KEY_PAIR_ID`, `CLOUDFRONT_PRIVATE_KEY` (or `CLOUDFRONT_PRIVATE_KEY_SECRET` to read from Secrets Manager). Skip them if you don't use CloudFront — they don't conflict with S3 configuration.
+如果你用 CloudFront 给 S3 做 CDN，三个相关的环境变量：`CLOUDFRONT_DOMAIN`、`CLOUDFRONT_KEY_PAIR_ID`、`CLOUDFRONT_PRIVATE_KEY`（或从 Secrets Manager 读的 `CLOUDFRONT_PRIVATE_KEY_SECRET`）。不用 CloudFront 就不用管——和配置 S3 不冲突。
 
-### Cookie domain
+### Cookie 域
 
-| Variable | Default | Description |
+| 环境变量 | 默认值 | 说明 |
 |---|---|---|
-| `COOKIE_DOMAIN` | empty | Scope of the session cookie |
+| `COOKIE_DOMAIN` | 空 | session cookie 的作用域 |
 
-- **Empty**: the cookie is valid only on the exact host visited (correct for single-host deployments)
-- **Set to `.example.com`**: the cookie is shared across subdomains (so `app.example.com` and `api.example.com` share a sign-in session)
-- Warning: it cannot be an IP address (browsers ignore it)
+- **空**：cookie 只对访问的那个 host 生效（单主机部署正确）
+- **设成 `.example.com`**：cookie 在所有子域共享（让 `app.example.com` 和 `api.example.com` 共用登录态）
+- ⚠️ 不能是 IP 地址（浏览器会忽略）
 
-## Restricting who can sign up
+## 怎么限制谁能注册
 
-Three allowlist layers combine by priority. **If any layer is set to a non-empty value, emails that don't match are rejected** — even `ALLOW_SIGNUP=true` won't override that.
+三层白名单按优先级组合。**任何一层白名单一旦设置非空，不匹配的邮箱就会被拒**——即使 `ALLOW_SIGNUP=true` 也挡不住。
 
-| Variable | Default | Description |
+| 环境变量 | 默认值 | 说明 |
 |---|---|---|
-| `ALLOWED_EMAILS` | empty | Explicit email allowlist (comma-separated). When non-empty, only listed emails can sign up |
-| `ALLOWED_EMAIL_DOMAINS` | empty | Domain allowlist (comma-separated). When non-empty, only listed domains can sign up |
-| `ALLOW_SIGNUP` | `true` | Signup master switch. Set `false` to disable signup entirely |
+| `ALLOWED_EMAILS` | 空 | 显式邮箱白名单（逗号分隔）。非空时只有列表里的邮箱能注册 |
+| `ALLOWED_EMAIL_DOMAINS` | 空 | 域名白名单（逗号分隔）。非空时只有列表里的域名能注册 |
+| `ALLOW_SIGNUP` | `true` | 注册总开关。设 `false` 完全关闭注册 |
 
-**The counterintuitive part**: `ALLOWED_EMAIL_DOMAINS=company.io` + `ALLOW_SIGNUP=true` does **not** mean "allow company.io or everyone" — it means **only allow company.io**. The allowlist layers are AND semantics — the full decision tree is in [Sign-in and signup configuration → Signup allowlists](/auth-setup#restricting-who-can-sign-up).
+**不直观的点**：`ALLOWED_EMAIL_DOMAINS=company.io` + `ALLOW_SIGNUP=true` 的组合**不是**「允许 company.io 或所有人」，而是**只允许 company.io**。白名单的 AND 语义——决策树详见 [登录与注册配置 → Signup 白名单](/auth-setup#怎么限制谁能注册)。
 
-**Invite flows themselves do not check the signup allowlist** — but the invitee must still be able to **sign in** before accepting the invite. If they already have a Multica account (for example from another workspace), they can accept directly, unaffected by the allowlist; **if they have never signed up**, the first step of sign-in (requesting a verification code) still passes through the allowlist check, and an email rejected by `ALLOW_SIGNUP=false` or by `ALLOWED_EMAILS` / `ALLOWED_EMAIL_DOMAINS` **cannot finish signup, and therefore cannot accept the invite**.
+**邀请流程本身不检查 signup 白名单**——但被邀请人必须先能**登录**才能接受邀请。如果对方已经有 Multica 账号（比如在其他工作区注册过），可以直接接受，不受白名单影响；**如果对方还没注册过**，他们登录的第一步（发送验证码）仍然会过白名单检查，被 `ALLOW_SIGNUP=false` 或 `ALLOWED_EMAILS` / `ALLOWED_EMAIL_DOMAINS` 拒绝的邮箱**无法完成注册，也就没法接受邀请**。
 
-## Daemon tuning parameters
+## 守护进程的调节参数
 
-The daemon runs on the user's local machine, and its config is read from local environment variables too. The common ones:
+守护进程跑在用户本地机器上，配置也是读本地环境变量。常用的几个：
 
-| Variable | Default | Description |
+| 环境变量 | 默认值 | 说明 |
 |---|---|---|
-| `MULTICA_SERVER_URL` | `ws://localhost:8080/ws` | Server address (self-host: replace with your domain) |
-| `MULTICA_DAEMON_HEARTBEAT_INTERVAL` | `15s` | Heartbeat interval |
-| `MULTICA_DAEMON_POLL_INTERVAL` | `3s` | Task polling interval |
-| `MULTICA_DAEMON_MAX_CONCURRENT_TASKS` | `20` | Max concurrent tasks |
-| `MULTICA_<PROVIDER>_PATH` | matches the CLI name | Path to each AI coding tool's executable (for example `MULTICA_CLAUDE_PATH`) |
-| `MULTICA_<PROVIDER>_MODEL` | empty | Default model for each AI coding tool |
+| `MULTICA_SERVER_URL` | `ws://localhost:8080/ws` | server 地址（self-host 换成你的域名）|
+| `MULTICA_DAEMON_HEARTBEAT_INTERVAL` | `15s` | 心跳频率 |
+| `MULTICA_DAEMON_POLL_INTERVAL` | `3s` | 任务轮询频率 |
+| `MULTICA_DAEMON_MAX_CONCURRENT_TASKS` | `20` | 并发任务上限 |
+| `MULTICA_<PROVIDER>_PATH` | 对应 CLI 名 | 各 AI 编程工具的可执行文件路径（如 `MULTICA_CLAUDE_PATH`）|
+| `MULTICA_<PROVIDER>_MODEL` | 空 | 各 AI 编程工具的默认模型 |
 
-For a full explanation of how each parameter affects daemon behavior, see [Daemon and runtimes](/daemon-runtimes).
+完整解释每个参数对守护进程行为的影响，见 [守护进程与运行时](/daemon-runtimes)。
 
-## Frontend access control
+## 前端访问控制
 
-| Variable | Default | Description |
+| 环境变量 | 默认值 | 说明 |
 |---|---|---|
-| `FRONTEND_ORIGIN` | empty | Frontend address. Invite email links, the CORS allowlist, and the cookie domain are all derived from this. When unset, invite email links fall back to the hosted domain `https://app.multica.ai` — self-host must set this explicitly |
-| `CORS_ALLOWED_ORIGINS` | empty | Additional allowed CORS origins (comma-separated) |
-| `ALLOWED_ORIGINS` | empty | WebSocket-specific origin allowlist (comma-separated); when unset, fallback order is `CORS_ALLOWED_ORIGINS` → `FRONTEND_ORIGIN` → `localhost:3000/5173/5174` |
+| `FRONTEND_ORIGIN` | 空 | 前端地址。邀请邮件里的链接、CORS 白名单、cookie domain 都从这里推导。邮件链接在不设时会 fallback 到托管版域名 `https://app.multica.ai`——self-host 必须显式填 |
+| `CORS_ALLOWED_ORIGINS` | 空 | 额外的 CORS 允许来源（逗号分隔）|
+| `ALLOWED_ORIGINS` | 空 | WebSocket 专用的 origin 白名单（逗号分隔）；不设就按 `CORS_ALLOWED_ORIGINS` → `FRONTEND_ORIGIN` → `localhost:3000/5173/5174` 顺序回落 |
 
 <Callout type="warning">
-**Leaving `FRONTEND_ORIGIN` unset creates two silent failures**: (1) invite email links point at `https://app.multica.ai` (the hosted domain), and clicking them doesn't bring users back to your self-hosted instance; (2) WebSocket Origin checks fall back to `localhost:3000 / 5173 / 5174`, so every WebSocket connection in a production deployment is rejected and the frontend appears to "lose real-time updates."
+**`FRONTEND_ORIGIN` 不设就有两个静默失败**：（1）邀请邮件里的链接指向 `https://app.multica.ai`（托管版的域名），用户点了跳不回你的 self-host 实例；（2）WebSocket 连接的 Origin 校验回落到 `localhost:3000 / 5173 / 5174`，生产部署的 WebSocket 全部被拒，前端看起来「实时更新不工作」。
 </Callout>
 
-## Usage analytics
+## 用量统计
 
-By default, the server reports to Multica's official PostHog instance. To opt out, set `ANALYTICS_DISABLED=true`.
+默认上报到 Multica 官方 PostHog 实例。不想上报就把 `ANALYTICS_DISABLED=true`。
 
-| Variable | Default | Description |
+| 环境变量 | 默认值 | 说明 |
 |---|---|---|
-| `ANALYTICS_DISABLED` | `false` | Set `true` to disable backend analytics entirely |
-| `POSTHOG_API_KEY` | built-in default key | Set when pointing at your own PostHog instance |
-| `POSTHOG_HOST` | `https://us.i.posthog.com` | Change to your own host if you self-host PostHog |
+| `ANALYTICS_DISABLED` | `false` | 设 `true` 完全关闭后端上报 |
+| `POSTHOG_API_KEY` | 内置默认 key | 换成你自己的 PostHog 实例时填 |
+| `POSTHOG_HOST` | `https://us.i.posthog.com` | 自建 PostHog 的话改成你自己的地址 |
 
-## Next
+## 下一步
 
-- [Sign-in and signup configuration](/auth-setup) — how to actually configure the auth-related variables above and where the traps are
-- [Troubleshooting](/troubleshooting) — symptoms and fixes for common misconfigurations
-- [Daemon and runtimes](/daemon-runtimes) — what the `MULTICA_DAEMON_*` parameters actually do
+- [登录与注册配置](/auth-setup) —— 上面 auth 相关的那几个环境变量怎么真的配、陷阱在哪
+- [故障排查](/troubleshooting) —— 配错了常见的症状和修复
+- [守护进程与运行时](/daemon-runtimes) —— `MULTICA_DAEMON_*` 参数的行为含义

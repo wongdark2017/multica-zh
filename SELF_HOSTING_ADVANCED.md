@@ -1,190 +1,190 @@
-# Self-Hosting — Advanced Configuration
+# 自部署：高级配置
 
-This document covers advanced configuration for self-hosted Multica deployments. For the quick start guide, see [SELF_HOSTING.md](SELF_HOSTING.md).
+这份文档说明 Multica 自部署的高级配置。快速上手请看 [SELF_HOSTING.md](SELF_HOSTING.md)。
 
-## Configuration
+## 配置
 
-All configuration is done via environment variables. Copy `.env.example` as a starting point.
+所有配置都通过环境变量完成。建议从 `.env.example` 复制一份开始。
 
-### Required Variables
+### 必填变量
 
-| Variable | Description | Example |
-|----------|-------------|---------|
-| `DATABASE_URL` | PostgreSQL connection string | `postgres://multica:multica@localhost:5432/multica?sslmode=disable` |
-| `JWT_SECRET` | **Must change from default.** Secret key for signing JWT tokens. Use a long random string. | `openssl rand -hex 32` |
-| `FRONTEND_ORIGIN` | URL where the frontend is served (used for CORS) | `https://app.example.com` |
+| 变量 | 说明 | 示例 |
+|---|---|---|
+| `DATABASE_URL` | PostgreSQL 连接串 | `postgres://multica:multica@localhost:5432/multica?sslmode=disable` |
+| `JWT_SECRET` | **必须修改默认值。** 用于签发 JWT 的密钥，应使用足够长的随机字符串。 | `openssl rand -hex 32` |
+| `FRONTEND_ORIGIN` | 前端访问地址，用于 CORS | `https://app.example.com` |
 
-### Database Pool Tuning (Optional)
+### 数据库连接池调优（可选）
 
-These have sensible defaults and only need to be set when tuning a large or constrained deployment. Precedence (highest first): env var → `pool_*` query params on `DATABASE_URL` → built-in default.
+这些值有合理默认值，只在大规模或资源受限部署时需要调整。优先级：环境变量 -> `DATABASE_URL` 上的 `pool_*` query param -> 内置默认。
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `DATABASE_MAX_CONNS` | pgxpool max connections per pod. `pod_count × DATABASE_MAX_CONNS` should stay well below the Postgres `max_connections` ceiling. With a connection pooler (PgBouncer / RDS Proxy / Supavisor) in front, this can be raised significantly. | `25` |
-| `DATABASE_MIN_CONNS` | pgxpool warm baseline connections per pod. Auto-clamped to `DATABASE_MAX_CONNS`. | `5` |
+| 变量 | 说明 | 默认值 |
+|---|---|---|
+| `DATABASE_MAX_CONNS` | 每个 pod 的 pgxpool 最大连接数。`pod_count × DATABASE_MAX_CONNS` 应明显低于 Postgres `max_connections`。如果前面有 PgBouncer / RDS Proxy / Supavisor，可适当调高。 | `25` |
+| `DATABASE_MIN_CONNS` | 每个 pod 的 pgxpool 预热基线连接数，会自动 clamp 到 `DATABASE_MAX_CONNS`。 | `5` |
 
-### Email (Required for Authentication)
+### Email（认证必需）
 
-Multica uses email-based magic link authentication via [Resend](https://resend.com).
+Multica 使用 [Resend](https://resend.com) 发送邮箱验证码。
 
-| Variable | Description |
-|----------|-------------|
-| `RESEND_API_KEY` | Your Resend API key |
-| `RESEND_FROM_EMAIL` | Sender email address (default: `noreply@multica.ai`) |
+| 变量 | 说明 |
+|---|---|
+| `RESEND_API_KEY` | 你的 Resend API key |
+| `RESEND_FROM_EMAIL` | 发件邮箱，默认 `noreply@multica.ai` |
 
-> **Note:** If Resend is not configured, generated verification codes are printed to backend logs. A fixed local testing code is disabled by default; to opt in on a private test instance, set `APP_ENV=development` and `MULTICA_DEV_VERIFICATION_CODE` to a 6-digit value. It is ignored when `APP_ENV=production`.
+> **说明：** 如果未配置 Resend，生成的验证码会打印到 backend 日志。固定本地测试验证码默认关闭；私有测试实例可设置 `APP_ENV=development` 和 6 位 `MULTICA_DEV_VERIFICATION_CODE` 开启。`APP_ENV=production` 时会忽略该值。
 
-### Google OAuth (Optional)
+### Google OAuth（可选）
 
-| Variable | Description |
-|----------|-------------|
+| 变量 | 说明 |
+|---|---|
 | `GOOGLE_CLIENT_ID` | Google OAuth client ID |
 | `GOOGLE_CLIENT_SECRET` | Google OAuth client secret |
-| `GOOGLE_REDIRECT_URI` | OAuth callback URL (e.g. `https://app.example.com/auth/callback`) |
+| `GOOGLE_REDIRECT_URI` | OAuth callback URL，例如 `https://app.example.com/auth/callback` |
 
-Changes take effect after restarting the backend / compose stack. The web UI reads `GOOGLE_CLIENT_ID` from `/api/config` at runtime, so no web rebuild is needed.
+修改后重启 backend / compose stack 生效。Web UI 会在运行时从 `/api/config` 读取 `GOOGLE_CLIENT_ID`，不需要重新构建 web。
 
-### Signup Controls (Optional)
+### 注册控制（可选）
 
-| Variable | Description |
-|----------|-------------|
-| `ALLOW_SIGNUP` | Set to `false` to disable new user signups on a private instance |
-| `ALLOWED_EMAIL_DOMAINS` | Optional comma-separated allowlist of email domains |
-| `ALLOWED_EMAILS` | Optional comma-separated allowlist of exact email addresses |
+| 变量 | 说明 |
+|---|---|
+| `ALLOW_SIGNUP` | 设为 `false` 可禁用私有实例上的新用户注册 |
+| `ALLOWED_EMAIL_DOMAINS` | 可选，逗号分隔的 email domain allowlist |
+| `ALLOWED_EMAILS` | 可选，逗号分隔的精确 email allowlist |
 
-Changes take effect after restarting the backend / compose stack. The web UI reads `ALLOW_SIGNUP` from `/api/config` at runtime, so no web rebuild is needed.
+修改后重启 backend / compose stack 生效。Web UI 会在运行时从 `/api/config` 读取 `ALLOW_SIGNUP`，不需要重新构建 web。
 
-### File Storage (Optional)
+### 文件存储（可选）
 
-For file uploads and attachments, configure S3 and CloudFront:
+上传文件和附件可以配置 S3 与 CloudFront：
 
-| Variable | Description |
-|----------|-------------|
-| `S3_BUCKET` | S3 bucket name |
-| `S3_REGION` | AWS region (default: `us-west-2`) |
+| 变量 | 说明 |
+|---|---|
+| `S3_BUCKET` | S3 bucket 名称 |
+| `S3_REGION` | AWS region，默认 `us-west-2` |
 | `CLOUDFRONT_DOMAIN` | CloudFront distribution domain |
-| `CLOUDFRONT_KEY_PAIR_ID` | CloudFront key pair ID for signed URLs |
-| `CLOUDFRONT_PRIVATE_KEY` | CloudFront private key (PEM format) |
+| `CLOUDFRONT_KEY_PAIR_ID` | 用于 signed URL 的 CloudFront key pair ID |
+| `CLOUDFRONT_PRIVATE_KEY` | CloudFront private key（PEM 格式） |
 
-### Cookies
+### Cookie
 
-| Variable | Description |
-|----------|-------------|
-| `COOKIE_DOMAIN` | Optional `Domain` attribute for session + CloudFront cookies. **Leave empty** for single-host deployments (localhost, LAN IP, or a single hostname). Only set it when the frontend and backend sit on different subdomains of one registered domain (e.g. `.example.com`). **Do not use an IP literal** — RFC 6265 forbids IP addresses in the cookie `Domain` attribute and browsers will drop such `Set-Cookie` headers. |
+| 变量 | 说明 |
+|---|---|
+| `COOKIE_DOMAIN` | session + CloudFront cookie 的可选 `Domain` 属性。单 host 部署（localhost、LAN IP 或单 hostname）请留空。只有当前端和后端位于同一注册域名下的不同子域（例如 `.example.com`）时才设置。**不要使用 IP literal**：RFC 6265 禁止在 cookie `Domain` 中使用 IP 地址，浏览器会丢弃这类 `Set-Cookie`。 |
 
-The `Secure` flag on session cookies is derived automatically from the scheme of `FRONTEND_ORIGIN`: HTTPS origins get `Secure` cookies; plain-HTTP origins (LAN / private-network self-host) get non-secure cookies so the browser can actually store them.
+session cookie 的 `Secure` flag 会根据 `FRONTEND_ORIGIN` scheme 自动推导：HTTPS origin 得到 `Secure` cookie；普通 HTTP origin（LAN / private-network self-host）使用 non-secure cookie，浏览器才能保存。
 
 ### Server
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | `8080` | Backend server port |
-| `METRICS_ADDR` | empty | Optional Prometheus metrics listener, for example `127.0.0.1:9090` |
-| `FRONTEND_PORT` | `3000` | Frontend port |
-| `CORS_ALLOWED_ORIGINS` | Value of `FRONTEND_ORIGIN` | Comma-separated list of allowed origins |
-| `LOG_LEVEL` | `info` | Log level: `debug`, `info`, `warn`, `error` |
+| 变量 | 默认值 | 说明 |
+|---|---|---|
+| `PORT` | `8080` | Backend server 端口 |
+| `METRICS_ADDR` | 空 | 可选 Prometheus metrics listener，例如 `127.0.0.1:9090` |
+| `FRONTEND_PORT` | `3000` | Frontend 端口 |
+| `CORS_ALLOWED_ORIGINS` | `FRONTEND_ORIGIN` 的值 | 逗号分隔的允许 origin |
+| `LOG_LEVEL` | `info` | 日志级别：`debug`、`info`、`warn`、`error` |
 
 ### CLI / Daemon
 
-These are configured on each user's machine, not on the server:
+这些变量配置在每个用户自己的机器上，不在 server 上：
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `MULTICA_SERVER_URL` | `ws://localhost:8080/ws` | WebSocket URL for daemon → server connection |
-| `MULTICA_APP_URL` | `http://localhost:3000` | Frontend URL for CLI login flow |
-| `MULTICA_DAEMON_POLL_INTERVAL` | `3s` | How often the daemon polls for tasks |
-| `MULTICA_DAEMON_HEARTBEAT_INTERVAL` | `15s` | Heartbeat frequency |
+| 变量 | 默认值 | 说明 |
+|---|---|---|
+| `MULTICA_SERVER_URL` | `ws://localhost:8080/ws` | daemon -> server 的 WebSocket URL |
+| `MULTICA_APP_URL` | `http://localhost:3000` | CLI 登录流程使用的前端 URL |
+| `MULTICA_DAEMON_POLL_INTERVAL` | `3s` | daemon 拉取任务的频率 |
+| `MULTICA_DAEMON_HEARTBEAT_INTERVAL` | `15s` | 心跳频率 |
 
-Agent-specific overrides:
+Agent 专属 override：
 
-| Variable | Description |
-|----------|-------------|
-| `MULTICA_CLAUDE_PATH` | Custom path to the `claude` binary |
-| `MULTICA_CLAUDE_MODEL` | Override the Claude model used |
-| `MULTICA_CODEX_PATH` | Custom path to the `codex` binary |
-| `MULTICA_CODEX_MODEL` | Override the Codex model used |
-| `MULTICA_COPILOT_PATH` | Custom path to the `copilot` (GitHub Copilot CLI) binary |
-| `MULTICA_COPILOT_MODEL` | Override the Copilot model used (note: GitHub Copilot routes models through your account entitlement, so this may not be honoured) |
-| `MULTICA_OPENCODE_PATH` | Custom path to the `opencode` binary |
-| `MULTICA_OPENCODE_MODEL` | Override the OpenCode model used |
-| `MULTICA_OPENCLAW_PATH` | Custom path to the `openclaw` binary |
-| `MULTICA_OPENCLAW_MODEL` | Override the OpenClaw model used |
-| `MULTICA_HERMES_PATH` | Custom path to the `hermes` binary |
-| `MULTICA_HERMES_MODEL` | Override the Hermes model used |
-| `MULTICA_GEMINI_PATH` | Custom path to the `gemini` binary |
-| `MULTICA_GEMINI_MODEL` | Override the Gemini model used |
-| `MULTICA_PI_PATH` | Custom path to the `pi` binary |
-| `MULTICA_PI_MODEL` | Override the Pi model used |
-| `MULTICA_CURSOR_PATH` | Custom path to the `cursor-agent` binary |
-| `MULTICA_CURSOR_MODEL` | Override the Cursor Agent model used |
+| 变量 | 说明 |
+|---|---|
+| `MULTICA_CLAUDE_PATH` | 自定义 `claude` binary 路径 |
+| `MULTICA_CLAUDE_MODEL` | 覆盖 Claude 使用的模型 |
+| `MULTICA_CODEX_PATH` | 自定义 `codex` binary 路径 |
+| `MULTICA_CODEX_MODEL` | 覆盖 Codex 使用的模型 |
+| `MULTICA_COPILOT_PATH` | 自定义 `copilot`（GitHub Copilot CLI）binary 路径 |
+| `MULTICA_COPILOT_MODEL` | 覆盖 Copilot 使用的模型；注意 GitHub Copilot 会按账号 entitlement 路由模型，可能不会完全遵守 |
+| `MULTICA_OPENCODE_PATH` | 自定义 `opencode` binary 路径 |
+| `MULTICA_OPENCODE_MODEL` | 覆盖 OpenCode 使用的模型 |
+| `MULTICA_OPENCLAW_PATH` | 自定义 `openclaw` binary 路径 |
+| `MULTICA_OPENCLAW_MODEL` | 覆盖 OpenClaw 使用的模型 |
+| `MULTICA_HERMES_PATH` | 自定义 `hermes` binary 路径 |
+| `MULTICA_HERMES_MODEL` | 覆盖 Hermes 使用的模型 |
+| `MULTICA_GEMINI_PATH` | 自定义 `gemini` binary 路径 |
+| `MULTICA_GEMINI_MODEL` | 覆盖 Gemini 使用的模型 |
+| `MULTICA_PI_PATH` | 自定义 `pi` binary 路径 |
+| `MULTICA_PI_MODEL` | 覆盖 Pi 使用的模型 |
+| `MULTICA_CURSOR_PATH` | 自定义 `cursor-agent` binary 路径 |
+| `MULTICA_CURSOR_MODEL` | 覆盖 Cursor Agent 使用的模型 |
 
-## Database Setup
+## 数据库设置
 
-Multica requires PostgreSQL 17 with the pgvector extension.
+Multica 需要 PostgreSQL 17 和 pgvector extension。
 
-### Using Docker Compose (Recommended)
+### 使用 Docker Compose（推荐）
 
-The `docker-compose.selfhost.yml` includes PostgreSQL. No separate setup needed.
+`docker-compose.selfhost.yml` 已包含 PostgreSQL，不需要单独设置。
 
-### Using Your Own PostgreSQL
+### 使用自己的 PostgreSQL
 
-If you prefer to use an existing PostgreSQL instance, ensure the pgvector extension is available:
+如果使用已有 PostgreSQL，请确认 pgvector extension 可用：
 
 ```sql
 CREATE EXTENSION IF NOT EXISTS vector;
 ```
 
-Set `DATABASE_URL` in your `.env` and remove the `postgres` service from the compose file.
+然后在 `.env` 中设置 `DATABASE_URL`，并从 compose 文件中移除 `postgres` 服务。
 
-### Running Migrations Manually
+### 手动运行迁移
 
-The Docker Compose setup runs migrations automatically. If you need to run them manually:
+Docker Compose 安装会自动运行迁移。如果需要手动运行：
 
 ```bash
-# Using the built binary
+# 使用构建出的二进制
 ./server/bin/migrate up
 
-# Or from source
+# 或从源码运行
 cd server && go run ./cmd/migrate up
 ```
 
-## Manual Setup (Without Docker Compose)
+## 手动安装（不使用 Docker Compose）
 
-If you prefer to build and run services manually:
+如果想手动构建并运行服务：
 
-**Prerequisites:** Go 1.26+, Node.js 20+, pnpm 10.28+, PostgreSQL 17 with pgvector.
+**前置条件：** Go 1.26+、Node.js 20+、pnpm 10.28+、PostgreSQL 17 + pgvector。
 
 ```bash
-# Start your PostgreSQL (or use: docker compose up -d postgres)
+# 启动 PostgreSQL（或使用：docker compose up -d postgres）
 
-# Build the backend
+# 构建 backend
 make build
 
-# Run database migrations
+# 运行数据库迁移
 DATABASE_URL="your-database-url" ./server/bin/migrate up
 
-# Start the backend server
+# 启动 backend server
 DATABASE_URL="your-database-url" PORT=8080 JWT_SECRET="your-secret" ./server/bin/server
 ```
 
-For the frontend:
+前端：
 
 ```bash
 pnpm install
 pnpm build
 
-# Start the frontend (production mode)
+# 启动前端（production mode）
 cd apps/web
 REMOTE_API_URL=http://localhost:8080 pnpm start
 ```
 
-## Reverse Proxy
+## 反向代理
 
-In production, put a reverse proxy in front of both the backend and frontend to handle TLS and routing.
+生产环境建议在 backend 和 frontend 前面放反向代理，负责 TLS 和路由。
 
-### Caddy (Recommended)
+### Caddy（推荐）
 
-```
+```caddy
 app.example.com {
     reverse_proxy localhost:3000
 }
@@ -242,58 +242,55 @@ server {
 }
 ```
 
-When using separate domains for frontend and backend, set these environment variables accordingly:
+前后端使用不同域名时，设置：
 
 ```bash
 # Backend
 FRONTEND_ORIGIN=https://app.example.com
 CORS_ALLOWED_ORIGINS=https://app.example.com
 
-# Frontend (only if you are building the web image from source via docker-compose.selfhost.build.yml)
+# Frontend（仅当你通过 docker-compose.selfhost.build.yml 从源码构建 web image 时）
 REMOTE_API_URL=https://api.example.com
 NEXT_PUBLIC_API_URL=https://api.example.com
 NEXT_PUBLIC_WS_URL=wss://api.example.com/ws
 ```
 
-## LAN / Non-localhost Access
+## LAN / 非 localhost 访问
 
-By default, Multica works on `localhost`. If you access it from another machine on the LAN (e.g. `http://192.168.1.100:3000`), you need to tell the backend to accept that origin:
+默认情况下 Multica 面向 `localhost`。如果要从 LAN 中另一台机器访问，例如 `http://192.168.1.100:3000`，需要告诉 backend 接受该 origin：
 
 ```bash
-# .env — replace with your server's LAN IP
+# .env — 替换成你的 server LAN IP
 FRONTEND_ORIGIN=http://192.168.1.100:3000
 CORS_ALLOWED_ORIGINS=http://192.168.1.100:3000
 ```
 
-Then restart the stack:
+然后重启 stack：
 
 ```bash
 docker compose -f docker-compose.selfhost.yml up -d
 ```
 
-### WebSocket for LAN / Non-localhost Access
+### LAN / 非 localhost 的 WebSocket
 
-HTTP requests (issues, comments, uploads) work on LAN out of the box — Next.js rewrites proxy `/api`, `/auth`, and `/uploads` to the backend. **WebSockets do not**: Next.js rewrites only forward HTTP requests, not the `Upgrade` handshake a WebSocket needs. If you open the app on `http://<lan-ip>:3000`, real-time features (chat streaming, live issue updates, notifications) will fail to connect until you do one of the following:
+HTTP 请求（issues、comments、uploads）在 LAN 中默认可用，因为 Next.js rewrites 会把 `/api`、`/auth`、`/uploads` 代理到 backend。**WebSocket 不会默认可用**：Next.js rewrites 只转发 HTTP 请求，不处理 WebSocket 需要的 `Upgrade` handshake。如果你用 `http://<lan-ip>:3000` 打开应用，实时功能（chat streaming、实时 issue 更新、通知）会连接失败，直到你做其中一件事：
 
-1. **Put a reverse proxy in front of the stack (recommended).** Nginx or Caddy terminates the WebSocket upgrade and forwards it to the backend on port 8080. See the [Reverse Proxy](#reverse-proxy) section above — the Nginx example already includes a `location /ws { ... }` block with the correct `Upgrade` / `Connection` headers. Once a proxy is in place the browser connects directly through it, so no frontend rebuild is needed.
-
-2. **Bake a WebSocket URL into the web image.** If you are not running a reverse proxy, rebuild the web image with `NEXT_PUBLIC_WS_URL` pointing straight at the backend (port 8080 must be reachable from the browser):
+1. **在 stack 前放反向代理（推荐）。** Nginx 或 Caddy 负责 WebSocket upgrade，并转发到 backend 8080。上面的 Nginx 示例已经包含正确的 `location /ws { ... }`。
+2. **把 WebSocket URL 构建进 web image。** 如果没有反向代理，使用 `NEXT_PUBLIC_WS_URL` 指向 backend（浏览器必须能访问 8080）：
 
    ```bash
    # In .env
    NEXT_PUBLIC_WS_URL=ws://<lan-ip>:8080/ws
 
-   # Rebuild the web image so the build-time value is baked in
+   # 重新构建 web image，把 build-time 值写进去
    docker compose -f docker-compose.selfhost.yml -f docker-compose.selfhost.build.yml up -d --build
    ```
 
-   `NEXT_PUBLIC_WS_URL` is a build-time variable (see `Dockerfile.web`), so setting it only in `environment:` on the pre-built image has no effect — you must use the `selfhost.build.yml` override that rebuilds the image.
+`NEXT_PUBLIC_WS_URL` 是 build-time 变量（见 `Dockerfile.web`），只在预构建 image 的 `environment:` 中设置不会生效；必须使用 `selfhost.build.yml` override 重新构建。
 
-> **Note:** If you need to hard-code a different public API / WebSocket endpoint into the web image for any other reason, use the same source-build override: `docker compose -f docker-compose.selfhost.yml -f docker-compose.selfhost.build.yml up -d --build`.
+## 健康检查
 
-## Health Check
-
-The backend exposes public health endpoints:
+Backend 暴露公开健康检查端点：
 
 ```text
 GET /health
@@ -306,39 +303,30 @@ GET /healthz
 → same response as /readyz
 ```
 
-Use `/health` for basic liveness / reachability checks. Use `/readyz` for
-dependency-aware readiness probes and external monitoring that should fail when
-the database is unavailable or migrations are not fully applied. `/healthz` is
-kept as an alias for operator familiarity.
+`/health` 用于基础存活/可达性检查。`/readyz` 用于依赖感知 readiness probe 和外部监控：数据库不可用或迁移未完全应用时应该失败。`/healthz` 保留为别名，方便 operator 使用。
 
 ## Prometheus Metrics
 
-The backend can expose Prometheus metrics on a separate management listener:
+Backend 可以在独立 management listener 上暴露 Prometheus metrics：
 
 ```bash
 METRICS_ADDR=127.0.0.1:9090 ./server/bin/server
 curl http://127.0.0.1:9090/metrics
 ```
 
-`METRICS_ADDR` is empty by default, so no metrics listener is started. The
-public API port does not serve `/metrics`; keep it that way for internet-facing
-deployments. HTTP request metrics start accumulating only after the metrics
-listener is enabled. Metrics can reveal internal routes, traffic volume,
-dependency state, and runtime health.
+`METRICS_ADDR` 默认为空，因此不会启动 metrics listener。公网 API 端口不提供 `/metrics`，面向互联网部署时应保持如此。HTTP request metrics 只有在 metrics listener 启用后才开始累计。Metrics 可能暴露内部路由、流量、依赖状态和 runtime health。
 
-For Docker or Kubernetes deployments, prefer a private scrape path: bind the
-metrics listener to an internal interface and protect it with private
-networking, allowlists, NetworkPolicy, or proxy authentication. If you bind
-`METRICS_ADDR=0.0.0.0:9090` inside a container, only publish that port to a
-trusted network, for example a host-local mapping such as
-`127.0.0.1:9090:9090`.
+Docker 或 Kubernetes 部署建议使用私有 scrape 路径：把 metrics listener 绑定到内部接口，并用私有网络、allowlist、NetworkPolicy 或代理认证保护。如果在容器内绑定 `METRICS_ADDR=0.0.0.0:9090`，只把该端口发布到可信网络，例如 host-local 映射 `127.0.0.1:9090:9090`。
 
-## Upgrading
+## 升级
 
 ```bash
 docker compose -f docker-compose.selfhost.yml pull
 docker compose -f docker-compose.selfhost.yml up -d
 ```
 
-Pin `MULTICA_IMAGE_TAG` in `.env` to an exact release like `v0.2.4` if you want to stay on a specific version. Migrations run automatically on backend startup. They are idempotent — running them multiple times has no effect.
-If the selected GHCR tag has not been published yet, fall back to `docker compose -f docker-compose.selfhost.yml -f docker-compose.selfhost.build.yml up -d --build`.
+如果想固定版本，在 `.env` 中把 `MULTICA_IMAGE_TAG` pin 到具体 release，例如 `v0.2.4`。迁移会在 backend 启动时自动运行，且是幂等的，重复运行不会产生影响。如果选中的 GHCR tag 尚未发布，回退到：
+
+```bash
+docker compose -f docker-compose.selfhost.yml -f docker-compose.selfhost.build.yml up -d --build
+```

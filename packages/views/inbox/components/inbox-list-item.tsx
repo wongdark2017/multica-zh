@@ -62,7 +62,7 @@ export function InboxListItem({
             <span
               role="button"
               tabIndex={-1}
-              title="Archive"
+              title="归档"
               onClick={(e) => {
                 e.stopPropagation();
                 onArchive();

@@ -133,6 +133,16 @@ vi.mock("sonner", () => ({
 }));
 
 describe("SearchCommand", () => {
+  const searchPlaceholder = "输入命令或搜索...";
+  const newIssueLabel = "新建 Issue";
+  const newProjectLabel = "新建项目";
+  const settingsLabel = "设置";
+  const inboxLabel = "收件箱";
+  const copyIssueLinkLabel = "复制 Issue 链接";
+  const darkThemeLabel = "切换到深色主题";
+  const lightThemeLabel = "切换到浅色主题";
+  const systemThemeLabel = "使用系统主题";
+
   beforeEach(() => {
     mockPush.mockReset();
     mockSearchIssues.mockReset().mockResolvedValue({ issues: [] });
@@ -162,7 +172,7 @@ describe("SearchCommand", () => {
 
     render(<SearchCommand />);
 
-    const input = screen.getByPlaceholderText("Type a command or search...");
+    const input = screen.getByPlaceholderText(searchPlaceholder);
     await user.click(input);
 
     expect(useSearchStore.getState().open).toBe(true);
@@ -172,7 +182,7 @@ describe("SearchCommand", () => {
     await waitFor(() => {
       expect(useSearchStore.getState().open).toBe(false);
     });
-    expect(screen.queryByPlaceholderText("Type a command or search...")).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(searchPlaceholder)).not.toBeInTheDocument();
   });
 
   it("shows only New Issue by default and hides Pages / Switch Workspace / low-frequency commands until query", () => {
@@ -184,36 +194,36 @@ describe("SearchCommand", () => {
     // else (theme, copy, New Project) must be revealed by typing.
     expect(screen.getByText("Commands")).toBeInTheDocument();
     expect(
-      screen.getByText((_, el) => el?.textContent === "New Issue" && el?.tagName === "SPAN"),
+      screen.getByText((_, el) => el?.textContent === newIssueLabel && el?.tagName === "SPAN"),
     ).toBeInTheDocument();
-    expect(screen.queryByText("New Project")).not.toBeInTheDocument();
-    expect(screen.queryByText("Switch to Light Theme")).not.toBeInTheDocument();
-    expect(screen.queryByText("Switch to Dark Theme")).not.toBeInTheDocument();
-    expect(screen.queryByText("Use System Theme")).not.toBeInTheDocument();
+    expect(screen.queryByText(newProjectLabel)).not.toBeInTheDocument();
+    expect(screen.queryByText(lightThemeLabel)).not.toBeInTheDocument();
+    expect(screen.queryByText(darkThemeLabel)).not.toBeInTheDocument();
+    expect(screen.queryByText(systemThemeLabel)).not.toBeInTheDocument();
   });
 
   it("filters navigation pages by query", async () => {
     const user = userEvent.setup();
     render(<SearchCommand />);
 
-    const input = screen.getByPlaceholderText("Type a command or search...");
+    const input = screen.getByPlaceholderText(searchPlaceholder);
     await user.type(input, "set");
 
     await waitFor(() => {
       // HighlightText splits text, so use a function matcher
-      expect(screen.getByText((_, el) => el?.textContent === "Settings" && el?.tagName === "SPAN")).toBeInTheDocument();
+      expect(screen.getByText((_, el) => el?.textContent === settingsLabel && el?.tagName === "SPAN")).toBeInTheDocument();
     });
-    expect(screen.queryByText("Inbox")).not.toBeInTheDocument();
+    expect(screen.queryByText(inboxLabel)).not.toBeInTheDocument();
   });
 
   it("navigates to page on selection", async () => {
     const user = userEvent.setup();
     render(<SearchCommand />);
 
-    const input = screen.getByPlaceholderText("Type a command or search...");
+    const input = screen.getByPlaceholderText(searchPlaceholder);
     await user.type(input, "settings");
 
-    const settingsItem = await screen.findByText("Settings");
+    const settingsItem = await screen.findByText(settingsLabel);
     await user.click(settingsItem);
 
     expect(mockPush).toHaveBeenCalledWith("/ws-test/settings");
@@ -232,7 +242,7 @@ describe("SearchCommand", () => {
 
     render(<SearchCommand />);
 
-    expect(screen.getByText("Recent")).toBeInTheDocument();
+    expect(screen.getByText("最近使用")).toBeInTheDocument();
     expect(screen.getByText("First issue")).toBeInTheDocument();
     expect(screen.getByText("MUL-1")).toBeInTheDocument();
     expect(screen.getByText("Second issue")).toBeInTheDocument();
@@ -243,21 +253,21 @@ describe("SearchCommand", () => {
     const user = userEvent.setup();
     render(<SearchCommand />);
 
-    const input = screen.getByPlaceholderText("Type a command or search...");
+    const input = screen.getByPlaceholderText(searchPlaceholder);
     await user.type(input, "new");
 
     await waitFor(() => {
       expect(screen.getByText("Commands")).toBeInTheDocument();
       expect(
-        screen.getByText((_, el) => el?.textContent === "New Issue" && el?.tagName === "SPAN"),
+        screen.getByText((_, el) => el?.textContent === newIssueLabel && el?.tagName === "SPAN"),
       ).toBeInTheDocument();
       expect(
-        screen.getByText((_, el) => el?.textContent === "New Project" && el?.tagName === "SPAN"),
+        screen.getByText((_, el) => el?.textContent === newProjectLabel && el?.tagName === "SPAN"),
       ).toBeInTheDocument();
     });
 
     const newIssue = await screen.findByText(
-      (_, el) => el?.textContent === "New Issue" && el?.tagName === "SPAN",
+      (_, el) => el?.textContent === newIssueLabel && el?.tagName === "SPAN",
     );
     await user.click(newIssue);
 
@@ -270,11 +280,11 @@ describe("SearchCommand", () => {
     mockPathname.current = "/ws-test/projects";
     render(<SearchCommand />);
 
-    const input = screen.getByPlaceholderText("Type a command or search...");
+    const input = screen.getByPlaceholderText(searchPlaceholder);
     await user.type(input, "copy");
 
     // Commands section may still be empty / absent.
-    expect(screen.queryByText("Copy Issue Link")).not.toBeInTheDocument();
+    expect(screen.queryByText(copyIssueLinkLabel)).not.toBeInTheDocument();
   });
 
   it("copies issue link and identifier when on an issue detail route", async () => {
@@ -290,23 +300,23 @@ describe("SearchCommand", () => {
     ];
     render(<SearchCommand />);
 
-    const input = screen.getByPlaceholderText("Type a command or search...");
+    const input = screen.getByPlaceholderText(searchPlaceholder);
     await user.type(input, "copy");
 
     const linkItem = await screen.findByText(
-      (_, el) => el?.textContent === "Copy Issue Link" && el?.tagName === "SPAN",
+      (_, el) => el?.textContent === copyIssueLinkLabel && el?.tagName === "SPAN",
     );
     await user.click(linkItem);
 
     expect(mockGetShareableUrl).toHaveBeenCalledWith("/ws-test/issues/issue-1");
     expect(mockClipboardWrite).toHaveBeenCalledWith("https://app.multica//ws-test/issues/issue-1");
-    expect(mockToastSuccess).toHaveBeenCalledWith("Link copied");
+    expect(mockToastSuccess).toHaveBeenCalledWith("链接已复制");
 
     // Reopen palette and test identifier copy
     act(() => {
       useSearchStore.setState({ open: true });
     });
-    const input2 = screen.getByPlaceholderText("Type a command or search...");
+    const input2 = screen.getByPlaceholderText(searchPlaceholder);
     await user.type(input2, "copy");
     const idItem = await screen.findByText(
       (_, el) =>
@@ -314,7 +324,7 @@ describe("SearchCommand", () => {
     );
     await user.click(idItem);
     expect(mockClipboardWrite).toHaveBeenCalledWith("MUL-42");
-    expect(mockToastSuccess).toHaveBeenCalledWith("Copied MUL-42");
+    expect(mockToastSuccess).toHaveBeenCalledWith("已复制 MUL-42");
 
     writeSpy.mockRestore();
   });
@@ -323,17 +333,17 @@ describe("SearchCommand", () => {
     const user = userEvent.setup();
     render(<SearchCommand />);
 
-    const input = screen.getByPlaceholderText("Type a command or search...");
+    const input = screen.getByPlaceholderText(searchPlaceholder);
     await user.type(input, "dark");
 
     await waitFor(() => {
       expect(screen.getByText("Commands")).toBeInTheDocument();
       expect(
-        screen.getByText((_, el) => el?.textContent === "Switch to Dark Theme" && el?.tagName === "SPAN"),
+        screen.getByText((_, el) => el?.textContent === darkThemeLabel && el?.tagName === "SPAN"),
       ).toBeInTheDocument();
     });
-    expect(screen.queryByText("Switch to Light Theme")).not.toBeInTheDocument();
-    expect(screen.queryByText("Use System Theme")).not.toBeInTheDocument();
+    expect(screen.queryByText(lightThemeLabel)).not.toBeInTheDocument();
+    expect(screen.queryByText(systemThemeLabel)).not.toBeInTheDocument();
   });
 
   it("applies the selected theme and closes the palette", async () => {
@@ -341,11 +351,11 @@ describe("SearchCommand", () => {
     mockTheme.current = "light";
     render(<SearchCommand />);
 
-    const input = screen.getByPlaceholderText("Type a command or search...");
+    const input = screen.getByPlaceholderText(searchPlaceholder);
     await user.type(input, "dark");
 
     const darkItem = await screen.findByText(
-      (_, el) => el?.textContent === "Switch to Dark Theme" && el?.tagName === "SPAN",
+      (_, el) => el?.textContent === darkThemeLabel && el?.tagName === "SPAN",
     );
     await user.click(darkItem);
 
@@ -358,21 +368,21 @@ describe("SearchCommand", () => {
     mockTheme.current = "dark";
     render(<SearchCommand />);
 
-    const input = screen.getByPlaceholderText("Type a command or search...");
+    const input = screen.getByPlaceholderText(searchPlaceholder);
     await user.type(input, "theme");
 
     await waitFor(() => {
       expect(
-        screen.getByText((_, el) => el?.textContent === "Switch to Light Theme" && el?.tagName === "SPAN"),
+        screen.getByText((_, el) => el?.textContent === lightThemeLabel && el?.tagName === "SPAN"),
       ).toBeInTheDocument();
       expect(
-        screen.getByText((_, el) => el?.textContent === "Switch to Dark Theme" && el?.tagName === "SPAN"),
+        screen.getByText((_, el) => el?.textContent === darkThemeLabel && el?.tagName === "SPAN"),
       ).toBeInTheDocument();
       expect(
-        screen.getByText((_, el) => el?.textContent === "Use System Theme" && el?.tagName === "SPAN"),
+        screen.getByText((_, el) => el?.textContent === systemThemeLabel && el?.tagName === "SPAN"),
       ).toBeInTheDocument();
     });
-    expect(screen.getByLabelText("Current theme")).toBeInTheDocument();
+    expect(screen.getByLabelText("当前主题")).toBeInTheDocument();
   });
 
   it("lists other workspaces under Switch Workspace and navigates on select", async () => {
@@ -385,7 +395,7 @@ describe("SearchCommand", () => {
     ];
     render(<SearchCommand />);
 
-    const input = screen.getByPlaceholderText("Type a command or search...");
+    const input = screen.getByPlaceholderText(searchPlaceholder);
     await user.type(input, "alpha");
 
     await waitFor(() => {
@@ -416,7 +426,7 @@ describe("SearchCommand", () => {
     ];
     render(<SearchCommand />);
 
-    const input = screen.getByPlaceholderText("Type a command or search...");
+    const input = screen.getByPlaceholderText(searchPlaceholder);
     await user.type(input, "workspace");
 
     await waitFor(() => {
@@ -442,7 +452,7 @@ describe("SearchCommand", () => {
 
     render(<SearchCommand />);
 
-    expect(screen.getByText("Recent")).toBeInTheDocument();
+    expect(screen.getByText("最近使用")).toBeInTheDocument();
     expect(screen.getByText("Existing issue")).toBeInTheDocument();
     expect(screen.queryByText("deleted-issue")).not.toBeInTheDocument();
   });

@@ -56,7 +56,7 @@ const externalLinkText = (label: string) => (
 export const baseOptions: BaseLayoutProps = {
   nav: {
     title: (
-      <span className="font-semibold text-base">Multica Docs</span>
+      <span className="font-semibold text-base">Multica 文档</span>
     ),
   },
   links: [

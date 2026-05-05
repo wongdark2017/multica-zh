@@ -225,7 +225,7 @@ export function ActivityHeatmap({ usage }: { usage: RuntimeUsage[] }) {
           </svg>
         </div>
         <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-          <span>Less</span>
+          <span>少</span>
           {[0, 1, 2, 3, 4].map((level) => (
             <div
               key={level}
@@ -233,7 +233,7 @@ export function ActivityHeatmap({ usage }: { usage: RuntimeUsage[] }) {
               style={{ backgroundColor: getHeatmapColor(level) }}
             />
           ))}
-          <span>More</span>
+          <span>多</span>
         </div>
       </div>
 

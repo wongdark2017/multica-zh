@@ -192,7 +192,7 @@ export function AutopilotsPage() {
         </div>
         <Button size="sm" variant="outline" onClick={() => openCreate()}>
           <Plus className="h-3.5 w-3.5 mr-1" />
-          New autopilot
+          新建 autopilot
         </Button>
       </PageHeader>
 
@@ -217,9 +217,9 @@ export function AutopilotsPage() {
         ) : autopilots.length === 0 ? (
           <div className="flex flex-col items-center py-16 px-5">
             <Zap className="h-10 w-10 mb-3 text-muted-foreground opacity-30" />
-            <p className="text-sm text-muted-foreground">No autopilots yet</p>
+            <p className="text-sm text-muted-foreground">还没有 autopilots</p>
             <p className="text-xs text-muted-foreground mt-1 mb-6">
-              Schedule recurring tasks for your AI agents. Pick a template or start from scratch.
+              为你的 AI agents 设置周期性任务。选择模板，或从空白开始。
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full max-w-3xl">
               {TEMPLATES.map((t) => {
@@ -242,7 +242,7 @@ export function AutopilotsPage() {
             </div>
             <Button size="sm" variant="outline" className="mt-4" onClick={() => openCreate()}>
               <Plus className="h-3.5 w-3.5 mr-1" />
-              Start from scratch
+              从空白开始
             </Button>
           </div>
         ) : (
@@ -250,11 +250,11 @@ export function AutopilotsPage() {
             {/* Column headers */}
             <div className="sticky top-0 z-[1] hidden h-8 items-center gap-2 border-b bg-muted/30 px-5 text-xs font-medium text-muted-foreground sm:flex">
               <span className="shrink-0 w-4" />
-              <span className="min-w-0 flex-1">Name</span>
+              <span className="min-w-0 flex-1">名称</span>
               <span className="w-32 shrink-0">Agent</span>
-              <span className="w-24 text-center shrink-0">Mode</span>
-              <span className="w-20 text-center shrink-0">Status</span>
-              <span className="w-20 text-right shrink-0">Last run</span>
+              <span className="w-24 text-center shrink-0">模式</span>
+              <span className="w-20 text-center shrink-0">状态</span>
+              <span className="w-20 text-right shrink-0">上次运行</span>
             </div>
             {autopilots.map((autopilot) => (
               <AutopilotRow key={autopilot.id} autopilot={autopilot} />

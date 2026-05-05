@@ -6,15 +6,15 @@ import type { NodeViewProps } from "@tiptap/react";
 import { Copy, Check } from "lucide-react";
 
 function CodeBlockView({ node }: NodeViewProps) {
-  const [copied, setCopied] = useState(false);
+  const [copied, set已复制] = useState(false);
   const language = node.attrs.language || "";
 
   const handleCopy = async () => {
     const text = node.textContent;
     if (!text) return;
     await navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    set已复制(true);
+    setTimeout(() => set已复制(false), 2000);
   };
 
   return (
@@ -32,7 +32,7 @@ function CodeBlockView({ node }: NodeViewProps) {
           type="button"
           onClick={handleCopy}
           className="flex h-6 w-6 items-center justify-center rounded text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-          title="Copy code"
+          title="复制代码"
         >
           {copied ? (
             <Check className="h-3.5 w-3.5" />

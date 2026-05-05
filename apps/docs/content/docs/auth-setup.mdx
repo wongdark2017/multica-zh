@@ -1,63 +1,63 @@
 ---
-title: Sign-in and signup configuration
-description: Configure email + verification code sign-in, Google OAuth, signup allowlists, and local test codes.
+title: 登录与注册配置
+description: 配 Email 验证码登录、Google OAuth、注册白名单和本地测试验证码。
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 import { Mermaid } from "@/components/mermaid";
 
-Multica supports two sign-in methods: **email + verification code** (default) and **Google OAuth** (optional). On successful sign-in, the server issues a JWT cookie with a 30-day lifetime. This page covers how to configure each method, how to restrict who can sign up, and the single biggest trap for self-hosted deployments.
+Multica 支持两种登录方式：**Email + 验证码**（默认）和 **Google OAuth**（可选）。登录成功后 server 签发一个 30 天有效期的 JWT cookie。这一页讲怎么配、怎么限制谁能注册、以及本地测试验证码怎么安全使用。
 
-For the list of environment variables referenced below, see [Environment variables](/environment-variables); for token usage and lifecycle details, see [Authentication and tokens](/auth-tokens).
+上面用到的环境变量的清单见 [环境变量](/environment-variables)；token 怎么用、生命周期细节见 [认证与令牌](/auth-tokens)。
 
-## How email + verification code sign-in works
+## Email + 验证码登录怎么工作
 
-The user enters an email on the sign-in page → the server sends a 6-digit code → the user enters it → the server verifies it → a JWT cookie is issued. Standard flow. It requires [Resend](https://resend.com/) as the email provider:
+用户在登录页输邮箱 → server 发 6 位验证码 → 用户填回 → server 验证 → 签发 JWT cookie。是标准流程。需要 [Resend](https://resend.com/) 作为邮件发送服务：
 
-1. Create a Resend account and verify your domain
-2. Create an API key
-3. Set the environment variables:
+1. 在 Resend 建账号、验证你的域名
+2. 创建 API key
+3. 设环境变量：
 
     ```bash
     RESEND_API_KEY=re_xxxxxxxxxxxxxxxx
-    RESEND_FROM_EMAIL=noreply@yourdomain.com  # must be a domain verified in Resend
+    RESEND_FROM_EMAIL=noreply@yourdomain.com  # 必须是 Resend 已验证的域名
     ```
 
-4. Restart the server
+4. 重启 server
 
-**What happens if you don't set `RESEND_API_KEY`**: the server doesn't error, but **every email that should have been sent is written to the server's stdout only**. Handy for local development (copy the code from the logs); in production it's a black hole.
+**不配 `RESEND_API_KEY` 的后果**：server 不报错，但**所有本该发出去的邮件只打到 server 的 stdout**。本地开发方便（你从日志抄验证码），生产环境等于黑洞。
 
-## Fixed local testing codes
+## 固定本地测试验证码
 
 <Callout type="warning">
-**Do not enable a fixed verification code on a publicly reachable instance.**
+**不要在公网可访问实例上启用固定验证码。**
 
-The old behavior where non-production instances accepted `888888` by default has been removed. Unless you explicitly configure it, typing `888888` is treated like any other wrong code.
+旧版「非 production 默认接受 `888888`」的行为已经移除。除非你显式配置，否则输入 `888888` 会和普通错误验证码一样被拒绝。
 
-Local development without Resend should use the generated code printed in server logs. If you need deterministic local/private automation, set `MULTICA_DEV_VERIFICATION_CODE` to a 6-digit value such as `888888`, and keep `APP_ENV` non-production:
+不配 Resend 的本地开发，应使用 server 日志里打印的随机验证码。如果你需要确定性的本地/私有自动化测试，可以把 `MULTICA_DEV_VERIFICATION_CODE` 设成一个 6 位数字，比如 `888888`，并保持 `APP_ENV` 为非 production：
 
 ```bash
 APP_ENV=development
 MULTICA_DEV_VERIFICATION_CODE=888888
 ```
 
-This shortcut is ignored when `APP_ENV=production`.
+`APP_ENV=production` 时这个快捷码会被忽略。
 </Callout>
 
-Production deployments should leave `MULTICA_DEV_VERIFICATION_CODE` empty and set `APP_ENV=production`. If you deploy via `make selfhost` / `docker-compose.selfhost.yml`, `APP_ENV` defaults to `production`.
+生产部署应保持 `MULTICA_DEV_VERIFICATION_CODE` 为空，并设置 `APP_ENV=production`。如果你用 `make selfhost` / `docker-compose.selfhost.yml` 自部署，`APP_ENV` 默认就是 `production`。
 
-## Google OAuth configuration
+## 怎么配 Google OAuth
 
-Optional. Without it, only email + verification code is available; with it, the sign-in page gets a "Sign in with Google" button.
+可选。不配就只有 Email + 验证码登录；配了后登录页会多出「用 Google 登录」按钮。
 
-1. Create an OAuth 2.0 client in the [Google Cloud Console](https://console.cloud.google.com/)
-2. Set the **Authorized redirect URIs** to your Multica frontend address plus `/auth/callback`, for example:
+1. 去 [Google Cloud Console](https://console.cloud.google.com/) 创建一个 OAuth 2.0 client
+2. **授权的回调 URI**（Authorized redirect URIs）填你的 Multica 前端地址加 `/auth/callback`，例如：
 
     ```text
     https://multica.yourdomain.com/auth/callback
     ```
 
-3. Once you have the client ID and client secret, set three environment variables:
+3. 拿到 client ID 和 client secret 后设三个环境变量：
 
     ```bash
     GOOGLE_CLIENT_ID=xxxxx.apps.googleusercontent.com
@@ -65,64 +65,64 @@ Optional. Without it, only email + verification code is available; with it, the 
     GOOGLE_REDIRECT_URI=https://multica.yourdomain.com/auth/callback
     ```
 
-4. Restart the server.
+4. 重启 server。
 
-**Takes effect at runtime**: the frontend reads these settings at runtime via `/api/config` — after changing them, restart the server and the frontend picks up the new values with no rebuild or redeploy.
+**热生效**：前端通过 `/api/config` 运行时读这些配置——改完只要重启 server，前端不用重建镜像、不用重新部署。
 
 <Callout type="warning">
-**The redirect URI must match exactly in both the Google Console and `GOOGLE_REDIRECT_URI`** — including protocol (`http` vs `https`), trailing slash, and port. Any mismatch and Google rejects the entire OAuth flow; the error shown to the user is `redirect_uri_mismatch`.
+**回调 URI 在 Google Console 和 `GOOGLE_REDIRECT_URI` 两处必须完全一致**，包括协议（`http` vs `https`）、尾部斜杠、端口。不一致 Google 会拒绝整个 OAuth 流程，用户看到的错误是 `redirect_uri_mismatch`。
 </Callout>
 
-## Restricting who can sign up
+## 怎么限制谁能注册
 
-Three environment variables combine by priority:
+三层环境变量按优先级组合：
 
 <Mermaid chart={`
 graph TD
-    Start[New user first sign-in] --> A{Email in<br/>ALLOWED_EMAILS?}
-    A -- Yes --> Allow[Allow signup]
-    A -- No --> B{Domain in<br/>ALLOWED_EMAIL_DOMAINS?}
-    B -- Yes --> Allow
-    B -- No --> C{Any allowlist<br/>non-empty?}
-    C -- Yes --> Block[Reject]
-    C -- No --> D{ALLOW_SIGNUP<br/>= true?}
-    D -- Yes --> Allow
-    D -- No --> Block
+    Start[新用户首次登录] --> A{email 在<br/>ALLOWED_EMAILS 里?}
+    A -- 是 --> Allow[允许注册]
+    A -- 否 --> B{domain 在<br/>ALLOWED_EMAIL_DOMAINS 里?}
+    B -- 是 --> Allow
+    B -- 否 --> C{任一白名单<br/>非空?}
+    C -- 是 --> Block[拒绝]
+    C -- 否 --> D{ALLOW_SIGNUP<br/>= true?}
+    D -- 是 --> Allow
+    D -- 否 --> Block
 `} />
 
-**Existing users can always sign in again** — the signup allowlist only applies to **first-time signup**, not returning users.
+**已经登录过的老用户永远可以再次登录**——signup 白名单只对**首次注册**生效，不拦截老用户。
 
-- **`ALLOWED_EMAILS`** (highest priority) — explicit email allowlist, comma-separated. **When non-empty, only listed emails can sign up.**
-- **`ALLOWED_EMAIL_DOMAINS`** — domain allowlist, comma-separated (for example `company.io,partner.com`).
-- **`ALLOW_SIGNUP`** — master switch, default `true`. Set `false` to disable signup entirely.
+- **`ALLOWED_EMAILS`**（最高优先级）—— 显式邮箱白名单，逗号分隔。**非空时只有列表里的邮箱能注册**。
+- **`ALLOWED_EMAIL_DOMAINS`**—— 域名白名单，逗号分隔（例如 `company.io,partner.com`）。
+- **`ALLOW_SIGNUP`** —— 总开关，默认 `true`。设 `false` 完全关闭注册。
 
 <Callout type="warning">
-**The three layers are AND semantics, not OR.** A common wrong intuition is that `ALLOWED_EMAIL_DOMAINS=company.io` + `ALLOW_SIGNUP=true` means "allow company.io plus everyone else." It does **not**. If any layer has a non-empty value, **emails not matching it are rejected outright** — `ALLOW_SIGNUP=true` does not override that.
+**三层白名单是 AND 语义，不是 OR。** 很多人第一直觉是「设 `ALLOWED_EMAIL_DOMAINS=company.io` + `ALLOW_SIGNUP=true` 就是允许 company.io 和其他所有人」——**不是**。任何一层白名单只要设了非空值，**不匹配的邮箱直接拒**，`ALLOW_SIGNUP=true` 挡不住。
 
-To actually "allow everyone," leave all three variables empty (or keep `ALLOW_SIGNUP=true`).
+要真的「允许所有人」，所有三个环境变量都留空（或 `ALLOW_SIGNUP=true`）。
 </Callout>
 
-**Typical configurations**:
+**典型配法**：
 
-| Goal | Configuration |
+| 需求 | 配置 |
 |---|---|
-| Internal only, employees of `company.io` | `ALLOWED_EMAIL_DOMAINS=company.io` |
-| Internal + a few external collaborators | `ALLOWED_EMAIL_DOMAINS=company.io` + collaborator addresses added to `ALLOWED_EMAILS` |
-| Disable self-serve signup entirely, invite-only | `ALLOW_SIGNUP=false` |
-| Open signup (not recommended for production) | All three empty |
+| 公司内网，只允许 `company.io` 员工 | `ALLOWED_EMAIL_DOMAINS=company.io` |
+| 公司内网 + 几个外部合作者 | `ALLOWED_EMAIL_DOMAINS=company.io` + 合作者个人邮箱加到 `ALLOWED_EMAILS` |
+| 完全关闭自助注册，只能邀请 | `ALLOW_SIGNUP=false` |
+| 开放注册（不推荐生产用）| 三个都留空 |
 
-## Can you still invite people when signup is disabled?
+## 关了注册还能邀请人进来吗
 
-**Only people who already have a Multica account.** Accepting an invite doesn't check the signup allowlist — if the invitee has signed up already (for example in another workspace), clicking the invite link and signing in lets them accept.
+**只对已经有 Multica 账号的人能**。接受邀请那一步不检查 signup 白名单——如果对方已经注册过（比如在别的工作区），他们点链接登录就能直接接受。
 
-**But people who have never signed up cannot be rescued by an invite.** Before accepting, they must sign in, and the first step of sign-in (requesting the verification code) passes through the signup allowlist check. If `ALLOW_SIGNUP=false`, or their email isn't in `ALLOWED_EMAILS` / `ALLOWED_EMAIL_DOMAINS`, they **cannot complete signup**, and therefore cannot accept the invite.
+**但还没注册过的人，邀请救不了他们**。他们接受邀请前必须先登录，登录的第一步（发验证码）会过 signup 白名单检查。如果你 `ALLOW_SIGNUP=false`、或他们的邮箱不在 `ALLOWED_EMAILS` / `ALLOWED_EMAIL_DOMAINS` 里，他们**没法完成注册**，也就没法接受邀请。
 
-To invite an external collaborator who hasn't signed up yet: temporarily add their email to `ALLOWED_EMAILS`, wait for them to sign up and accept the invite, then remove the entry.
+要邀请一个还没注册的外部协作者：临时把他们的邮箱加到 `ALLOWED_EMAILS`，等他们注册 + 接受邀请之后再把这条移掉。
 
-For how to create and use invites, see [Members and roles](/members-roles).
+邀请的创建和使用见 [成员与权限](/members-roles)。
 
-## Next
+## 下一步
 
-- [Environment variables](/environment-variables) — full definitions of every variable used on this page
-- [Authentication and tokens](/auth-tokens) — JWT / PAT / daemon token categories and usage
-- [Troubleshooting](/troubleshooting) — verification code not received, OAuth `redirect_uri_mismatch`, signup rejected
+- [环境变量](/environment-variables) —— 这一页用到的环境变量完整定义
+- [认证与令牌](/auth-tokens) —— JWT / PAT / Daemon Token 的分类和使用
+- [故障排查](/troubleshooting) —— 验证码收不到、OAuth 报 `redirect_uri_mismatch`、注册被拒的常见排查

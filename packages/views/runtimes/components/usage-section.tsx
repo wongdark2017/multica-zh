@@ -258,7 +258,7 @@ function WhenChart({
     <div className="rounded-lg border bg-card p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <h4 className="text-sm font-semibold">When this runtime spent</h4>
+          <h4 className="text-sm font-semibold">该 runtime 的花费时间</h4>
           <Segmented
             value={tab}
             onChange={setTab}
@@ -563,10 +563,10 @@ function DailyBreakdownTable({ usage }: { usage: RuntimeUsage[] }) {
   return (
     <div className="rounded-lg border">
       <div className="grid grid-cols-[100px_1fr_80px_80px_80px_80px] gap-2 border-b px-3 py-2 text-xs font-medium text-muted-foreground">
-        <div>Date</div>
-        <div>Model</div>
-        <div className="text-right">Input</div>
-        <div className="text-right">Output</div>
+        <div>日期</div>
+        <div>模型</div>
+        <div className="text-right">输入</div>
+        <div className="text-right">输出</div>
         <div className="text-right">Cache R</div>
         <div className="text-right">Cache W</div>
       </div>
@@ -617,7 +617,7 @@ function UsageEmpty() {
   return (
     <div className="flex flex-col items-center rounded-lg border border-dashed py-8">
       <BarChart3 className="h-5 w-5 text-muted-foreground/40" />
-      <p className="mt-2 text-xs text-muted-foreground">No usage data yet</p>
+      <p className="mt-2 text-xs text-muted-foreground">暂无用量数据</p>
     </div>
   );
 }
@@ -665,4 +665,3 @@ function computeTotals(rows: RuntimeUsage[]): UsageTotals {
     { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0, cacheSavings: 0 },
   );
 }
-

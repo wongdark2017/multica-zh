@@ -117,7 +117,7 @@ export function ModelPicker({
         <div className="p-1.5">
           <Input
             autoFocus
-            placeholder="Search or type a model ID"
+            placeholder="搜索或输入 model ID"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="h-7 text-xs"
@@ -128,7 +128,7 @@ export function ModelPicker({
       {modelsQuery.isLoading && (
         <div className="flex items-center gap-2 p-3 text-xs text-muted-foreground">
           <Loader2 className="h-3 w-3 animate-spin" />
-          Discovering models…
+          正在发现模型…
         </div>
       )}
 
@@ -148,7 +148,7 @@ export function ModelPicker({
                 <span className="truncate font-medium">{m.label}</span>
                 {m.default && (
                   <span className="shrink-0 rounded bg-primary/10 px-1 text-[10px] font-medium text-primary">
-                    default
+                    默认
                   </span>
                 )}
               </div>
@@ -163,7 +163,7 @@ export function ModelPicker({
 
       {!modelsQuery.isLoading && filtered.length === 0 && !canCreate && (
         <p className="px-3 py-3 text-center text-xs text-muted-foreground">
-          No models available
+          暂无可用模型
         </p>
       )}
 
@@ -171,11 +171,11 @@ export function ModelPicker({
         <PickerItem
           selected={false}
           onClick={() => void select(trimmedSearch)}
-          tooltip={`Use “${trimmedSearch}” as a custom model id`}
+          tooltip={`将“${trimmedSearch}”用作自定义 model id`}
         >
           <Plus className="h-3.5 w-3.5 shrink-0 text-primary" />
           <span className="truncate text-primary">
-            Use &ldquo;{trimmedSearch}&rdquo;
+            使用 &ldquo;{trimmedSearch}&rdquo;
           </span>
         </PickerItem>
       )}
@@ -185,9 +185,9 @@ export function ModelPicker({
           type="button"
           onClick={() => void select("")}
           className="mt-1 flex w-full items-center border-t px-3 py-2 text-left text-xs text-muted-foreground transition-colors hover:bg-accent/50"
-          title="Clear and fall back to the runtime's provider default"
+          title="清除并回退到 runtime 的 provider 默认值"
         >
-          Clear (use provider default)
+          清除（使用 provider 默认值）
         </button>
       )}
     </PropertyPicker>

@@ -1,111 +1,111 @@
 ---
-title: Daemon and runtimes
-description: Agents don't run on Multica's servers — they run on your own machines.
+title: 守护进程与运行时
+description: 智能体不在 Multica 服务器上运行——它们跑在你自己的机器上。
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 import { Mermaid } from "@/components/mermaid";
 
-In Multica, [agents](/agents) do **not** run on our servers — they run on your own machines, driven by a small program called the **daemon** that invokes the [AI coding tools](/providers) installed locally. The Multica server only coordinates: it stores [issues](/issues), queues [tasks](/tasks), and dispatches them to the right **runtime** (runtime = daemon × one AI coding tool).
+在 Multica 里，[智能体](/agents) **不**在我们的服务器上运行——它们跑在你自己的机器上，由一个叫**守护进程**（daemon）的小程序调用本地安装的 [AI 编程工具](/providers)。Multica 服务器只做协调：存 [issue](/issues)、排 [任务](/tasks)、派发给正确的**运行时**（runtime = 守护进程 × 一款 AI 编程工具）。
 
-This structure is the biggest difference between Multica and Linear / Jira: **your API keys, toolchain, and code directories stay on your machine** — the Multica server never sees any of them. That means "my agent isn't working" is almost always a local problem — the daemon isn't running, an AI tool isn't installed, a key has expired. Check locally first; see [Troubleshooting](/troubleshooting) for a guide.
+这个结构带来 Multica 和 Linear / Jira 最大的差别：**你的 API 密钥、工具链、代码目录都留在本地**，Multica 服务器一个都看不到。"我的智能体不工作"类问题几乎都是本地问题——守护进程没启动、某款 AI 工具没装、密钥过期——请先从本地查起；定位指引见 [故障排查](/troubleshooting)。
 
-## Starting the daemon
+## 启动守护进程
 
-The daemon is part of the Multica CLI. Once you've installed the [Multica CLI](/cli), run on your own machine:
+守护进程是 Multica CLI 的一部分。装好 [Multica CLI](/cli) 后，在自己机器上跑：
 
 ```bash
 multica daemon start
 ```
 
-On startup it does four things:
+启动后它会做四件事：
 
-1. Reads the credentials saved when you logged in
-2. Detects AI coding tools installed on your `PATH` (11 built-in: [Claude Code](/providers#claude-code), [Codex](/providers#codex), [Cursor](/providers#cursor), [Copilot](/providers#copilot), [Gemini](/providers#gemini), [Hermes](/providers#hermes), [Kimi](/providers#kimi), [Kiro CLI](/providers#kiro-cli), [OpenCode](/providers#opencode), [OpenClaw](/providers#openclaw), [Pi](/providers#pi))
-3. Registers itself with the server, along with a runtime for each detected tool
-4. Keeps **polling every 3 seconds** for tasks to pick up, and **sends a heartbeat every 15 seconds**
+1. 读取你登录时保存的凭证
+2. 探测本机 `PATH` 上已安装的 AI 编程工具（内置支持 11 款：[Claude Code](/providers#claude-code)、[Codex](/providers#codex)、[Cursor](/providers#cursor)、[Copilot](/providers#copilot)、[Gemini](/providers#gemini)、[Hermes](/providers#hermes)、[Kimi](/providers#kimi)、[Kiro CLI](/providers#kiro-cli)、[OpenCode](/providers#opencode)、[OpenClaw](/providers#openclaw)、[Pi](/providers#pi)）
+3. 向服务器注册自己，以及每款检测到的工具对应的运行时
+4. 持续**每 3 秒轮询一次**是否有任务要领，**每 15 秒发一次心跳**
 
-Common commands:
+常用命令：
 
-| Command | Purpose |
+| 命令 | 作用 |
 |---|---|
-| `multica daemon start` | Start (background by default; add `--foreground` to run in the foreground) |
-| `multica daemon stop` | Stop |
-| `multica daemon restart` | Restart |
-| `multica daemon status` | Show status |
-| `multica daemon logs` | Show logs (add `-f` to follow) |
+| `multica daemon start` | 启动（默认后台，加 `--foreground` 前台运行）|
+| `multica daemon stop` | 停止 |
+| `multica daemon restart` | 重启 |
+| `multica daemon status` | 查看状态 |
+| `multica daemon logs` | 查看日志（加 `-f` 跟随）|
 
-Full CLI reference in [CLI commands](/cli).
+完整 CLI 参考见 [CLI 命令速查](/cli)。
 
-**The desktop app ships with a daemon.** If you use the [desktop app](/desktop-app), you don't need to run `multica daemon start` manually — it launches the daemon automatically on startup.
+**桌面应用自带守护进程。**用 [桌面应用](/desktop-app) 就不必手动 `multica daemon start`——它启动时会自动拉起守护进程。
 
-## Why one machine has multiple runtimes
+## 为什么一台机器会有多个运行时
 
-A runtime is not a server and not a container — it's the combination of "**daemon × one AI coding tool**". For example: you start the daemon on a MacBook with both Claude Code and Codex installed, and you're a member of two workspaces. Multica then registers 4 runtimes:
+运行时不是一个服务器，也不是一个容器——它是「**守护进程 × 一款 AI 编程工具**」的组合。举例：你在一台 MacBook 上启动守护进程，本机装了 Claude Code 和 Codex；你是两个工作区的成员。那么 Multica 会注册 4 个运行时：
 
 <Mermaid chart={`
 graph TD
-    D["Your daemon<br/>MacBook"]
-    D --> R1["Runtime<br/>Workspace A × Claude Code"]
-    D --> R2["Runtime<br/>Workspace A × Codex"]
-    D --> R3["Runtime<br/>Workspace B × Claude Code"]
-    D --> R4["Runtime<br/>Workspace B × Codex"]
+    D["你的守护进程<br/>MacBook"]
+    D --> R1["运行时<br/>工作区 A × Claude Code"]
+    D --> R2["运行时<br/>工作区 A × Codex"]
+    D --> R3["运行时<br/>工作区 B × Claude Code"]
+    D --> R4["运行时<br/>工作区 B × Codex"]
 `} />
 
-Key points:
+关键的点：
 
-- **One daemon can map to multiple runtimes** — one per combination of installed tool and workspace you belong to
-- **The same daemon, workspace, and tool produces exactly one runtime** — restarting the daemon never creates duplicate records
-- The **Runtimes** page in the Multica UI lists these rows
+- **一个守护进程可以对应多个运行时**——装了多款工具、加入了多个工作区，每个组合就各一个
+- **同一个守护进程在同一个工作区同一款工具上只会有一条运行时**——重启守护进程不会产生重复记录
+- Multica 界面的 **Runtimes** 页面列的就是这些行
 
 <Callout type="info">
-**Cloud runtimes are coming**, currently in a waitlist phase. Once available, you'll be able to execute agent tasks directly on Multica Cloud without running a local daemon. Sign up with your email on the [download page](https://multica.ai/download) to get notified.
+**云端运行时即将开放**，目前处于等待名单阶段。上线后，你无需在本地运行守护进程，即可在 Multica Cloud 上直接执行智能体任务。在 [下载页面](https://multica.ai/download) 登记邮箱以获取通知。
 </Callout>
 
-## When a runtime is marked offline
+## 运行时什么时候被判定为离线
 
-Multica uses heartbeats to decide whether a runtime is online. Three key numbers:
+Multica 用心跳判断运行时是否在线。三个关键数字：
 
-| Event | Threshold |
+| 事件 | 阈值 |
 |---|---|
-| Daemon heartbeat frequency | Every **15 seconds** |
-| Marked as missing | No heartbeat for **45 seconds** (3 missed beats) |
-| Auto-deleted | Missing with no associated agents for over **7 days** |
+| 守护进程心跳频率 | 每 **15 秒** |
+| 标记为失联 | 超过 **45 秒** 没心跳（漏了 3 次）|
+| 自动删除 | 失联且无关联智能体超过 **7 天** |
 
-Missing is not permanent — as soon as the daemon sends another heartbeat it returns to online, and the runtime record is preserved. Restarting the daemon does not lose runtimes.
+失联不是永久的——守护进程只要再次发出心跳就立刻回到在线，运行时记录也会保留。重启守护进程不会丢运行时。
 
 <Callout type="warning">
-**Tasks running on a missing runtime are marked as failed** (failure reason `runtime_offline`). For retryable sources (issues, chat), Multica automatically requeues them; Autopilot-triggered tasks are not retried automatically. See [Tasks → Which failures retry automatically](/tasks#which-failures-retry-automatically-which-dont).
+**失联的运行时上正在跑的执行任务会被标记为失败**（失败原因 `runtime_offline`）。对可重试的来源（issue、chat），Multica 会自动重新排队；Autopilots 触发的任务不自动重试。详见 [执行任务 → 哪些失败会自动重试](/tasks#哪些失败会自动重试哪些不会)。
 </Callout>
 
-## How many tasks can run in parallel
+## 一次能并发跑多少任务
 
-Multica enforces concurrency limits at two layers:
+Multica 对并发有两层限额：
 
-- **Daemon layer**: **20 concurrent tasks** by default (tunable via env var `MULTICA_DAEMON_MAX_CONCURRENT_TASKS`)
-- **Agent layer**: **6 concurrent tasks per agent** by default (configured per-agent)
+- **守护进程层**：默认 **20 个执行任务并发**（环境变量 `MULTICA_DAEMON_MAX_CONCURRENT_TASKS` 可调）
+- **智能体层**：每个智能体默认 **6 个执行任务并发**（智能体配置里改）
 
-The tighter of the two wins. If your daemon is already running 20 tasks, new tasks wait even if an agent still has headroom.
+两层中更紧的那层生效。如果你的守护进程已经在跑 20 个任务，即使某个智能体还有余量，新的任务也要等。
 
-If you see tasks stuck in `queued` without moving to `dispatched`, one of these two limits is usually saturated.
+如果你看到执行任务卡在 `queued` 状态不 `dispatched`，通常就是这两层里某一层打满了。
 
-## What happens to in-flight tasks after a daemon crash
+## 守护进程崩溃后，没跑完的任务会怎样
 
-When the daemon crashes or is force-killed, the tasks it had picked up are left in `dispatched` or `running`. On the next start, the daemon tells the server: "these tasks are no longer mine, please mark them failed." The server flips them to `failed` with reason `runtime_recovery` — for retryable sources, the tasks are automatically requeued.
+守护进程崩溃或被强行结束时，它领走的执行任务会停在 `dispatched` 或 `running` 状态。下次启动时，守护进程会告诉服务器：「这些任务不是我的了，请标记失败。」服务器把它们改成 `failed`，失败原因 `runtime_recovery`——对可重试的来源，任务自动重新排队。
 
-Even if this step fails due to a network issue, there's a server-side scan **every 30 seconds** as a backstop: any runtime without a heartbeat for over 45 seconds is marked missing, and its tasks are reclaimed along with it.
+即使这一步因网络问题没完成，还有**每 30 秒**一次的服务器端扫描作为后备：超过 45 秒没心跳的运行时会被统一标记为失联，上面的任务也一并回收。
 
-## Troubleshooting agents that aren't working
+## Agent 不工作怎么排查
 
-When you hit a "my agent isn't working" problem, run this three-step checklist first:
+遇到「我的智能体不工作」类问题，先过一遍这三步：
 
-1. Run `multica daemon status` — confirm the daemon is running and online
-2. Run `multica daemon logs -f` — check for errors
-3. Open the **Runtimes** page in the Multica UI — confirm your runtime shows "online"
+1. 跑 `multica daemon status`，确认守护进程在运行且在线
+2. 跑 `multica daemon logs -f`，看是否有错误
+3. 去 Multica 界面的 **Runtimes** 页面，确认你的运行时显示「在线」
 
-More scenarios in [Troubleshooting](/troubleshooting).
+更多场景见 [Troubleshooting](/troubleshooting)。
 
-## Next
+## 下一步
 
-- [Tasks](/tasks) — the full lifecycle of a task once the daemon picks it up
-- [Providers Matrix](/providers) — capability differences across the 11 AI coding tools
+- [执行任务](/tasks) —— 守护进程领到任务后，它的完整生命周期
+- [Providers Matrix](/providers) —— 11 款 AI 编程工具的能力差异对照

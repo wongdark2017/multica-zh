@@ -181,7 +181,7 @@ function ManualForm({
             }}
           />
           <p className="text-xs text-muted-foreground">
-            Must be unique within the workspace.
+            必须在工作区内唯一。
           </p>
         </div>
 
@@ -191,13 +191,13 @@ function ManualForm({
             className="text-xs text-muted-foreground"
           >
             <Pencil className="h-3 w-3" />
-            Description
+            描述
           </Label>
           <Textarea
             id="create-skill-desc"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            placeholder="One sentence on when to assign this skill to an agent."
+            placeholder="用一句话说明什么时候应将该 skill 分配给 agent。"
             rows={3}
             className="resize-none"
           />
@@ -212,7 +212,7 @@ function ManualForm({
             <span>
               {error}
               {isNameConflictError(error) && (
-                <> Try a different name and submit again.</>
+                <> 请换一个名称后重新提交。</>
               )}
             </span>
           </div>
@@ -500,13 +500,13 @@ export function CreateSkillDialog({
                       type="button"
                       onClick={() => setMethod("chooser")}
                       className="-ml-1 rounded-sm p-1 text-muted-foreground opacity-70 transition-opacity hover:bg-accent/60 hover:opacity-100"
-                      aria-label="Back to method chooser"
+                      aria-label="返回方法选择"
                     >
                       <ArrowLeft className="h-3.5 w-3.5" />
                     </button>
                   }
                 />
-                <TooltipContent side="bottom">Back</TooltipContent>
+                <TooltipContent side="bottom">返回</TooltipContent>
               </Tooltip>
             )}
             <div className="min-w-0">
@@ -525,13 +525,13 @@ export function CreateSkillDialog({
                   type="button"
                   onClick={onClose}
                   className="rounded-sm p-1 text-muted-foreground opacity-70 transition-opacity hover:bg-accent/60 hover:opacity-100"
-                  aria-label="Close"
+                  aria-label="关闭"
                 >
                   <XIcon className="h-3.5 w-3.5" />
                 </button>
               }
             />
-            <TooltipContent side="bottom">Close</TooltipContent>
+            <TooltipContent side="bottom">关闭</TooltipContent>
           </Tooltip>
         </div>
 

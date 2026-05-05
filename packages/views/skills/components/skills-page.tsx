@@ -48,10 +48,10 @@ type FilterKey = "all" | "used" | "unused" | "mine";
 // ---------------------------------------------------------------------------
 
 const SCOPES: { value: FilterKey; label: string; description: string }[] = [
-  { value: "all", label: "All", description: "All skills in this workspace" },
-  { value: "used", label: "In use", description: "Skills assigned to at least one agent" },
-  { value: "unused", label: "Unused", description: "Skills not assigned to any agent" },
-  { value: "mine", label: "Created by me", description: "Skills you created" },
+  { value: "all", label: "全部", description: "此工作区内的全部技能" },
+  { value: "used", label: "使用中", description: "已分配给至少一个智能体的技能" },
+  { value: "unused", label: "未使用", description: "尚未分配给任何智能体的技能" },
+  { value: "mine", label: "我创建的", description: "由你创建的技能" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -70,7 +70,7 @@ function PageHeaderBar({
     <PageHeader className="justify-between px-5">
       <div className="flex items-center gap-2">
         <BookOpen className="h-4 w-4 text-muted-foreground" />
-        <h1 className="text-sm font-medium">Skills</h1>
+        <h1 className="text-sm font-medium">技能</h1>
         {totalCount > 0 && (
           <span className="font-mono text-xs tabular-nums text-muted-foreground/70">
             {totalCount}
@@ -79,20 +79,20 @@ function PageHeaderBar({
         {/* Tagline next to the title — single sentence + docs link. Hidden
             below md so it never collides with the title on narrow screens. */}
         <p className="ml-2 hidden text-xs text-muted-foreground md:block">
-          Instructions any agent in this workspace can use.{" "}
+          此工作区内任何智能体都可以使用的指令。{" "}
           <a
             href="https://multica.ai/docs/skills"
             target="_blank"
             rel="noopener noreferrer"
             className="underline decoration-muted-foreground/30 underline-offset-4 transition-colors hover:text-foreground"
           >
-            Learn more →
+            了解更多 →
           </a>
         </p>
       </div>
       <Button type="button" size="sm" onClick={onCreate}>
         <Plus className="h-3 w-3" />
-        New skill
+        新建技能
       </Button>
     </PageHeader>
   );
@@ -100,7 +100,7 @@ function PageHeaderBar({
 
 // ---------------------------------------------------------------------------
 // Card toolbar — search + scope filters, kept inside the card because they
-// operate on the table content. Page-level actions (New skill) live in the
+// operate on the table content. Page-level actions (新建技能) live in the
 // PageHeader instead.
 // ---------------------------------------------------------------------------
 
@@ -122,7 +122,7 @@ function CardToolbar({
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search skills…"
+          placeholder="搜索技能…"
           className="h-8 w-64 pl-8 text-sm"
         />
       </div>
@@ -161,14 +161,13 @@ function EmptyState({ onCreate }: { onCreate: () => void }) {
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
         <BookOpen className="h-6 w-6 text-muted-foreground" />
       </div>
-      <h2 className="mt-4 text-base font-semibold">No skills yet</h2>
+      <h2 className="mt-4 text-base font-semibold">暂无技能</h2>
       <p className="mt-1 max-w-md text-sm text-muted-foreground">
-        Create your first skill, import one from a URL, or copy one from a
-        connected runtime — and every agent in the workspace can use it.
+        创建第一个技能、从 URL 导入，或从已连接的运行时复制。工作区内的每个智能体都可以使用它。
       </p>
       <Button type="button" onClick={onCreate} size="sm" className="mt-5">
         <Plus className="h-3 w-3" />
-        New skill
+        新建技能
       </Button>
     </div>
   );
@@ -327,11 +326,11 @@ export default function SkillsPage() {
         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-16 text-center">
           <AlertCircle className="h-8 w-8 text-destructive" />
           <div>
-            <p className="text-sm font-medium">Couldn&rsquo;t load skills</p>
+            <p className="text-sm font-medium">无法加载技能</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {listError instanceof Error
                 ? listError.message
-                : "Something went wrong fetching the skill list."}
+                : "获取技能列表时出错。"}
             </p>
           </div>
           <Button
@@ -408,11 +407,11 @@ export default function SkillsPage() {
             {filtered.length === 0 ? (
               <div className="flex flex-1 flex-col items-center justify-center gap-2 px-4 py-16 text-center text-muted-foreground">
                 <Search className="h-8 w-8 text-muted-foreground/40" />
-                <p className="text-sm">No matches</p>
+                <p className="text-sm">无匹配结果</p>
                 <p className="max-w-xs text-xs">
                   {search
                     ? `No skills match "${search}"${filter !== "all" ? " in this filter" : ""}.`
-                    : "No skills match this filter."}{" "}
+                    : "没有技能匹配当前筛选。"}{" "}
                   Try a different query.
                 </p>
               </div>

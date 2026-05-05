@@ -33,11 +33,11 @@ export function DeleteIssueConfirmModal({
     setDeleting(true);
     try {
       await deleteIssue.mutateAsync(issueId);
-      toast.success("Issue deleted");
+      toast.success("Issue 已删除");
       onClose();
       if (navigateTo) navigation.push(navigateTo);
     } catch {
-      toast.error("Failed to delete issue");
+      toast.error("删除 issue 失败");
       setDeleting(false);
     }
   };
@@ -46,22 +46,22 @@ export function DeleteIssueConfirmModal({
     <AlertDialog open onOpenChange={(v) => { if (!v && !deleting) onClose(); }}>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>Delete issue</AlertDialogTitle>
+          <AlertDialogTitle>删除 issue</AlertDialogTitle>
           <AlertDialogDescription>
-            This will permanently delete this issue and all its comments. This action cannot be undone.
+            这会永久删除该 issue 及其所有评论。此操作无法撤销。
             <span className="mt-2 block text-xs text-muted-foreground/80">
-              Any workspace member can delete issues.
+              任意工作区成员都可以删除 issues。
             </span>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+          <AlertDialogCancel disabled={deleting}>取消</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
             disabled={deleting}
             className="bg-destructive text-white hover:bg-destructive/90"
           >
-            {deleting ? "Deleting..." : "Delete"}
+            {deleting ? "正在删除..." : "删除"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

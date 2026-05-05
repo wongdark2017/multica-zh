@@ -58,7 +58,7 @@ export function NotificationsTab() {
       delete updated[key];
     }
     mutation.mutate(updated, {
-      onError: () => toast.error("Failed to update notification settings"),
+      onError: () => toast.error("更新通知设置失败"),
     });
   };
 
@@ -66,11 +66,9 @@ export function NotificationsTab() {
     <div className="space-y-4">
       <section className="space-y-4">
         <div>
-          <h2 className="text-sm font-semibold">Inbox Notifications</h2>
+          <h2 className="text-sm font-semibold">Inbox 通知</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            Control which events generate inbox notifications. Muted event types
-            are silently filtered — you can still see them by visiting the issue
-            directly.
+            控制哪些事件会生成 inbox 通知。被静音的事件类型会被静默过滤，你仍然可以直接访问 issue 查看它们。
           </p>
         </div>
 

@@ -11,6 +11,9 @@ const mockSetKeepOpen = vi.hoisted(() => vi.fn());
 const mockSetLastMode = vi.hoisted(() => vi.fn());
 const mockToastSuccess = vi.hoisted(() => vi.fn());
 
+const agentPromptPlaceholder =
+  '告诉 agent 要做什么，例如“让 Bohan 修复 Web 项目中 inbox 加载慢的问题”';
+
 const mockQuickCreateStore = {
   lastAgentId: null as string | null,
   setLastAgentId: mockSetLastAgentId,
@@ -211,7 +214,7 @@ describe("AgentCreatePanel", () => {
 
     expect(
       screen.getByPlaceholderText(
-        'Tell the agent what to do, e.g. "let Bohan fix the inbox loading slowness in the Web project"',
+        agentPromptPlaceholder,
       ),
     ).toHaveValue("Persisted draft prompt");
   });
@@ -223,14 +226,14 @@ describe("AgentCreatePanel", () => {
     render(<AgentCreatePanel onClose={onClose} />);
 
     const editor = screen.getByPlaceholderText(
-      'Tell the agent what to do, e.g. "let Bohan fix the inbox loading slowness in the Web project"',
+      agentPromptPlaceholder,
     );
 
     await user.clear(editor);
     await user.type(editor, "New agent prompt");
     expect(mockSetPrompt).toHaveBeenLastCalledWith("New agent prompt");
 
-    await user.click(screen.getByRole("button", { name: /Create \(⌘↵\)/i }));
+    await user.click(screen.getByRole("button", { name: /创建 \(⌘↵\)/i }));
 
     await waitFor(() => {
       expect(mockQuickCreateIssue).toHaveBeenCalledWith({

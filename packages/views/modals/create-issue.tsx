@@ -226,7 +226,7 @@ export function ManualCreatePanel({
               <div className="flex items-center justify-center size-5 rounded-full bg-emerald-500/15 text-emerald-500">
                 <Check className="size-3" />
               </div>
-              <span className="text-sm font-medium">Issue created</span>
+              <span className="text-sm font-medium">Issue 已创建</span>
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground ml-7">
               <StatusIcon status={issue.status} className="size-3.5 shrink-0" />
@@ -240,13 +240,13 @@ export function ManualCreatePanel({
                 toast.dismiss(t);
               }}
             >
-              View issue
+              查看 issue
             </button>
           </div>
         ), { duration: 5000 });
       }
     } catch {
-      toast.error("Failed to create issue");
+      toast.error("创建 issue 失败");
     } finally {
       setSubmitting(false);
     }
@@ -283,7 +283,7 @@ export function ManualCreatePanel({
             onMoveToTodo={() => {
               updateIssueMutation.mutate(
                 { id: backlogHintIssueId, status: "todo" },
-                { onError: () => toast.error("Failed to update status") },
+                { onError: () => toast.error("更新状态失败") },
               );
               setBacklogHintIssueId(null);
               onClose();
@@ -291,14 +291,14 @@ export function ManualCreatePanel({
           />
         ) : (
           <>
-            <DialogTitle className="sr-only">New Issue</DialogTitle>
+            <DialogTitle className="sr-only">新建 Issue</DialogTitle>
 
             {/* Header */}
             <div className="flex items-center justify-between px-5 pt-3 pb-2 shrink-0">
               <div className="flex items-center gap-1.5 text-xs">
                 <span className="text-muted-foreground">{workspaceName}</span>
                 <ChevronRight className="size-3 text-muted-foreground/50" />
-                <span className="font-medium">Create manually</span>
+                <span className="font-medium">手动创建</span>
               </div>
               <div className="flex items-center gap-1">
                 <Tooltip>
@@ -312,7 +312,7 @@ export function ManualCreatePanel({
                       </button>
                     }
                   />
-                  <TooltipContent side="bottom">{isExpanded ? "Collapse" : "Expand"}</TooltipContent>
+                  <TooltipContent side="bottom">{isExpanded ? "收起" : "展开"}</TooltipContent>
                 </Tooltip>
                 <Tooltip>
                   <TooltipTrigger
@@ -325,7 +325,7 @@ export function ManualCreatePanel({
                       </button>
                     }
                   />
-                  <TooltipContent side="bottom">Close</TooltipContent>
+                  <TooltipContent side="bottom">关闭</TooltipContent>
                 </Tooltip>
               </div>
             </div>
@@ -336,7 +336,7 @@ export function ManualCreatePanel({
                 key={formResetKey}
                 autoFocus
                 defaultValue={draft.title}
-                placeholder="Issue title"
+                placeholder="Issue 标题"
                 className="text-lg font-semibold"
                 onChange={(v) => updateTitle(v)}
                 onSubmit={handleSubmit}
@@ -348,7 +348,7 @@ export function ManualCreatePanel({
               <ContentEditor
                 ref={descEditorRef}
                 defaultValue={draft.description}
-                placeholder="Add description..."
+                placeholder="添加描述..."
                 onUpdate={(md) => setDraft({ description: md })}
                 onUploadFile={handleUpload}
                 debounceMs={500}
@@ -413,13 +413,13 @@ export function ManualCreatePanel({
                     className="flex items-center gap-1.5 py-1 pl-2.5 cursor-pointer"
                   >
                     <ArrowUp className="size-3 text-muted-foreground" />
-                    <span>Sub-issue of {parentIssue.identifier}</span>
+                    <span>{parentIssue.identifier} 的子 issue</span>
                   </button>
                   <button
                     type="button"
                     onClick={() => setParentIssueId(undefined)}
                     className="p-1 pr-2 text-muted-foreground hover:text-foreground cursor-pointer"
-                    aria-label="Remove parent"
+                    aria-label="移除父 issue"
                   >
                     <XIcon className="size-3" />
                   </button>
@@ -435,7 +435,7 @@ export function ManualCreatePanel({
                 >
                   <div className="flex items-center gap-1.5 py-1 pl-2.5">
                     <ArrowDown className="size-3 text-muted-foreground" />
-                    <span>Sub-issue: {c.identifier}</span>
+                    <span>子 issue：{c.identifier}</span>
                   </div>
                   <button
                     type="button"
@@ -443,7 +443,7 @@ export function ManualCreatePanel({
                       setChildIssues((prev) => prev.filter((x) => x.id !== c.id))
                     }
                     className="p-1 pr-2 text-muted-foreground hover:text-foreground cursor-pointer"
-                    aria-label={`Remove sub-issue ${c.identifier}`}
+                    aria-label={`移除子 issue ${c.identifier}`}
                   >
                     <XIcon className="size-3" />
                   </button>
@@ -455,7 +455,7 @@ export function ManualCreatePanel({
               <DropdownMenu>
                 <DropdownMenuTrigger
                   render={
-                    <PillButton aria-label="More options">
+                    <PillButton aria-label="更多选项">
                       <MoreHorizontal className="size-3.5" />
                     </PillButton>
                   }
@@ -464,17 +464,17 @@ export function ManualCreatePanel({
                   {parentIssueId && parentIssue ? (
                     <DropdownMenuItem onClick={() => setParentPickerOpen(true)}>
                       <ArrowUp className="h-3.5 w-3.5" />
-                      Parent: {parentIssue.identifier}
+                      父 issue：{parentIssue.identifier}
                     </DropdownMenuItem>
                   ) : (
                     <DropdownMenuItem onClick={() => setParentPickerOpen(true)}>
                       <ArrowUp className="h-3.5 w-3.5" />
-                      Set parent issue...
+                      设置父 issue...
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuItem onClick={() => setChildPickerOpen(true)}>
                     <ArrowDown className="h-3.5 w-3.5" />
-                    Add sub-issue...
+                    添加子 issue...
                   </DropdownMenuItem>
                   {parentIssueId && parentIssue && (
                     <>
@@ -484,7 +484,7 @@ export function ManualCreatePanel({
                         onClick={() => setParentIssueId(undefined)}
                       >
                         <XIcon className="h-3.5 w-3.5" />
-                        Remove parent
+                        移除父 issue
                       </DropdownMenuItem>
                     </>
                   )}
@@ -497,8 +497,8 @@ export function ManualCreatePanel({
             <IssuePickerModal
               open={parentPickerOpen}
               onOpenChange={setParentPickerOpen}
-              title="Set parent issue"
-              description="Search for an issue to set as the parent of the new issue"
+              title="设置父 issue"
+              description="搜索一个 issue，作为新 issue 的父级"
               excludeIds={[
                 ...childIssues.map((c) => c.id),
                 ...(parentIssueId ? [parentIssueId] : []),
@@ -510,8 +510,8 @@ export function ManualCreatePanel({
             <IssuePickerModal
               open={childPickerOpen}
               onOpenChange={setChildPickerOpen}
-              title="Add sub-issue"
-              description="Search for an issue to add as a sub-issue of the new issue"
+              title="添加子 issue"
+              description="搜索一个 issue，作为新 issue 的子级"
               excludeIds={[
                 ...childIssues.map((c) => c.id),
                 ...(parentIssueId ? [parentIssueId] : []),
@@ -534,11 +534,11 @@ export function ManualCreatePanel({
                 <button
                   type="button"
                   onClick={switchToAgent}
-                  title="Switch to create with agent — describe in one line and let the agent file it"
+                  title="切换到用 agent 创建：用一句话描述，让 agent 帮你创建"
                   className="flex shrink-0 items-center gap-1.5 text-xs px-2 py-1 rounded-sm text-muted-foreground hover:text-foreground hover:bg-accent/60 transition-colors cursor-pointer"
                 >
                   <ArrowLeftRight className="size-3.5" />
-                  Switch to Agent
+                  切换到 Agent
                 </button>
                 <label className="flex shrink-0 items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
                   <Switch
@@ -546,10 +546,10 @@ export function ManualCreatePanel({
                     checked={keepOpen}
                     onCheckedChange={setKeepOpen}
                   />
-                  Create another
+                  继续创建
                 </label>
                 <Button size="sm" onClick={handleSubmit} disabled={!title.trim() || submitting}>
-                  {submitting ? "Creating..." : "Create Issue"}
+                  {submitting ? "创建中..." : "创建 Issue"}
                 </Button>
               </div>
             </div>

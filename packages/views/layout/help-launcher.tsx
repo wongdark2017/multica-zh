@@ -16,8 +16,8 @@ export function HelpLauncher() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        aria-label="Help"
-        title="Help"
+        aria-label="帮助"
+        title="帮助"
         className="inline-flex size-7 items-center justify-center rounded-full text-muted-foreground transition-colors cursor-pointer hover:bg-accent hover:text-foreground data-popup-open:bg-accent data-popup-open:text-foreground"
       >
         <CircleHelp className="size-4" />
@@ -34,7 +34,7 @@ export function HelpLauncher() {
           }
         >
           <BookOpen className="h-3.5 w-3.5" />
-          Docs
+          文档
           <ArrowUpRight className="size-3 translate-y-px text-muted-foreground/50" />
         </DropdownMenuItem>
         <DropdownMenuItem
@@ -47,14 +47,14 @@ export function HelpLauncher() {
           }
         >
           <History className="h-3.5 w-3.5" />
-          Change log
+          更新日志
           <ArrowUpRight className="size-3 translate-y-px text-muted-foreground/50" />
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => useModalStore.getState().open("feedback")}
         >
           <MessageCircle className="h-3.5 w-3.5" />
-          Feedback
+          反馈
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

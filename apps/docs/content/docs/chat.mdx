@@ -1,63 +1,63 @@
 ---
-title: Chat
-description: One-to-one conversation with an agent outside any issue — fully sandboxed. The agent cannot see or change issues, and nobody else can see the conversation.
+title: 对话
+description: 和智能体一对一独立聊天——完全沙盒，智能体看不到 issue、改不了 issue，也没人能看到你的对话。
 ---
 
 import { Callout } from "fumadocs-ui/components/callout";
 
-**Chat is a one-to-one conversation between you and an [agent](/agents)** — stepping outside the [issue](/issues) board. The agent sees no issues and cannot change any issue, and the entire conversation is **fully private** (nobody else in the [workspace](/workspaces), including admins, can see it). It fits discussing an approach with an agent, brainstorming, or asking a question that does not belong to any issue.
+**对话（Chat）是你和 [智能体](/agents) 的一对一独立沟通**——跳出 [issue](/issues) 看板，智能体看不到任何 issue、也改不了 issue，整段对话**完全私人**（[工作区](/workspaces) 里其他人、包括 admin 都看不到）。适合和智能体讨论方案、做 brainstorming、问一个不属于任何 issue 的问题。
 
-## Why not just @-mention the agent?
+## 为什么不用 @ 智能体就够
 
-[@-mention](/mentioning-agents) **pulls the agent into** an issue's context — it reads the issue description and every historical comment, and it can change the issue. Chat flips this: **it pulls you out of** the issue — the agent only sees this single conversation, has no awareness of any issue, and has no entry point to modify one.
+[@ 提及](/mentioning-agents) 把智能体**拉进** issue 的上下文——它会读 issue 的描述和所有历史评论，也能改 issue。对话反过来：**把你拉出** issue——智能体只看得到这一次对话，不知道 issue 存在，也没有修改 issue 的入口。
 
-Two rules of thumb:
+两条判据：
 
-- You want feedback grounded in the context of a specific issue → [@-mention](/mentioning-agents)
-- You want to discuss a topic unrelated to any issue (or you do not want anyone else to see the discussion) → Chat
+- 要智能体基于某个具体 issue 的上下文给反馈 → [@ 提及](/mentioning-agents)
+- 要和智能体聊一个不属于任何 issue 的话题（或不想让任何人看到讨论）→ 对话
 
-## Start a conversation
+## 开始一次对话
 
-Open **Chat** from the sidebar, pick an agent, and start a new conversation. The interface feels like any messaging app: you send a message, the agent replies. Each message triggers a run in the background (an enqueued `task`), so replies may take a few seconds.
+从侧边栏的 **Chat** 入口进，选一个智能体，开一段新对话。界面和普通聊天软件一样：你发消息，智能体回复。每条消息都会在后台触发一次执行（入队一个 `task`），所以回复可能要等几秒。
 
-## What an agent can and cannot do in chat
+## 智能体在对话里能做什么、不能做什么
 
-Agents run in a **fully sandboxed** mode inside a conversation.
+智能体在对话里跑在**完全沙盒**下。
 
-**Can do:**
+**能做的**：
 
-- Answer the questions in your current message
-- Use its configured [skills](/skills) and MCP
-- Read and write files in its own working directory
-- Call `multica` CLI commands that do not need issue context (for example, querying basic workspace info)
+- 回答你当前消息里提的问题
+- 使用自己配置的 [skill](/skills) 和 MCP
+- 在自己的工作目录里读写文件
+- 调用不需要 issue 上下文的 `multica` CLI 命令（比如查询工作区基本信息）
 
-**Cannot do:**
+**不能做的**：
 
-- **See any issue** — the prompt the agent receives has no issue IDs, and commands like `multica issue list` return empty
-- **Change any issue** — without issue context, API calls are blocked by permission checks
-- **See other conversations** — conversations are fully isolated
-- **@-mention anyone or any agent** — chat is a private space with no path to notify others
+- **看到任何 issue**——智能体收到的提示里没有 issue ID，`multica issue list` 之类命令对它返回空
+- **改任何 issue**——没有 issue 上下文，API 调用会被权限 check 拦截
+- **看到别的对话**——对话之间完全隔离
+- **@ 任何人或智能体**——对话是私人空间，没有通知别人的路径
 
-## How multi-turn context is preserved
+## 多轮对话怎么保留上下文
 
-Chat maintains multi-turn context via **provider session resumption** — the agent establishes a provider session on its first reply (for example, a Claude session), and the session ID is stored. On the next message, the task dispatch passes that ID back so the agent **resumes from where it left off** without re-reading history every time.
+对话用 **provider 会话恢复**机制维持多轮上下文——智能体第一次回复时建立一个 provider 会话（比如 Claude 的 session），session ID 被存起来；下一条消息派任务时把这个 ID 传回去，智能体**接着上次的状态继续**，不需要每次重新读历史。
 
-If **one turn fails**, Multica looks up the previous task that had established a session ID (whether that task succeeded or failed) and tries to resume — a single failure in the middle does not drop the memory of the whole conversation.
+如果**某一轮失败**，Multica 会查找上一轮建立过 session ID 的任务（不论它当时成功还是失败）并尝试 resume——不会因为中间一次出错就丢掉整段对话的记忆。
 
-Note: not every provider actually implements session resumption — see the [**Providers Matrix**](/providers) for support status.
+注意：并非所有 provider 都真正实现了 session 恢复——支持情况见 [**Providers Matrix**](/providers)。
 
-## Archive a conversation
+## 归档对话
 
-Conversations you no longer want to see can be archived — right-click in the conversation list or use the "Archive" button on the detail page. After archiving:
+不想再看到的对话可以归档——在对话列表右键或详情页的"归档"按钮。归档后：
 
-- The conversation disappears from the active list (you can still find it in the "Archived" view)
-- Historical messages, session ID, and the working directory are all preserved — nothing is deleted
+- 对话从活跃列表隐藏（可以在"已归档"视图里翻到）
+- 历史消息、session ID、工作目录完整保留，不会被删
 
 <Callout type="warning">
-**There is no "restore" button after archiving.** There is currently no entry point to move an archived conversation back to active. If you want to continue the thread later, you will need to start a new conversation. To revisit content in an archived conversation, open the "Archived" view and read through the history.
+**归档之后没有"恢复"按钮**——目前没有把归档对话重新设回活跃的入口。如果后续还想继续这段对话，只能另起一个新对话。需要翻看归档对话里的内容时，去"已归档"视图读历史消息。
 </Callout>
 
-## Next
+## 下一步
 
-- [**Autopilots**](/autopilots) — let agents start work automatically on a schedule
-- [**Assign issues to agents**](/assigning-issues) — bring the topic back onto the issue board
+- [**Autopilots**](/autopilots) —— 让智能体定时自动开工
+- [**分配 issue 给智能体**](/assigning-issues) —— 把话题放回 issue 看板上

@@ -260,8 +260,8 @@ describe("CreateIssueModal", () => {
 
     renderModal(<CreateIssueModal onClose={onClose} />);
 
-    await user.type(screen.getByPlaceholderText("Issue title"), "  Ship create issue regression coverage  ");
-    await user.click(screen.getByRole("button", { name: "Create Issue" }));
+    await user.type(screen.getByPlaceholderText("Issue 标题"), "  Ship create issue regression coverage  ");
+    await user.click(screen.getByRole("button", { name: "创建 Issue" }));
 
     await waitFor(() => {
       expect(mockCreateIssue).toHaveBeenCalledWith({
@@ -288,11 +288,11 @@ describe("CreateIssueModal", () => {
 
     render(renderToast("toast-1"));
 
-    expect(screen.getByText("Issue created")).toBeInTheDocument();
+    expect(screen.getByText("Issue 已创建")).toBeInTheDocument();
     expect(screen.getByText(/TES-123/)).toBeInTheDocument();
     expect(screen.getByText(/Ship create issue regression coverage/)).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "View issue" }));
+    await user.click(screen.getByRole("button", { name: "查看 issue" }));
 
     expect(mockPush).toHaveBeenCalledWith("/ws-test/issues/issue-123");
     expect(mockToastDismiss).toHaveBeenCalledWith("toast-1");
@@ -305,9 +305,9 @@ describe("CreateIssueModal", () => {
 
     renderModal(<CreateIssueModal onClose={onClose} />);
 
-    await user.type(screen.getByPlaceholderText("Issue title"), "First follow-up issue");
-    await user.type(screen.getByPlaceholderText("Add description..."), "Description to clear");
-    await user.click(screen.getByRole("button", { name: "Create Issue" }));
+    await user.type(screen.getByPlaceholderText("Issue 标题"), "First follow-up issue");
+    await user.type(screen.getByPlaceholderText("添加描述..."), "Description to clear");
+    await user.click(screen.getByRole("button", { name: "创建 Issue" }));
 
     await waitFor(() => {
       expect(mockCreateIssue).toHaveBeenCalledWith({
@@ -325,8 +325,8 @@ describe("CreateIssueModal", () => {
     });
 
     expect(onClose).not.toHaveBeenCalled();
-    expect(screen.getByPlaceholderText("Issue title")).toHaveValue("");
-    expect(screen.getByPlaceholderText("Add description...")).toHaveValue("");
+    expect(screen.getByPlaceholderText("Issue 标题")).toHaveValue("");
+    expect(screen.getByPlaceholderText("添加描述...")).toHaveValue("");
     expect(mockSetDraft).toHaveBeenCalledWith({
       title: "",
       description: "",

@@ -42,24 +42,24 @@ const HEALTH_CHIP: Record<
   { label: string; dot: string; description: string }
 > = {
   online: {
-    label: "Online",
+    label: "在线",
     dot: "bg-success",
-    description: "Heartbeat received in the last 45s. Ready to dispatch tasks.",
+    description: "最近 45 秒内收到心跳，可以派发任务。",
   },
   recently_lost: {
-    label: "Recently lost",
+    label: "最近失联",
     dot: "bg-warning",
-    description: "Lost contact under 5 minutes ago — often a brief network blip.",
+    description: "失联不到 5 分钟，通常是短暂网络波动。",
   },
   offline: {
-    label: "Offline",
+    label: "离线",
     dot: "bg-muted-foreground/40",
-    description: "No heartbeat for 5+ minutes. Restart the daemon or investigate the host.",
+    description: "超过 5 分钟没有心跳。请重启守护进程或检查主机。",
   },
   about_to_gc: {
-    label: "About to GC",
+    label: "即将清理",
     dot: "bg-destructive",
-    description: "Offline 6+ days. Auto-deleted at 7 days unless it reconnects.",
+    description: "已离线 6 天以上。如未重连，7 天后会自动删除。",
   },
 };
 
@@ -218,7 +218,7 @@ function PageHeaderBar({
     <PageHeader className="justify-between px-5">
       <div className="flex items-center gap-2">
         <Server className="h-4 w-4 text-muted-foreground" />
-        <h1 className="text-sm font-medium">Runtimes</h1>
+        <h1 className="text-sm font-medium">运行时</h1>
         {totalCount > 0 && (
           <span className="font-mono text-xs tabular-nums text-muted-foreground/70">
             {totalCount}
@@ -275,7 +275,7 @@ function CardToolbar({
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Search runtimes…"
+          placeholder="搜索运行时…"
           className="h-8 w-64 pl-8 text-sm"
         />
       </div>
@@ -359,7 +359,7 @@ function FilterChipsRow({
         const count = key === "all" ? total : healthCounts[key];
         const visual = key === "all" ? null : HEALTH_CHIP[key];
         const description =
-          key === "all" ? "All runtimes in this view" : visual!.description;
+          key === "all" ? "当前视图中的全部运行时" : visual!.description;
         return (
           <HealthChip
             key={key}
@@ -435,7 +435,7 @@ function EmptyState({ onConnectRemote }: { onConnectRemote: () => void }) {
       <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
         <Server className="h-6 w-6 text-muted-foreground" />
       </div>
-      <h2 className="mt-4 text-base font-semibold">No runtimes yet</h2>
+      <h2 className="mt-4 text-base font-semibold">暂无运行时</h2>
       <p className="mt-1 max-w-md text-sm text-muted-foreground">
         Desktop auto-scans your local machine. For AWS EC2 or other remote
         machines, connect them using the setup wizard.
@@ -454,7 +454,7 @@ function EmptyState({ onConnectRemote }: { onConnectRemote: () => void }) {
 }
 
 // ---------------------------------------------------------------------------
-// No matches state — runtimes exist but the current filter combination
+// 无匹配结果 state — runtimes exist but the current filter combination
 // hides all of them. Keeps the user oriented by reflecting *which* filters
 // are in play.
 // ---------------------------------------------------------------------------
@@ -474,7 +474,7 @@ function NoMatchesState({
     return (
       <div className="flex flex-1 flex-col items-center justify-center gap-2 px-4 py-16 text-center">
         <Server className="h-8 w-8 animate-pulse text-muted-foreground/40" />
-        <p className="text-sm text-muted-foreground">Starting local runtime…</p>
+        <p className="text-sm text-muted-foreground">正在启动本地运行时…</p>
         <p className="max-w-xs text-xs text-muted-foreground/70">
           This usually takes a few seconds. Your daemon is registering with the workspace.
         </p>
@@ -489,11 +489,11 @@ function NoMatchesState({
   return (
     <div className="flex flex-1 flex-col items-center justify-center gap-2 px-4 py-16 text-center text-muted-foreground">
       <Search className="h-8 w-8 text-muted-foreground/40" />
-      <p className="text-sm">No matches</p>
+      <p className="text-sm">无匹配结果</p>
       <p className="max-w-xs text-xs">
         {hasSearch
           ? `No runtimes match "${search}"${hasHealthFilter || hasScope ? " in this filter" : ""}.`
-          : "No runtimes match this filter."}{" "}
+          : "没有运行时匹配当前筛选。"}{" "}
         Try widening the scope or clearing filters.
       </p>
     </div>

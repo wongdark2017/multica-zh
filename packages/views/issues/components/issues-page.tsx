@@ -84,7 +84,7 @@ export function IssuesPage() {
 
       updateIssueMutation.mutate(
         { id: issueId, ...updates },
-        { onError: () => toast.error("Failed to move issue") },
+        { onError: () => toast.error("移动 issue 失败") },
       );
     },
     [updateIssueMutation],
@@ -136,10 +136,10 @@ export function IssuesPage() {
       <PageHeader className="gap-1.5">
         <WorkspaceAvatar name={workspace?.name ?? "W"} size="sm" />
         <span className="text-sm text-muted-foreground">
-          {workspace?.name ?? "Workspace"}
+          {workspace?.name ?? "工作区"}
         </span>
         <ChevronRight className="h-3 w-3 text-muted-foreground" />
-        <span className="text-sm font-medium">Issues</span>
+        <span className="text-sm font-medium">Issue</span>
       </PageHeader>
 
       <ViewStoreProvider store={useIssueViewStore}>
@@ -150,8 +150,8 @@ export function IssuesPage() {
         {scopedIssues.length === 0 ? (
           <div className="flex flex-1 min-h-0 flex-col items-center justify-center gap-2 text-muted-foreground">
             <ListTodo className="h-10 w-10 text-muted-foreground/40" />
-            <p className="text-sm">No issues yet</p>
-            <p className="text-xs">Create an issue to get started.</p>
+            <p className="text-sm">暂无 issue</p>
+            <p className="text-xs">创建一个 issue 开始使用。</p>
           </div>
         ) : (
           <div className="flex flex-col flex-1 min-h-0">

@@ -208,7 +208,7 @@ function SortablePinItem({
           >
             <X className="size-1" />
           </TooltipTrigger>
-          <TooltipContent side="top" sideOffset={4}>Unpin</TooltipContent>
+          <TooltipContent side="top" sideOffset={4}>取消固定</TooltipContent>
         </Tooltip>
       </SidebarMenuButton>
     </SidebarMenuItem>
@@ -566,7 +566,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                   <SquarePen />
                   <DraftDot />
                 </span>
-                <span>New Issue</span>
+                <span>新建 Issue</span>
                 <kbd className="pointer-events-none ml-auto inline-flex h-5 select-none items-center gap-0.5 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground">C</kbd>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -610,7 +610,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
                   render={<CollapsibleTrigger />}
                   className="group/trigger cursor-pointer hover:bg-sidebar-accent/70 hover:text-sidebar-accent-foreground"
                 >
-                  <span>Pinned</span>
+                  <span>已固定</span>
                   <ChevronRight className="!size-3 ml-1 stroke-[2.5] transition-transform duration-200 group-data-[panel-open]/trigger:rotate-90" />
                   <span className="ml-auto text-[10px] text-muted-foreground opacity-0 transition-opacity group-hover/pinned:opacity-100">{localPinned.length}</span>
                 </SidebarGroupLabel>
@@ -639,7 +639,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
           )}
 
           <SidebarGroup>
-            <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+            <SidebarGroupLabel>工作区</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="gap-0.5">
                 {workspaceNav.map((item) => {
@@ -663,7 +663,7 @@ export function AppSidebar({ topSlot, searchSlot, headerClassName, headerStyle }
           </SidebarGroup>
 
           <SidebarGroup>
-            <SidebarGroupLabel>Configure</SidebarGroupLabel>
+            <SidebarGroupLabel>配置</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu className="gap-0.5">
                 {configureNav.map((item) => {

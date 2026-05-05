@@ -88,9 +88,9 @@ export function AgentDetailPage({ agentId }: AgentDetailPageProps) {
     try {
       await api.updateAgent(id, data as UpdateAgentRequest);
       qc.invalidateQueries({ queryKey: workspaceKeys.agents(wsId) });
-      toast.success("Agent updated");
+      toast.success("Agent 已更新");
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to update agent");
+      toast.error(e instanceof Error ? e.message : "更新 agent 失败");
       throw e;
     }
   };
@@ -99,9 +99,9 @@ export function AgentDetailPage({ agentId }: AgentDetailPageProps) {
     try {
       await api.archiveAgent(id);
       qc.invalidateQueries({ queryKey: workspaceKeys.agents(wsId) });
-      toast.success("Agent archived");
+      toast.success("Agent 已归档");
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to archive agent");
+      toast.error(e instanceof Error ? e.message : "归档 agent 失败");
     }
   };
 
@@ -109,9 +109,9 @@ export function AgentDetailPage({ agentId }: AgentDetailPageProps) {
     try {
       await api.restoreAgent(id);
       qc.invalidateQueries({ queryKey: workspaceKeys.agents(wsId) });
-      toast.success("Agent restored");
+      toast.success("Agent 已恢复");
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Failed to restore agent");
+      toast.error(e instanceof Error ? e.message : "恢复 agent 失败");
     }
   };
 
@@ -124,15 +124,15 @@ export function AgentDetailPage({ agentId }: AgentDetailPageProps) {
   if (!agent) {
     return (
       <div className="flex flex-1 min-h-0 flex-col">
-        <BackHeader paths={paths.agents()} title="Agents" />
+        <BackHeader paths={paths.agents()} title="智能体" />
         <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-16 text-center">
           <AlertCircle className="h-8 w-8 text-destructive" />
           <div>
-            <p className="text-sm font-medium">Agent not found</p>
+            <p className="text-sm font-medium">未找到 agent</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {agentsError instanceof Error
                 ? agentsError.message
-                : "This agent may have been archived or deleted."}
+                : "该 agent 可能已被归档或删除。"}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -142,14 +142,14 @@ export function AgentDetailPage({ agentId }: AgentDetailPageProps) {
               size="sm"
               onClick={() => refetchAgents()}
             >
-              Try again
+              重试
             </Button>
             <Button
               type="button"
               size="sm"
               onClick={() => navigation.push(paths.agents())}
             >
-              Back to agents
+              返回 agents
             </Button>
           </div>
         </div>

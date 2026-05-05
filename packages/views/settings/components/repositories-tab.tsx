@@ -64,12 +64,12 @@ export function RepositoriesTab() {
   return (
     <div className="space-y-8">
       <section className="space-y-4">
-        <h2 className="text-sm font-semibold">Repositories</h2>
+        <h2 className="text-sm font-semibold">仓库</h2>
 
         <Card>
           <CardContent className="space-y-3">
             <p className="text-xs text-muted-foreground">
-              Git repositories associated with this workspace. Agents use these to clone and work on code.
+              与该工作区关联的 Git 仓库。Agents 会使用这些仓库来 clone 并处理代码。
             </p>
 
             {repos.map((repo, index) => (
