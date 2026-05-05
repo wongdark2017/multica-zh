@@ -160,10 +160,10 @@ describe("InvitationsPage", () => {
     renderWithClient();
 
     await waitFor(() =>
-      screen.getByRole("button", { name: /continue to setup/i }),
+      screen.getByRole("button", { name: /继续设置/i }),
     );
     fireEvent.click(
-      screen.getByRole("button", { name: /continue to setup/i }),
+      screen.getByRole("button", { name: /继续设置/i }),
     );
     expect(navigate).toHaveBeenCalledWith("/onboarding");
   });

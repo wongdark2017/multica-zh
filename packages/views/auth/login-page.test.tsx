@@ -65,6 +65,18 @@ function getOTPInput() {
   return screen.getByRole("textbox", { hidden: true });
 }
 
+const loginTitle = /登录 Multica/i;
+const loginDescription = /输入邮箱以获取登录验证码/i;
+const emailLabel = /邮箱/i;
+const sendingCodeText = /正在发送验证码/i;
+const checkEmailTitle = /检查你的邮箱/i;
+const genericSendCodeError = /发送验证码失败/i;
+const resendCooldownText = /秒后可重发/i;
+const resendCodeText = /重新发送验证码/i;
+const googleButtonName = /使用 Google 继续/i;
+const authorizeCliTitle = /授权 CLI/i;
+const differentAccountButtonName = /使用其他账号/i;
+
 // ---------------------------------------------------------------------------
 // Tests
 // ---------------------------------------------------------------------------
@@ -95,13 +107,9 @@ describe("LoginPage", () => {
 
   it("renders email form with 'Sign in to Multica' title", () => {
     render(<LoginPage onSuccess={onSuccess} />);
-    expect(
-      screen.getByText(/sign in to multica/i),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(/enter your email to get a login code/i),
-    ).toBeInTheDocument();
-    expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+    expect(screen.getByText(loginTitle)).toBeInTheDocument();
+    expect(screen.getByText(loginDescription)).toBeInTheDocument();
+    expect(screen.getByLabelText(emailLabel)).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /continue/i }),
     ).toBeInTheDocument();
@@ -118,7 +126,7 @@ describe("LoginPage", () => {
     // form programmatically the same way the component does — via form submit.
     // Since the button is disabled, we directly call handleSendCode's logic
     // by removing the required attr and submitting.
-    const emailInput = screen.getByLabelText(/email/i);
+    const emailInput = screen.getByLabelText(emailLabel);
     // The input has required + the button is disabled, so we need to type
     // a space then clear to trigger the empty-email error path.
     // Actually, the component guards `if (!email)` in handleSendCode.
@@ -143,7 +151,7 @@ describe("LoginPage", () => {
     render(<LoginPage onSuccess={onSuccess} />);
 
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     expect(mockSendCode).toHaveBeenCalledWith("test@example.com");
@@ -155,10 +163,10 @@ describe("LoginPage", () => {
     render(<LoginPage onSuccess={onSuccess} />);
 
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
-    expect(screen.getByText(/sending code/i)).toBeInTheDocument();
+    expect(screen.getByText(sendingCodeText)).toBeInTheDocument();
   });
 
   it("transitions to code step after successful sendCode", async () => {
@@ -166,12 +174,12 @@ describe("LoginPage", () => {
     render(<LoginPage onSuccess={onSuccess} />);
 
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
       expect(
-        screen.getByText(/check your email/i),
+        screen.getByText(checkEmailTitle),
       ).toBeInTheDocument();
     });
     expect(screen.getByText(/test@example.com/)).toBeInTheDocument();
@@ -182,7 +190,7 @@ describe("LoginPage", () => {
     render(<LoginPage onSuccess={onSuccess} />);
 
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
@@ -195,12 +203,12 @@ describe("LoginPage", () => {
     render(<LoginPage onSuccess={onSuccess} />);
 
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
       expect(
-        screen.getByText(/failed to send code/i),
+        screen.getByText(genericSendCodeError),
       ).toBeInTheDocument();
     });
   });
@@ -218,13 +226,13 @@ describe("LoginPage", () => {
 
     const user = userEvent.setup();
     // Step 1: email
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     // Step 2: code
     await waitFor(() => {
       expect(
-        screen.getByText(/check your email/i),
+        screen.getByText(checkEmailTitle),
       ).toBeInTheDocument();
     });
 
@@ -254,12 +262,12 @@ describe("LoginPage", () => {
     render(<LoginPage onSuccess={onSuccess} />);
 
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
       expect(
-        screen.getByText(/check your email/i),
+        screen.getByText(checkEmailTitle),
       ).toBeInTheDocument();
     });
 
@@ -281,17 +289,17 @@ describe("LoginPage", () => {
     render(<LoginPage onSuccess={onSuccess} />);
 
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
       expect(
-        screen.getByText(/check your email/i),
+        screen.getByText(checkEmailTitle),
       ).toBeInTheDocument();
     });
 
     // After transitioning to code step, cooldown is 60s
-    const resendBtn = screen.getByRole("button", { name: /resend in/i });
+    const resendBtn = screen.getByRole("button", { name: resendCooldownText });
     expect(resendBtn).toBeDisabled();
   });
 
@@ -300,15 +308,15 @@ describe("LoginPage", () => {
     const user = userEvent.setup();
     render(<LoginPage onSuccess={onSuccess} />);
 
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/check your email/i)).toBeInTheDocument();
+      expect(screen.getByText(checkEmailTitle)).toBeInTheDocument();
     });
 
     // After transition, resend shows cooldown text and is disabled
-    expect(screen.getByText(/resend in/i)).toBeInTheDocument();
+    expect(screen.getByText(resendCooldownText)).toBeInTheDocument();
   });
 
   it("calls sendCode again when resend is clicked after cooldown", async () => {
@@ -316,11 +324,11 @@ describe("LoginPage", () => {
     render(<LoginPage onSuccess={onSuccess} />);
 
     const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
-      expect(screen.getByText(/check your email/i)).toBeInTheDocument();
+      expect(screen.getByText(checkEmailTitle)).toBeInTheDocument();
     });
 
     // sendCode was called once for the initial send
@@ -335,10 +343,10 @@ describe("LoginPage", () => {
     }
 
     await waitFor(() => {
-      expect(screen.getByText(/resend code/i)).toBeInTheDocument();
+      expect(screen.getByText(resendCodeText)).toBeInTheDocument();
     });
 
-    const resendBtn = screen.getByRole("button", { name: /resend code/i });
+    const resendBtn = screen.getByRole("button", { name: resendCodeText });
     expect(resendBtn).not.toBeDisabled();
 
     await user.click(resendBtn);
@@ -357,14 +365,14 @@ describe("LoginPage", () => {
       />,
     );
     expect(
-      screen.getByRole("button", { name: /continue with google/i }),
+      screen.getByRole("button", { name: googleButtonName }),
     ).toBeInTheDocument();
   });
 
   it("hides Google OAuth button when google prop omitted", () => {
     render(<LoginPage onSuccess={onSuccess} />);
     expect(
-      screen.queryByRole("button", { name: /continue with google/i }),
+      screen.queryByRole("button", { name: googleButtonName }),
     ).not.toBeInTheDocument();
   });
 
@@ -392,7 +400,7 @@ describe("LoginPage", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/authorize cli/i),
+        screen.getByText(authorizeCliTitle),
       ).toBeInTheDocument();
     });
     expect(screen.getByText(/user@example.com/)).toBeInTheDocument();
@@ -400,7 +408,7 @@ describe("LoginPage", () => {
       screen.getByRole("button", { name: /authorize/i }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /use a different account/i }),
+      screen.getByRole("button", { name: differentAccountButtonName }),
     ).toBeInTheDocument();
   });
 
@@ -426,7 +434,7 @@ describe("LoginPage", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/authorize cli/i),
+        screen.getByText(authorizeCliTitle),
       ).toBeInTheDocument();
     });
 
@@ -459,18 +467,16 @@ describe("LoginPage", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText(/authorize cli/i),
+        screen.getByText(authorizeCliTitle),
       ).toBeInTheDocument();
     });
 
     const user = userEvent.setup();
     await user.click(
-      screen.getByRole("button", { name: /use a different account/i }),
+      screen.getByRole("button", { name: differentAccountButtonName }),
     );
 
-    expect(
-      screen.getByText(/sign in to multica/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(loginTitle)).toBeInTheDocument();
   });
 
   // -------------------------------------------------------------------------
@@ -493,7 +499,7 @@ describe("LoginPage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/authorize cli/i)).toBeInTheDocument();
+      expect(screen.getByText(authorizeCliTitle)).toBeInTheDocument();
     });
     expect(screen.getByText(/cookie@example.com/)).toBeInTheDocument();
   });
@@ -517,7 +523,7 @@ describe("LoginPage", () => {
     );
 
     await waitFor(() => {
-      expect(screen.getByText(/authorize cli/i)).toBeInTheDocument();
+      expect(screen.getByText(authorizeCliTitle)).toBeInTheDocument();
     });
 
     const user = userEvent.setup();
@@ -550,12 +556,12 @@ describe("LoginPage", () => {
     );
 
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/email/i), "cli@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "cli@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
       expect(
-        screen.getByText(/check your email/i),
+        screen.getByText(checkEmailTitle),
       ).toBeInTheDocument();
     });
 
@@ -616,12 +622,12 @@ describe("LoginPage", () => {
     );
 
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
       expect(
-        screen.getByText(/check your email/i),
+        screen.getByText(checkEmailTitle),
       ).toBeInTheDocument();
     });
 
@@ -643,20 +649,18 @@ describe("LoginPage", () => {
     render(<LoginPage onSuccess={onSuccess} />);
 
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/email/i), "test@example.com");
+    await user.type(screen.getByLabelText(emailLabel), "test@example.com");
     await user.click(screen.getByRole("button", { name: /continue/i }));
 
     await waitFor(() => {
       expect(
-        screen.getByText(/check your email/i),
+        screen.getByText(checkEmailTitle),
       ).toBeInTheDocument();
     });
 
     await user.click(screen.getByRole("button", { name: /back/i }));
 
-    expect(
-      screen.getByText(/sign in to multica/i),
-    ).toBeInTheDocument();
+    expect(screen.getByText(loginTitle)).toBeInTheDocument();
   });
 
 });
